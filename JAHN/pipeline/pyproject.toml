@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "abpipe"
+version = "0.1.0"
+description = "Swappable generate -> filter -> rank pipeline for antibody variants"
+requires-python = ">=3.11"
+# abguard is not on PyPI: install the organisers' wheel into the same environment (see README).
+dependencies = ["polars", "pyyaml", "numpy", "rapidfuzz"]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+abpipe = "abpipe.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["abpipe*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["needs_data: needs the hackathon data directory and abguard"]
