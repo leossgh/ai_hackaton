@@ -162,7 +162,43 @@ What this means in practice:
   training CDRH3s. At ≥5, treat the ranker's output as uninformative, not as a weak signal.
 - This is the sharpest argument for getting more measured affinity data in the region we actually design in.
 
-## 4. Four mistakes to avoid
+## 4. Tried and rejected: the T0 sequence-only ddG features
+
+`../features/README.md` tiers 99 binding-ddG descriptors by cost. Only **T0** (13 features: `blosum`,
+`d_chg`, `d_hydro`, `abs_hydro`, `d_vol`, `abs_chg`, `d_arom`) is sequence-only; T1 and above need bound
+complex coordinates and so cannot feed a sequence screen at all.
+
+`seqfeat.py` ports T0 to a 10-residue variant (1–10 substitutions), as variant-level aggregates (37
+features) and position-resolved deltas (90). The motivating hypothesis was good: one-hot has a free
+parameter per (position, residue) and cannot speak to a combination it never saw, whereas physicochemical
+deltas transfer — exactly the regime where the ranker collapses (§3).
+
+**It does not work.** Cluster-bootstrap 95% CIs on the paired difference against the current models:
+
+| Task | Grouping | Current | + T0 agg | Difference, 95% CI |
+|---|---|---|---|---|
+| Ranker | Hamming ≤2 | +0.683 | +0.632 | −0.047 [−0.095, +0.016] |
+| Ranker | Hamming ≤4 | +0.434 | +0.532 | +0.060 [−0.099, +0.133] |
+| Classifier | Hamming ≤2 | 0.931 | 0.939 | +0.008 [−0.005, +0.026] |
+| Classifier | Hamming ≤4 | 0.910 | 0.894 | −0.012 [−0.034, +0.028] |
+
+Every interval spans zero. **The models were not changed.**
+
+Two methodology traps this ran into, worth knowing because they both initially looked like a win:
+
+1. **Scaling the one-hot block handicaps the baseline.** Standardising binary columns amplifies rare
+   residues. With one `StandardScaler` over all features, one-hot's extrapolation AUROC looked like 0.844;
+   scaling only the continuous block it is 0.904. `p11_features.py` uses a `ColumnTransformer` that passes
+   one-hot through untouched.
+2. **Repeat-to-repeat spread is not sampling uncertainty.** Averaging 12 randomised grouped-CV repeats gave
+   tight error bars (±0.003 to ±0.09) that made +0.07 look "significant". That spread only measures
+   fold-assignment noise. Bootstrapping over *clusters* gives the uncertainty from having 179 data points,
+   and it is roughly 2–3x wider. Use `p13_bootstrap.py` for any accept/reject decision.
+
+With n=179 measured KDs, differences below ~0.1 Spearman are unresolvable. The binding constraint is
+measured data in the ≥5-mutation region, not features.
+
+## 5. Four mistakes to avoid
 
 1. **Do not validate with random cross-validation.** Variants differ by 1–2 residues, so neighbours land on
    both sides of a random split and every score inflates. Use `clusters()` (single-linkage, Hamming ≤2) as
@@ -175,12 +211,13 @@ What this means in practice:
 3. **Do not use the FACS classes to rank affinity.** They do not track KD. Among the 37 CDRH3s shared with
    the SPR table, median KD is 7.2 nM for `high`, 4.2 nM for `medium` and 15.4 nM for `low` — not monotonic.
    The 524k table is for coarse binder/non-binder signal and for the novelty filter.
-4. **Do not screen or rank on fold confidence.** See §5.
+4. **Do not screen or rank on fold confidence.** See §6.
 5. **Do not believe `pred_log10_kd` for a design far from the training set.** See §3.
+6. **Do not judge a feature set on grouped-CV repeat spread.** Bootstrap over clusters. See §4.
 
 ---
 
-## 5. Refolding: measured, and it does not screen
+## 6. Refolding: measured, and it does not screen
 
 We folded 60 SPR variants with known outcomes (30 with KD from 0.023 to 13,863 nM, 30 with no measurable
 KD) against HER2 domain IV with the 1N8Z template, using **Boltz-2** and **Protenix v2**.
@@ -221,7 +258,7 @@ Do not use refolding to screen or rank, and do not rank on ipTM alone even for d
 
 ---
 
-## 6. What is not covered
+## 7. What is not covered
 
 - **Thermostability** and **epitope preservation** — two of the three judged properties. No labelled data
   for either, and no predictor chosen. The pre-filter says nothing about them.
@@ -231,7 +268,7 @@ Do not use refolding to screen or rank, and do not rank on ipTM alone even for d
   puts trastuzumab's own CDRH3 at 1.8 nM against a measured 0.03–0.18 nM. Treat the output as a ranking, not
   a predicted KD.
 
-## 7. Reproducing the numbers
+## 8. Reproducing the numbers
 
 ```bash
 cd NICCOLO/eda
@@ -244,6 +281,10 @@ python p6_iptm_calib.py    # do fold metrics add anything?
 python p7_ipae.py          # interface PAE from the detailed scores
 python p9_protenix.py      # second fold model
 python p10_leakage_audit.py # leakage audit: permutation, threshold sweep, nested CV, extrapolation
+python seqfeat.py          # T0 feature builder self-test
+python p11_features.py     # T0 feature comparison, nested CV + extrapolation
+python p12_features_ci.py  # repeated randomised grouped CV
+python p13_bootstrap.py    # cluster bootstrap: the accept/reject test
 ```
 
 Requires `pandas numpy scikit-learn scipy matplotlib cbor2`. Full results and caveats: `README.md`.

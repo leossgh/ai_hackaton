@@ -160,6 +160,35 @@ effect (AUROC > ~0.65), not a weak one.
 **Consequence for the pipeline:** refolding stays as a structural plausibility check on the handful of
 designs we actually submit, not as a screening stage. Screening ranks on sequence.
 
+## Related: which ddG features are worth their cost (`../features/`)
+
+Different task — binding **ddG** on a given complex (the DG32 descriptors), not CDRH3 KD ranking — but the
+same cost question, and it points the same way: **the cheap features carry most of the signal**.
+
+Ridge on 26-fold LOCO, no link stage:
+
+| tier | what it needs | features | mean LOCO r (cumulative) |
+|---|---|---|---|
+| T0 sequence-only | residue identities + chain; table lookups | 13 | 0.370 |
+| T1 fast geometry | complex coordinates; numpy distances and neighbour counts | 29 | **0.548** |
+| T2 DSSP + Voronoi | external tools | 8 | 0.551 |
+| T3 ESM-IF | inverse folding on the backbone | 14 | 0.578 |
+| T4 FoldX scan | 26,676 FoldX mutants | 35 | 0.597 |
+
+T0 + T1 (42 features) reaches 0.548 of the all-99 model's 0.597; the top 10 fast features alone give 0.527.
+DSSP and Voronoi buy +0.004 for two dependencies. The two expensive tiers together buy +0.046.
+
+Note T1 needs a **bound** VHH–antigen structure, so it is not sequence-only and does not apply to the
+sequence-only screen above. Full tables, caveats and the top-20 feature list: `../features/README.md`.
+
+## Tried and rejected: T0 sequence-only ddG features
+
+`seqfeat.py` ports the T0 tier from `../features/README.md` to CDRH3 variants. Cluster-bootstrap 95% CIs on
+the paired difference against the current models all span zero (ranker −0.047 [−0.095, +0.016] at Hamming
+≤2, +0.060 [−0.099, +0.133] at ≤4; classifier +0.008 and −0.012). The models were not changed. See
+`AGENT_GUIDE.md` §4, including the two traps that initially made this look like a win: scaling the one-hot
+block handicaps the baseline, and grouped-CV repeat spread understates sampling uncertainty by 2–3x.
+
 ## How to use it
 
 ```python
