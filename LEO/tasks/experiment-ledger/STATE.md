@@ -8,11 +8,11 @@
 
 | | |
 |---|---|
-| Experiments | 1 (`inconclusive` 1) |
-| Theories | 8 active — `low` 2, `medium` 6, `high` 0 |
-| Ideas | 7 open |
-| Research passes | 1 |
-| AMASS spend | 0 searches, $0.00 of the ~2,000-search team budget |
+| Experiments | 2 (`worked` 1, `inconclusive` 1) |
+| Theories | 9 active + 1 retired — `low` 0, `medium` 7, `high` 2 |
+| Ideas | 9 open/lit-checked, 1 done |
+| Research passes | 2 |
+| AMASS spend | 2 searches, $0.10 of the ~2,000-search team budget |
 
 ## What this task is
 
@@ -52,10 +52,11 @@ not on the designs alone. See [`PROMPT.md`](PROMPT.md) for the full cycle.
 
 ## Next, in order
 
-1. Each pass: `--scope` the weakest theory, apply findings, commit.
-2. Resolve IDEA-003 (thermostability predictor) — it blocks any S-tier claim.
-3. Fold in the sibling [`../litreview-optimisation/`](../litreview-optimisation/) digest once that task finishes; it will supersede parts of `literature/REVIEW.md`.
-4. Hand IDEA-001 (CDRH3 for binding + framework for Tm) to whoever has the GPU — it is the only idea that attacks two scored properties at once.
+1. **Hand IDEA-008 to whoever has the GPU.** Substitute A106/M107/D108/Y109 and nothing else: 63.6% CDRH3 identity, track-eligible by arithmetic before any model runs, and the lowest constructible epitope risk. Rank it first unless a model objects.
+2. Each pass: scan the repo for new committed results, `--scope` the weakest theory, apply, commit.
+3. IDEA-010 — energetics for Y109. It is the single assumption IDEA-008 rests on.
+4. IDEA-001 (CDRH3 for binding + framework for Tm) — still the only idea attacking two scored properties at once, and TH-005 is unaffected by EXP-002.
+5. Resolve IDEA-003 (thermostability predictor); answer now depends on whether we submit a VHH.
 
 ## Log
 
@@ -68,3 +69,5 @@ not on the designs alone. See [`PROMPT.md`](PROMPT.md) for the full cycle.
 | 2026-11-14 | pass-002 (live, $0.10, 2 searches): found PMID:41564239, absent from the seeded queries. TH-007 `low` → `medium`; IDEA-003 split by format (`open` → `lit-checked`); `literature/REVIEW.md` §3 rewritten |
 | 2026-11-14 | Rebased onto `origin/main` (3cbf4a7), which had moved 5 commits ahead. Noted that `main` lacks `LEO/.gitignore`, so the AMASS key is unprotected on a fresh clone — this branch carries the fix |
 | 2026-11-14 | Push blocker resolved: `leossgh` has no write access to `niccolocard99/ai_hackaton`, so forked to `leossgh/ai_hackaton` and opened **PR #2** from the fork. Loop now pushes to `fork` each pass |
+| 2026-11-14 | Repo scan of sibling branch `LEO-litreview-optimisation` (commits 9b45cdb, ae2cdef) found measured structural work. Recorded as **EXP-002**: TH-008 **retired**, TH-009 and TH-010 created at `high`, IDEA-004 `done`, IDEA-008/009/010 opened. First theory falsified by evidence rather than downgraded |
+| 2026-11-14 | Cadence changed 30 min → 15 min, and a repo-scan step added to each pass so teammates' committed results feed the theories |

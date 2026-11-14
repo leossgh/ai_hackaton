@@ -43,13 +43,13 @@ suggested it) | `team`.
 
 ### IDEA-004 — Extract per-residue energetic contributions at the 1N8Z interface, not just the contact list
 
-- **status:** open
+- **status:** done
 - **priority:** medium
-- **tests:** TH-008
+- **tests:** TH-009; TH-010
 - **cost:** structure analysis; `bsa_1n8z.py` in the litreview folder has started on buried surface area
 - **source:** literature
-- **evidence:** PMID:12610629
-- **notes:** A contact is not a hot spot. Without this, "preserves the epitope" is an assertion. The sibling task already computes BSA, so fold that in rather than redoing it.
+- **evidence:** PMID:12610629; EXP-002
+- **notes:** A contact is not a hot spot. Without this, "preserves the epitope" is an assertion. The sibling task already computes BSA, so fold that in rather than redoing it. **Done by EXP-002** (sibling branch, commits 9b45cdb and ae2cdef): per-position contact geometry across 8 structures. It retired TH-008 and produced TH-009 and TH-010. Energetics are still missing — a contact frequency is not a hot spot — so the remaining half is IDEA-010.
 
 ### IDEA-005 — Submit a VHH alongside the scFv designs to hedge the track split
 
@@ -81,3 +81,36 @@ suggested it) | `team`.
 - **evidence:**
 - **query_terms:** patent: anti-HER2 antibody CDR sequence claim variant; patent: trastuzumab biosimilar CDRH3 sequence claim; patent: computationally designed antibody CDR freedom to operate
 - **notes:** The digest already shows a crowded field — `Anti-HER2 antibody variants`, `High-affinity fully-humanized anti-Her2 monoclonal antibody` and ~36 more. Not a hard filter for the hackathon, but "path to value" is 20% of the pitch and freedom-to-operate is part of that answer.
+
+### IDEA-008 — Design the minimal-risk CDRH3 variant: substitute A106, M107, D108, Y109 and nothing else
+
+- **status:** open
+- **priority:** high
+- **tests:** TH-009
+- **cost:** one `her2-novel-2026-11-09` design run with CDRH3 positions constrained, then refold and score
+- **source:** experiment
+- **evidence:** EXP-002
+- **query_terms:** CDRH3 position restricted library design epitope retention; conservative CDR substitution affinity retention antibody
+- **notes:** The one design in the backlog whose track eligibility is arithmetically guaranteed before any model runs: 4 substitutions on an 11-residue CDRH3 gives 63.6% identity, clearing the `<70%` gate, while sacrificing only Y109, which contacts HER2 in 1 of 8 structures. Every other contacting position is spared. This is the design to rank first unless a model says otherwise, because its epitope risk is the lowest we can construct and we can defend the choice position by position in the pitch.
+
+### IDEA-009 — Redesign H2 or L3 with `antibody-2026-10-30` instead of chasing CDRH3
+
+- **status:** open
+- **priority:** medium
+- **tests:** TH-010
+- **cost:** one design run on a weight we have not used yet, plus refold; higher risk of wasted GPU
+- **source:** experiment
+- **evidence:** EXP-002
+- **query_terms:** CDR H2 redesign affinity antibody engineering; light chain CDR L3 contribution antigen binding affinity maturation
+- **notes:** H2 carries 14-47% of interface contacts and L3 11-29%, comparable to or exceeding H3's 12-34%. All four HER2 weights redesign CDRH3 only, so the obvious tool is aimed at a minority of the interface. `antibody-2026-10-30` is the only weight that can touch other CDRs. Risk: it is not HER2-tuned, so novelty and interface quality are unproven for this target, and the `<70% CDRH3 identity` gate still has to be met by CDRH3 changes regardless. Treat as the exploratory slot, not a core submission.
+
+### IDEA-010 — Get per-residue energetics for the CDRH3 contacts, not just contact frequency
+
+- **status:** open
+- **priority:** medium
+- **tests:** TH-009
+- **cost:** computational alanine scan or MM-GBSA style decomposition on 1N8Z; no GPU needed for the cheap version
+- **source:** experiment
+- **evidence:** EXP-002
+- **query_terms:** computational alanine scanning antibody antigen interface energy decomposition; MM-GBSA per residue binding free energy antibody
+- **notes:** TH-009's weak point, stated in its own `evidence_against`: contact frequency across crystal structures is geometry, not energy. Y109 contacts in only 1 of 8 structures, but a rare contact can still be energetically load-bearing, and Y109 is the one position the IDEA-008 recipe sacrifices. If an energetic estimate says Y109 is a hot spot, IDEA-008 needs a different fourth substitution — and there is no safe alternative, which would make the tension in TH-009 sharper rather than looser.

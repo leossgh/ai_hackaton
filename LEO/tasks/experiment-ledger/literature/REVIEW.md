@@ -44,11 +44,36 @@ predicted docking). This is an existence proof that epitope preservation does
 not require a paired VH/VL interface, which keeps the de novo VHH route open
 (TH-006).
 
-**Structural basis.** The HER2–Herceptin Fab structure (PMID:12610629) is the
-source of the domain IV contact set; the cryo-EM HER2–trastuzumab–pertuzumab
-complex (PMID:31042744) adds the ternary arrangement. Both give *contacts*.
-Neither gives per-residue energetic weight, so "which contacts are load-bearing"
-is still unanswered (TH-008, IDEA-004). A contact is not a hot spot.
+**Structural basis — now measured, and the measurement reversed the answer.**
+The HER2–Herceptin Fab structure (PMID:12610629) is the source of the domain IV
+contact set; the cryo-EM ternary complex (PMID:31042744) adds the arrangement.
+EXP-002 measured the contacts directly at 4.5 Å across **8** trastuzumab–HER2
+structures (1N8Z, 22GC, 22GE, 6BGT, 6OGE, 7MN8, 8PWH, 8Q6J).
+
+CDRH3 is **WGGDGFYAMDY**, 11 residues, so clearing the `<70%` identity gate
+needs **4 substitutions**. From 1N8Z alone, 7 positions look contact-free — but
+across all 8 structures only **3 never contact HER2** (A106, M107, D108). 1N8Z
+leaves HER2 579–593 unmodelled, and several CDRH3 positions contact there, so
+one structure under-counts contacts in exactly the direction that flatters a
+design.
+
+**Consequence:** the identity gate and epitope preservation are in quantified
+tension — at least one contacting position must be mutated. The cheapest is
+**Y109** (contacts in 1 of 8). That yields the recipe A106/M107/D108/Y109
+(TH-009, IDEA-008). This retired TH-008, which had named 1N8Z as the authority.
+
+**The HER2 epitope itself:** 34 residues contacted in at least one structure, of
+which 6 are contacted in every structure that models them — **P557, E558, P571,
+585, Q602, P603** — the core to preserve.
+
+**Interface share:** CDRH3 carries only 12–34% of contacts (26% in 1N8Z), with
+H2 at 14–47%, L3 11–29%, L1 5–17%, and framework up to 23%. All four HER2 RFD4
+weights redesign CDRH3 only, so our default tooling addresses a minority of the
+interface (TH-010, IDEA-009).
+
+Still missing: per-residue **energetics**. Contact frequency is geometry, not
+binding free energy, and Y109 is precisely the position the recipe sacrifices
+(IDEA-010). A contact is not a hot spot.
 
 **A failure mode to design against.** Arg-enriched CDR mutations raise affinity
 but cost specificity: scFv selected under weak specificity pressure were
