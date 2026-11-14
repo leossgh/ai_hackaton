@@ -16,6 +16,7 @@ def main():
     ap.add_argument("--ref", required=True, help="an existing prepared/holo/queries.json, for the HER2 chains")
     ap.add_argument("--spr", default=str(SPR))
     ap.add_argument("--n", type=int, default=60)
+    ap.add_argument("--all-quantified", action="store_true", help="fold every quantified binder (for ranking power)")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
 
@@ -32,6 +33,10 @@ def main():
     assert df.vl_sequence.nunique() == 1 and df.vl_sequence.iloc[0] == vl_ref, "VL differs from the reference"
     assert df.apply(lambda r: r.vh_sequence.replace(r.cdrh3, "#"), axis=1).nunique() == 1, "VH framework is not constant"
 
+    if a.all_quantified:
+        sel = df[df.binding_result == "quantified_binding"].drop_duplicates("cdrh3").reset_index(drop=True)
+        return write(sel, her2, a.out)
+
     q = df[df.binding_result == "quantified_binding"].copy()
     nq = df[df.binding_result == "no_reportable_kd"].copy()
     half = a.n // 2
@@ -46,19 +51,22 @@ def main():
     tzrow = df[df.cdrh3 == TZ].head(1)
     sel = pd.concat([tzrow, sel]).drop_duplicates("cdrh3").reset_index(drop=True)
 
+    return write(sel, her2, a.out)
+
+def write(sel, her2, outdir):
     queries = []
     for _, r in sel.iterrows():
         queries.append({"query_id": r.cdrh3, "chains": [
             {"chain_id": "A", "sequence": r.vl_sequence, "msa_path": None},
             {"chain_id": "B", "sequence": r.vh_sequence, "msa_path": None},
             *[dict(c) for c in her2]]})
-    out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
+    out = Path(outdir); out.mkdir(parents=True, exist_ok=True)
     json.dump({"queries": queries}, open(out/"queries.json", "w"), indent=1)
     cols = ["cdrh3", "binding_result", "kd_nM", "nmut"]
     sel[cols].to_csv(out/"manifest.csv", index=False)
     print(f"wrote {len(queries)} queries -> {out/'queries.json'}")
     print(sel.binding_result.value_counts().to_string())
-    print("KD range of positives:", round(sel.kd_nM.min(), 3), "to", round(sel.kd_nM.max(), 1), "nM")
+    print("KD range:", round(sel.kd_nM.min(), 3), "to", round(sel.kd_nM.max(), 1), "nM")
     print("mutation counts:", sel.nmut.value_counts().sort_index().to_dict())
 
 if __name__ == "__main__":
