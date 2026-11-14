@@ -1,0 +1,523 @@
+{
+  "pass": 6,
+  "date": "2026-11-14",
+  "scope": "auto",
+  "rationale": "auto: low/untested theories first (7), then unbacked ideas (1)",
+  "targets": [
+    "TH-002",
+    "TH-003",
+    "TH-004",
+    "IDEA-007"
+  ],
+  "queries": {
+    "cached": 0,
+    "fetched": 3,
+    "failed": [
+      [
+        "TH-003",
+        "biomedcore",
+        "arginine CDR mutation polyspecificity nonspecific binding antibody",
+        "HTTP 403"
+      ],
+      [
+        "TH-003",
+        "biomedcore",
+        "charged residue CDR affinity specificity trade-off",
+        "HTTP 403"
+      ],
+      [
+        "TH-003",
+        "biomedcore",
+        "antibody net charge nonspecificity developability",
+        "HTTP 403"
+      ],
+      [
+        "TH-004",
+        "biomedcore",
+        "CDRH3 loop flexibility rigidity affinity maturation repertoire",
+        "HTTP 403"
+      ],
+      [
+        "TH-004",
+        "biomedcore",
+        "antibody paratope conformational entropy binding",
+        "HTTP 403"
+      ],
+      [
+        "TH-004",
+        "biomedcore",
+        "B-factor rigidity antibody affinity prediction",
+        "HTTP 403"
+      ],
+      [
+        "IDEA-007",
+        "patentcore",
+        "anti-HER2 antibody CDR sequence claim variant",
+        "HTTP 403"
+      ]
+    ],
+    "deferred": [
+      [
+        "IDEA-007",
+        "patentcore",
+        "trastuzumab biosimilar CDRH3 sequence claim"
+      ],
+      [
+        "IDEA-007",
+        "patentcore",
+        "computationally designed antibody CDR freedom to operate"
+      ]
+    ]
+  },
+  "spend_this_pass_usd": 0.15,
+  "spend_total": {
+    "searches": 14,
+    "usd": 0.7,
+    "passes": 7
+  },
+  "findings": {
+    "TH-002": [
+      {
+        "id": "AMBC_JwGSFsFYuumYi1zgXk0571g2F5A",
+        "core": "biomedcore",
+        "year": "2026",
+        "title": "An innovative AI-based platform for antibody stability improvement and affinity optimization.",
+        "hits": 8,
+        "quotes": [
+          "This approach effectively find a new mutant reduced aggregation under one-week accelerated thermal stress from 100% to less than 5%, while increasing the melting temperature (Tm) by up to \u223c10 \u00b0C."
+        ],
+        "matched": [
+          "affinity",
+          "engineering",
+          "melting",
+          "mutation",
+          "optimization",
+          "scfv",
+          "stability",
+          "temperature"
+        ],
+        "cites": 0
+      },
+      {
+        "id": "36683173",
+        "core": "biomedcore",
+        "year": "2023",
+        "title": "Toward generalizable prediction of antibody thermostability using machine learning on sequence and structure features",
+        "hits": 7,
+        "quotes": [
+          "Both of these models are trained over temperature-specific data (TS50 measurements) derived from multiple libraries of scFv sequences.",
+          "Further, we demonstrate that for an independent mAb with available thermal melting temperatures for 20 experimentally characterized thermostable mutations, these models trained on TS50 data could identify 18 residue positions and 5 identical amino-acid mutations showing remarkable generalizability."
+        ],
+        "matched": [
+          "affinity",
+          "engineering",
+          "melting",
+          "mutation",
+          "scfv",
+          "stability",
+          "temperature"
+        ],
+        "cites": 46
+      },
+      {
+        "id": "23995618",
+        "core": "biomedcore",
+        "year": "2013",
+        "title": "CDR-restricted engineering of native human scFvs creates highly stable and soluble bifunctional antibodies for subcutaneous delivery",
+        "hits": 6,
+        "quotes": [
+          "Our final candidate could be formulated in a standard biopharmaceutical platform buffer at 100 mg/ml with<2% high molecular weight species present after 7 weeks at 4 \u00b0C and viscosity<15 cP."
+        ],
+        "matched": [
+          "affinity",
+          "engineering",
+          "mutation",
+          "optimization",
+          "scfv",
+          "stability"
+        ],
+        "cites": 34
+      },
+      {
+        "id": "41928412",
+        "core": "biomedcore",
+        "year": "2026",
+        "title": "Engineering of \u03b2-Agarase with Enhanced Thermostability via Multitool Consensus Prediction and Structure-Guided Screening",
+        "hits": 6,
+        "quotes": [
+          "This yielded mutant M3 (N120S-D243N-Q246A-S287E-A335D), which exhibits an 11 \u00b0C higher melting temperature (Tm) and 14-fold longer half-life (t1/2) at 50 \u00b0C than the wild-type."
+        ],
+        "matched": [
+          "engineering",
+          "melting",
+          "mutation",
+          "optimization",
+          "stability",
+          "temperature"
+        ],
+        "cites": 3
+      },
+      {
+        "id": "22272277",
+        "core": "biomedcore",
+        "year": "2012",
+        "title": "Stabilisation of the Fc fragment of human IgG1 by engineered intradomain disulfide bonds",
+        "hits": 5,
+        "quotes": [
+          "One of these bonds, which connects the N-terminus of the CH3 domain with the F-strand, led to an increase of the melting temperature of this domain by 10\u00b0C as compared to the CH3 domain in the context of the wild-type Fc region.",
+          "Another engineered disulfide bond, which connects the BC loop of the CH3 domain with the D-strand, resulted in an increase of T(m) of 5\u00b0C.",
+          "Combined in one molecule, both intradomain disulfide bonds led to an increase of the T(m) of about 15\u00b0C."
+        ],
+        "matched": [
+          "engineering",
+          "melting",
+          "mutation",
+          "stability",
+          "temperature"
+        ],
+        "cites": 63
+      },
+      {
+        "id": "31181988",
+        "core": "biomedcore",
+        "year": "2019",
+        "title": "Development of tibulizumab, a tetravalent bispecific antibody targeting BAFF and IL-17A for the treatment of autoimmune disease",
+        "hits": 5,
+        "quotes": [
+          "The anti-IL-17 scFv showed a high melting temperature (Tm) by differential scanning calorimetry (73.1\u00b0C), but also concentration-dependent, initially reversible, protein self-association."
+        ],
+        "matched": [
+          "affinity",
+          "melting",
+          "scfv",
+          "stability",
+          "temperature"
+        ],
+        "cites": 54
+      }
+    ],
+    "TH-003": [
+      {
+        "id": "35941164",
+        "core": "biomedcore",
+        "year": "2022",
+        "title": "A 33-residue peptide tag increases solubility and stability of Escherichia coli produced single-chain antibody fragments",
+        "hits": 5,
+        "quotes": [
+          "Here we report that a 33-residue peptide, termed P17 tag, increases the solubility of multiple scFvs produced in Escherichia coli SHuffle strain by up to 11.6 fold."
+        ],
+        "matched": [
+          "affinity",
+          "binding",
+          "charge",
+          "charged",
+          "residue"
+        ],
+        "cites": 27
+      },
+      {
+        "id": "40267400",
+        "core": "biomedcore",
+        "year": "2025",
+        "title": "Enhanced antibody-mediated cellular cytotoxicity of germline-like anti-HER2 antibodies through a point mutation in complementarity-determining regions",
+        "hits": 5,
+        "quotes": [
+          "Substitution of aspartic acid with glutamic acid decreased the interaction energies, resulting in a remarkable affinity enhancement of Ab5m-scFv (KD = 0.2 nM) compared with parental Ab5-scFv (KD = 1.5 nM)."
+        ],
+        "matched": [
+          "affinity",
+          "charge",
+          "charged",
+          "mutation",
+          "residue"
+        ],
+        "cites": 2
+      },
+      {
+        "id": "AMBC_JwGSFsFYuumYi1zgXk0571g2F5A",
+        "core": "biomedcore",
+        "year": "2026",
+        "title": "An innovative AI-based platform for antibody stability improvement and affinity optimization.",
+        "hits": 5,
+        "quotes": [
+          "This approach effectively find a new mutant reduced aggregation under one-week accelerated thermal stress from 100% to less than 5%, while increasing the melting temperature (Tm) by up to \u223c10 \u00b0C."
+        ],
+        "matched": [
+          "affinity",
+          "binding",
+          "mutation",
+          "residue",
+          "specificity"
+        ],
+        "cites": 0
+      },
+      {
+        "id": "31181988",
+        "core": "biomedcore",
+        "year": "2019",
+        "title": "Development of tibulizumab, a tetravalent bispecific antibody targeting BAFF and IL-17A for the treatment of autoimmune disease",
+        "hits": 4,
+        "quotes": [
+          "The anti-IL-17 scFv showed a high melting temperature (Tm) by differential scanning calorimetry (73.1\u00b0C), but also concentration-dependent, initially reversible, protein self-association."
+        ],
+        "matched": [
+          "affinity",
+          "binding",
+          "charge",
+          "residue"
+        ],
+        "cites": 54
+      },
+      {
+        "id": "36683173",
+        "core": "biomedcore",
+        "year": "2023",
+        "title": "Toward generalizable prediction of antibody thermostability using machine learning on sequence and structure features",
+        "hits": 4,
+        "quotes": [
+          "Both of these models are trained over temperature-specific data (TS50 measurements) derived from multiple libraries of scFv sequences.",
+          "Further, we demonstrate that for an independent mAb with available thermal melting temperatures for 20 experimentally characterized thermostable mutations, these models trained on TS50 data could identify 18 residue positions and 5 identical amino-acid mutations showing remarkable generalizability."
+        ],
+        "matched": [
+          "affinity",
+          "mutation",
+          "residue",
+          "specificity"
+        ],
+        "cites": 46
+      },
+      {
+        "id": "23255066",
+        "core": "biomedcore",
+        "year": "2013",
+        "title": "Ab initio structure prediction of the antibody hypervariable H3 loop",
+        "hits": 4,
+        "quotes": [
+          "When the prediction is performed in the crystal environment and including symmetry mates, the median backbone root mean square deviation (RMSD) is 0.5 A\u030a to the crystal structure, with 91% of cases having an RMSD of less than 2.0 A\u030a.",
+          "When the prediction is performed in a noncrystallographic environment, where the scaffold is constructed by swapping the H3 loops between homologous antibodies, 70% of cases have an RMSD below 2.0 A\u030a."
+        ],
+        "matched": [
+          "affinity",
+          "binding",
+          "residue",
+          "specificity"
+        ],
+        "cites": 34
+      }
+    ],
+    "TH-004": [
+      {
+        "id": "31181988",
+        "core": "biomedcore",
+        "year": "2019",
+        "title": "Development of tibulizumab, a tetravalent bispecific antibody targeting BAFF and IL-17A for the treatment of autoimmune disease",
+        "hits": 5,
+        "quotes": [
+          "The anti-IL-17 scFv showed a high melting temperature (Tm) by differential scanning calorimetry (73.1\u00b0C), but also concentration-dependent, initially reversible, protein self-association."
+        ],
+        "matched": [
+          "affinity",
+          "binding",
+          "conformational",
+          "factor",
+          "loop"
+        ],
+        "cites": 54
+      },
+      {
+        "id": "35547916",
+        "core": "biomedcore",
+        "year": "2018",
+        "title": "Comparative thermodynamic analysis in solution of a next generation antibody mimetic to VEGF",
+        "hits": 5,
+        "quotes": [
+          "FpFbeva displayed comparable binding affinity (KD) and binding thermodynamics (\u0394H = -25.7 kcal mole-1 and \u0394S = 14 kcal mole-1) to bevacizumab (\u0394H = -25 kcal mole-1, \u0394S = 13.3 kcal mole-1)."
+        ],
+        "matched": [
+          "affinity",
+          "binding",
+          "conformational",
+          "entropy",
+          "factor"
+        ],
+        "cites": 16
+      },
+      {
+        "id": "41193805",
+        "core": "biomedcore",
+        "year": "2025",
+        "title": "Atomically accurate de novo design of antibodies with RFdiffusion",
+        "hits": 4,
+        "quotes": [
+          "Although initial computational designs exhibit modest affinity (tens to hundreds of nanomolar Kd), affinity maturation using OrthoRep3 enables production of single-digit nanomolar binders that maintain the intended epitope selectivity."
+        ],
+        "matched": [
+          "affinity",
+          "binding",
+          "loop",
+          "maturation"
+        ],
+        "cites": 122
+      },
+      {
+        "id": "23255066",
+        "core": "biomedcore",
+        "year": "2013",
+        "title": "Ab initio structure prediction of the antibody hypervariable H3 loop",
+        "hits": 4,
+        "quotes": [
+          "When the prediction is performed in the crystal environment and including symmetry mates, the median backbone root mean square deviation (RMSD) is 0.5 A\u030a to the crystal structure, with 91% of cases having an RMSD of less than 2.0 A\u030a.",
+          "When the prediction is performed in a noncrystallographic environment, where the scaffold is constructed by swapping the H3 loops between homologous antibodies, 70% of cases have an RMSD below 2.0 A\u030a."
+        ],
+        "matched": [
+          "affinity",
+          "binding",
+          "conformational",
+          "loop"
+        ],
+        "cites": 34
+      },
+      {
+        "id": "24492299",
+        "core": "biomedcore",
+        "year": "2014",
+        "title": "In vitro affinity maturation of a natural human antibody overcomes a barrier to in vivo affinity maturation",
+        "hits": 4,
+        "quotes": [
+          "One high affinity (KD<10 pM) variant was identified that combined the D53N and T55R mutations while avoiding glycosylation of CDR H2."
+        ],
+        "matched": [
+          "affinity",
+          "binding",
+          "maturation",
+          "repertoire"
+        ],
+        "cites": 29
+      },
+      {
+        "id": "32610044",
+        "core": "biomedcore",
+        "year": "2020",
+        "title": "Computationally Designed Cyclic Peptides Derived from an Antibody Loop Increase Breadth of Binding for Influenza Variants",
+        "hits": 4,
+        "quotes": [
+          "We designed cyclic peptides that mimic the heavy-chain complementarity-determining region 3 (CDRH3) of anti-influenza broadly neutralizing antibody C05 and show that these peptides bound to HA molecules with <100 nM affinity, comparable with that of the full-length parental C05 IgG."
+        ],
+        "matched": [
+          "affinity",
+          "binding",
+          "cdrh3",
+          "loop"
+        ],
+        "cites": 25
+      }
+    ],
+    "IDEA-007": [
+      {
+        "id": "32610044",
+        "core": "biomedcore",
+        "year": "2020",
+        "title": "Computationally Designed Cyclic Peptides Derived from an Antibody Loop Increase Breadth of Binding for Influenza Variants",
+        "hits": 5,
+        "quotes": [
+          "We designed cyclic peptides that mimic the heavy-chain complementarity-determining region 3 (CDRH3) of anti-influenza broadly neutralizing antibody C05 and show that these peptides bound to HA molecules with <100 nM affinity, comparable with that of the full-length parental C05 IgG."
+        ],
+        "matched": [
+          "anti",
+          "cdrh3",
+          "computationally",
+          "designed",
+          "variant"
+        ],
+        "cites": 25
+      },
+      {
+        "id": "34392800",
+        "core": "biomedcore",
+        "year": "2021",
+        "title": "Machine learning modeling to identify affinity improved biobetter anticancer drug trastuzumab and the insight of molecular recognition of trastuzumab towards its antigen HER2",
+        "hits": 5,
+        "quotes": [
+          "A 100 evolutionary cycles of GA produced the best 100 probable GA-SVR models based on their fitness score (Q2) estimated using a stratified 5 fold cross-validation procedure."
+        ],
+        "matched": [
+          "anti",
+          "her2",
+          "sequence",
+          "trastuzumab",
+          "variant"
+        ],
+        "cites": 6
+      },
+      {
+        "id": "42909185",
+        "core": "biomedcore",
+        "year": "2026",
+        "title": "Structure-guided computational design and mechanistic understanding of the p95HER2-targeting NAZ-mAb antibody and its variants",
+        "hits": 5,
+        "quotes": [
+          "However, Biacore two-state kinetic analysis revealed weaker affinities than the parental antibody (KD NAZ-mAb v1: 326.1 nM, NAZ-mAb v2: 94.5 nM vs parental NAZ-mAb: 53.3 nM)."
+        ],
+        "matched": [
+          "anti",
+          "computationally",
+          "her2",
+          "sequence",
+          "variant"
+        ],
+        "cites": 0
+      },
+      {
+        "id": "28750054",
+        "core": "biomedcore",
+        "year": "2017",
+        "title": "Assisted Design of Antibody and Protein Therapeutics (ADAPT)",
+        "hits": 4,
+        "quotes": [
+          "The platform was tested on three antibody Fab-antigen systems that spanned a wide range of initial binding affinities: bH1-VEGF-A (44 nM), bH1-HER2 (3.6 nM) and Herceptin-HER2 (0.058 nM)."
+        ],
+        "matched": [
+          "anti",
+          "designed",
+          "her2",
+          "sequence"
+        ],
+        "cites": 44
+      },
+      {
+        "id": "25043744",
+        "core": "biomedcore",
+        "year": "2014",
+        "title": "Computational design of protein antigens that interact with the CDR H3 loop of HIV broadly neutralizing antibody 2F5",
+        "hits": 4,
+        "quotes": [
+          "MultiGraft Interface generated an epitope-scaffold that bound 2F5 with subnanomolar affinity (K(D) = 400 pM) and that interacted with the antibody CDR H3 loop through computationally designed contacts."
+        ],
+        "matched": [
+          "anti",
+          "computationally",
+          "designed",
+          "sequence"
+        ],
+        "cites": 22
+      },
+      {
+        "id": "37396255",
+        "core": "biomedcore",
+        "year": "2023",
+        "title": "Molecular Dynamics-Based Design and Biophysical Evaluation of Thermostable Single-Chain Fv Antibody Mutants Derived from Pharmaceutical Antibodies",
+        "hits": 4,
+        "quotes": [
+          "Trastuzumab scFv variants were prepared by using an Escherichia coli expression system, and the melting temperature-measured as a thermostability index-was 5 \u00b0C higher than that of the wild-type trastuzumab scFv, while the antigen-binding affinity was unchanged."
+        ],
+        "matched": [
+          "anti",
+          "designed",
+          "trastuzumab",
+          "variant"
+        ],
+        "cites": 14
+      }
+    ]
+  }
+}
