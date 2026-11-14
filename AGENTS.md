@@ -137,13 +137,28 @@ git branch -d LEO/<short-task-name>
 
 Use `--no-ff` so the branch point stays visible in the history. Delete the sub-branch after merging.
 
+**Every sub-branch carries its own state file.** The first commit on a new sub-branch creates `LEO/state/<short-task-name>.md` — same name as the branch. One file per branch, so two sub-branches never collide when they merge back into `LEO`. Never edit another branch's state file.
+
+Copy `LEO/state/TEMPLATE.md` and fill it in. It must answer, at any moment someone looks:
+
+- **What this task is** — one or two sentences, and why it matters for the submission.
+- **Right now** — what the agent is doing this minute, or "idle" / "waiting on X". Not a plan: the actual current activity.
+- **Done so far** — what works and has been verified, with the commit that did it.
+- **Blocked** — anything waiting on a person, a download, or a decision, and what would unblock it.
+- **Next** — the ordered remaining steps.
+- **Log** — one dated line per run, result or dead end, including the failures. A dead end that is written down saves the next agent from repeating it.
+
+Update it whenever the answer to "what are you doing?" changes — before starting a long run, after it finishes, and when hitting a blocker. Commit the update with the work it describes, not as a separate tidy-up at the end.
+
+When the branch merges into `LEO`, fold anything still true into `LEO/STATE.md` and delete the per-branch file in the merge commit. `LEO/STATE.md` is the roll-up across all branches; the per-branch files are the detail while work is in flight.
+
 **Never merge into `main` on your own.** Merging `LEO` into `main` requires Leo to ask for it explicitly, each time. "I finished the feature" is not permission. If you think a merge to `main` is due, say so and wait.
 
-| Branch | Who merges into it | When |
-|---|---|---|
-| `LEO/<task>` | the agent doing the task | commit freely while working |
-| `LEO` | the agent, when a feature is finished | after the task works |
-| `main` | **only on Leo's explicit request** | never on an agent's own judgment |
+| Branch | Who merges into it | When | State file |
+|---|---|---|---|
+| `LEO/<task>` | the agent doing the task | commit freely while working | `LEO/state/<task>.md`, kept current |
+| `LEO` | the agent, when a feature is finished | after the task works | `LEO/STATE.md`, the roll-up |
+| `main` | **only on Leo's explicit request** | never on an agent's own judgment | — |
 
 If a task is abandoned, say so and leave the sub-branch in place rather than deleting unmerged work.
 

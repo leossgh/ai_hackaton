@@ -2,6 +2,8 @@
 
 Snapshot of what is running, what has finished, and what is blocked. Written 2026-11-14, times in UTC as shown in the logs. Update it whenever a run starts, finishes or fails.
 
+This is the roll-up across the whole `LEO` branch. Work in flight on a sub-branch has its own file in [`LEO/state/`](state/), one per branch; those fold into this one when the branch merges. See `AGENTS.md` for the branching rules.
+
 ## Right now
 
 - **No agent work is running in this folder.** Other Claude Code sessions are open on this VM, but nothing in the logs shows them writing to `LEO/`.
