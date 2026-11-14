@@ -33,19 +33,19 @@ aws s3 sync s3://apheris-oslo-hackathon/data/ hackathon-data/
 
 Total: about 5 GB. Each folder's `README.md` explains its files.
 
-**Status: not downloaded yet.** As of 2026-11-14 there is no `hackathon-data/` on this VM and `/home/hackathon/data` is empty. Run the sync above before anything else. Do not commit the data to git.
+**Status: synced** to `~/hackathon-team-3/apheris/hackathon-data/` (4.7 GB, git-ignored). Never commit it.
 
 ## 3. Docs and Instructions
 
 Download with:
 
 ```bash
-aws s3 sync s3://apheris-oslo-hackathon/rfd4-proteina/docs/ ~/rfd4
+aws s3 sync s3://apheris-oslo-hackathon/rfd4-proteina/docs/ ~/hackathon-team-3/apheris/rfd4
 ```
 
-Then open `~/rfd4/Tutorial.html`.
+Then open `~/hackathon-team-3/apheris/rfd4/Tutorial.html`.
 
-**Status: not downloaded yet.** There is no `~/rfd4` on this VM as of 2026-11-14.
+**Status: synced** to `~/hackathon-team-3/apheris/rfd4/`.
 
 | File | What it covers | Where to start |
 |---|---|---|
@@ -117,13 +117,13 @@ Then open `~/rfd4/Tutorial.html`.
 
 ### 4.4 Local Tools on the VM
 
-**`/home/hackathon/foundry-assistant`:** an offline terminal assistant that answers Apheris Foundry questions from the docs. It runs two small local models (llama.cpp), with no network and no tokens. It doesn't need the Foundry Hub, so it can be used before anything else is set up.
+**`~/hackathon-team-3/apheris/foundry-assistant`:** an offline terminal assistant that answers Apheris Foundry questions from the docs. It runs two small local models (llama.cpp), with no network and no tokens. It doesn't need the Foundry Hub, so it can be used before anything else is set up.
 
 - **Status:** both model files are present in `models/` (about 0.5 GB each). `llama-server` is at `/opt/llama.cpp`. Not yet started.
 - **Run it:**
 
 ```bash
-cd /home/hackathon/foundry-assistant
+cd ~/hackathon-team-3/apheris/foundry-assistant
 make install
 make models  LLAMA_BIN=/opt/llama.cpp
 make up      LLAMA_BIN=/opt/llama.cpp     # add NGL=0 for CPU
@@ -308,5 +308,5 @@ Goal: do interesting things with the data.
 | 2026-11-14 | Local foundry-assistant reviewed and documented (not yet started) | Done |
 | 2026-11-14 | Full PDF re-read; corrected track assignment, mutation count, hard checks | Done |
 | 2026-11-14 | Added submission/pitch/prize rules and developability tools (were missing) | Done |
-| 2026-11-14 | Sync `hackathon-data/` and `~/rfd4` from S3 | **Not started** |
+| 2026-11-14 | Sync `hackathon-data/` and `~/hackathon-team-3/apheris/rfd4` from S3 | **Done** |
 | 2026-11-14 | Pick a thermostability predictor | Open |

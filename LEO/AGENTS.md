@@ -33,7 +33,7 @@ Allowed to write:
 | `../AGENTS.md`, `../README.md` | Team-shared files. Leo maintains them. |
 | `../JAHN/`, `../NICCOLO/`, `../ANDERS/` | Other people's folders. Never, for any reason. |
 | Anything else at the repo root | Shared. |
-| `~/rfd4/`, `~/foundry-assistant/`, `~/hackathon-data/` | Organiser-supplied and shared across the team. Read freely, write nothing. |
+| `~/hackathon-team-3/apheris/rfd4/`, `~/hackathon-team-3/apheris/foundry-assistant/`, `~/hackathon-team-3/apheris/hackathon-data/` | Organiser-supplied and shared across the team. Read freely, write nothing. |
 | Another task's folder or state file | Not yours, and it causes merge conflicts. |
 | Anything outside the repo, except scratch | Not part of this work. |
 

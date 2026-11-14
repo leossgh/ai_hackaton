@@ -41,7 +41,7 @@ So "which track are we doing?" is the wrong question. The right one is "what is 
 > **Off-by-one warning.** Page 2 of the task description says "at least 2 mutations", but the flowchart and the hard-filter list both say *more than* 2. Use **3 as the minimum** for optimisation designs so nothing is lost to the stricter reading.
 
 **Novelty set**
-- A design's CDRH3 must differ from all **525,063** CDRH3s in the HER2 tables (`hackathon-data/her2-trastuzumab/`). The 524,346 figure elsewhere is the FACS variant count, a different number for a different purpose.
+- A design's CDRH3 must differ from all **525,063** CDRH3s in the HER2 tables (`apheris/hackathon-data/her2-trastuzumab/`). The 524,346 figure elsewhere is the FACS variant count, a different number for a different purpose.
 
 **RFD4-Proteina input rules**
 - PDB files are rejected. Use annotated CIF/BCIF, compressed CIF, or a structure directory.
@@ -50,6 +50,33 @@ So "which track are we doing?" is the wrong question. The right one is "what is 
 
 **Deadline**
 - The VM shuts down at the end of Saturday 14 November. Copy anything worth keeping before then.
+
+## BASE VALIDATION (mandatory, always performed)
+
+Every design must go through base validation **before** it is ranked, refolded, written into a submission list, or reported as a candidate. No exceptions, and re-run it whenever a sequence changes. A design that has not passed is not a candidate.
+
+1. Put the designs in a table with columns `sequence_id, kind, heavy_sequence, light_sequence, design_description` (`kind` is `vhh`, `scfv` or `paired`; a VHH or scFv goes whole in `heavy_sequence`).
+2. Run **both** track scripts from `scripts/` on that table. They wrap `abguard` (numbering, format, length, cysteines, novelty) and add each track's extra rules:
+
+```bash
+scripts/check_denovo.py       designs.csv -o reports/denovo.csv
+scripts/check_optimisation.py designs.csv -o reports/optimisation.csv \
+    --provided apheris/hackathon-data/her2-trastuzumab/trastuzumab_her2_spr_all_768.csv
+```
+
+3. A design is eligible only if it shows `PASS` in the script for its **assigned** track (`assigned=` in the output). `FAIL` in the other track's script is expected, because a design is never reclassified.
+4. Keep the report next to the run notes, and record the verdict with the design.
+
+What the scripts check:
+- **Shared (abguard):** numbering confidence at least 0.1, format, length at most 250, no unpaired cysteines, unique ids.
+- **De novo:** identity under 70% (abguard `de_novo` class), CDRH3 at least 2 mutations from trastuzumab and every known CDRH3.
+- **Optimisation:** identity 70% or more (abguard `novel` class), CDRH3 identity to trastuzumab under 70%, at least 3 mutations from every provided data point (CDRH3 vs the reference, and whole VH+VL vs `--provided`).
+
+Caveats:
+- `abguard` is not on PATH. The scripts find the newest build with the novelty gate in `~/.cache/uv/archive-v0`; set `ABGUARD_PY` to override. The older cached build has no novelty gate.
+- abguard measures the 70% identity against trastuzumab only, not all known antibodies, so a design near some other known antibody can still be labelled de novo. Treat the script verdict as necessary, not sufficient, until the organisers' official `abguard` is run.
+- The bundled reference is abguard's own CDRH3 index. For the full check, sync `hackathon-data/` and pass `--reference-db` built from it.
+- Passing base validation says nothing about binding, epitope or thermostability. It is only the gate.
 
 ## Only 4 designs are guaranteed to be tested
 
@@ -80,11 +107,59 @@ Two consequences for agents: **record the reasoning** behind every design that m
 | `LEO/README.md` | Full notes: data, docs, setup, rules, submission, tasks, progress log |
 | `LEO/docs/` | The two challenge PDFs (deck and task description) |
 | `LEO/.venv/` | Python venv with `pypdf` (git-ignored) |
-| `hackathon-data/` | **Not synced yet.** `aws s3 sync s3://apheris-oslo-hackathon/data/ hackathon-data/`. Never commit it. |
-| `~/rfd4/` | **Not synced yet.** `aws s3 sync s3://apheris-oslo-hackathon/rfd4-proteina/docs/ ~/rfd4`. Start with `18-vm.md`, then `Tutorial.html`. |
-| `~/foundry-assistant/` | Offline Foundry docs assistant (`make ask Q="..."`), models already in place |
+| `apheris/hackathon-data/` | Synced from S3 (4.7 GB). Never commit it. |
+| `apheris/rfd4/` | Synced Foundry docs. Start with `18-vm.md`, then `Tutorial.html`. Run all model commands from here. |
+| `apheris/` | **Everything Apheris on this VM.** See "Apheris toolkit" below |
+| `scripts/` | `check_denovo.py`, `check_optimisation.py`: per-track design checks on top of `abguard` |
 
-Check whether the two synced paths exist before assuming their contents. Neither was present as of 2026-11-14.
+## Apheris toolkit (`apheris/`)
+
+All organiser-supplied tooling lives in `apheris/`. Paths below are relative to it (`~/hackathon-team-3/apheris/`). Full how-to: `apheris/README_APHERIS.md`.
+
+| Path | What it is |
+|---|---|
+| `README_APHERIS.md` | Tools, data, model commands, agent workflow. Read it before running anything |
+| `rfd4/` | Foundry docs, `Data/` input specs, `Settings/`, `Scripts/run-her2.sh`. **Run every model command from here.** `18-vm.md` first, then `Tutorial.html`; `index.md` lists every page |
+| `rfd4/runs/` | Model outputs, one folder per run (`runs/<descriptive-name>/`). Git-ignored. `runs/her2/` is the original smoke test |
+| `hackathon-data/` | 4.7 GB from `s3://apheris-oslo-hackathon/data/`. `README.md` explains every file. Git-ignored, read-only |
+| `foundry-assistant/` | Offline docs Q&A: `make ask Q="..."` (needs llama.cpp at `/opt/llama.cpp`, models in `models/`) |
+| `apheris-gui/` | Streamlit dashboard for the Docker commands (the VM has no Foundry Hub). `./run.sh` serves `localhost:8501`; from a laptop `ssh -L 8501:localhost:8501 <vm>`. Runs one heavy job at a time |
+| `challenge/` | The two challenge PDFs and their `.md` conversions (task description, deck). The `.md` files are the easiest to grep |
+
+**How to run models.** No Foundry Hub and no `apheris-foundry` CLI here. Every model is a Docker image `quay.io/apheris/oslo-hackathon:*`, already pulled, no login needed:
+
+```bash
+cd ~/hackathon-team-3/apheris/rfd4
+Q=quay.io/apheris/oslo-hackathon
+RUN="docker run --rm --gpus all --shm-size 16g --user $(id -u):$(id -g) -e HOME=/tmp -v /etc/passwd:/etc/passwd:ro -v $PWD:/work -w /work"
+$RUN $Q:apheris-rfd4-proteina-v0.3.0-her2-novel-2026-11-09 module-run design \
+  --input Data/12-her2/her2_cdrh3.yaml --output runs/<name>/design --num-replicates 100 --seed 1
+```
+
+Tasks per image: `design`, `refold-prepare`, `refold-score`, `metrics`, `finetune`. Folding images for refolding: Boltz-2 (`apheris-boltz-v1.3.0-boltz2`), OpenFold3, Protenix, Mol-1, ESMFold2. Quick end-to-end check: `bash Scripts/run-her2.sh all` (`N=`, `TOPN=`, `OUT=`, `IMG=` override defaults; set `OUT` so you do not overwrite `runs/her2`).
+
+**Constraints to respect**
+- **One H100 80 GB, shared by the whole team.** Run one heavy job at a time, in the background, and poll the log. Check `nvidia-smi` and `docker ps` before starting.
+- `docker run` mounts the current directory as `/work`. Run from `apheris/rfd4`, and write outputs under `runs/`. Never write into `hackathon-data/` or the docs.
+- Pass the spec file (`.yaml`/`.json`) as `--input`, not its folder. CIF/BCIF only, no PDB.
+- Rank on `min_ipae` (lower is better), `iptm`, `binder_plddt`. Compare scores only within one folding model.
+- Tools with network need keys from the environment. Never write `AMASS_API_KEY`, the Quay robot token (in `~/.bashrc`) or AWS credentials into any file in this repo.
+- Untrusted downloads and archives: unzip into their own new empty directory and read with `python3 -I`. The FACS table is a `.zip`; `zenodo-10831512-trastuzumab-ngs/data.zip` is 4 GB unzipped, so extract outside the repo or into a git-ignored folder.
+
+**`abguard` (the validity gate) and the track checkers**
+- `abguard` is not on `PATH`. It is in the uv cache (`~/.cache/uv/archive-v0/*/bin/abguard`, two builds; only the newer has the novelty gate). The scripts find the right build themselves, or set `ABGUARD_PY`. Its reference database is the 525,063 HER2 CDRH3s plus prior art.
+- `scripts/check_denovo.py` and `scripts/check_optimisation.py` wrap it and add each track's extra rules (see their docstrings). Usage: `scripts/check_<track>.py designs.csv [-o report.csv] [--strict-exit]`; optimisation also takes `--provided trastuzumab_her2_spr_all_768.csv`.
+- Local results are predictions. The real track assignment is `abguard`'s, at submission time.
+
+**MCP tools.** The RCSB PDB MCP (`mcp__rcsb-mcp__*`) is registered for Claude Code: structures, sequences, UniProt (HER2, trastuzumab = 1N8Z).
+
+**Moving or re-creating this setup.** It was created by syncing from S3, not by a script. To rebuild from scratch:
+
+```bash
+cd ~/hackathon-team-3/apheris
+aws s3 sync s3://apheris-oslo-hackathon/data/ hackathon-data/
+aws s3 sync s3://apheris-oslo-hackathon/rfd4-proteina/docs/ rfd4/
+```
 
 ## Models and weights
 
@@ -113,7 +188,8 @@ The RFD4-Proteina metrics only speak to binding. Thermostability and epitope pre
 
 ## Rules for agents
 
-- Never commit secrets or API keys, nor the `hackathon-data/` and `LEO/.venv/` folders.
+- Always run **BASE VALIDATION** (above) on every design before ranking or submitting it.
+- Never commit secrets or API keys, nor `apheris/hackathon-data/`, `apheris/rfd4/runs/` and `LEO/.venv/`.
 - Do not commit or push unless asked. End commit messages with a `Co-Authored-By:` line naming the model you are actually running as.
 - Record every design run: input spec, weight image, settings, seed, and resulting scores. Put run notes in the owner's folder, not in shared folders.
 - Keep each design's provenance and its **predicted** track (from its identity numbers) with the design. The real track assignment only comes from `abguard`, so treat local labels as predictions and verify them.
@@ -125,6 +201,6 @@ The RFD4-Proteina metrics only speak to binding. Thermostability and epitope pre
 - Participant field guide did not load when fetched. Open it in a browser and add its contents to `LEO/README.md`.
 - The developability write-up linked from the task description ("check the whole write-up here") is not captured. Find it on the hackathon site.
 - JapanFold link and login are not yet recorded.
-- `abguard` CLI and Nebius setup files are in the Slack folder. Install and test `abguard` early: it is the gate on every submission.
+- `abguard` works from the uv cache but is not on `PATH`. Nebius setup files are in the Slack folder.
 - AMASS onboarding walkthrough link returned 404.
 - No thermostability predictor chosen.

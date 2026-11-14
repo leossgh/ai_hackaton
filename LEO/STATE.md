@@ -12,7 +12,7 @@ This is the roll-up across the whole `LEO` branch. Work in flight on a sub-branc
 
 ## Finished runs
 
-A HER2 CDRH3 pipeline ran on the VM. It lives in `~/rfd4/runs/her2/`, not in this folder. Its script is `~/rfd4/Scripts/run-her2.sh`, and it was not started by this session. The log does not say who started it.
+A HER2 CDRH3 pipeline ran on the VM. It lives in `~/hackathon-team-3/apheris/rfd4/runs/her2/`, not in this folder. Its script is `~/hackathon-team-3/apheris/rfd4/Scripts/run-her2.sh`, and it was not started by this session. The log does not say who started it.
 
 | Stage | Folder | Time (UTC) | Result |
 |---|---|---|---|
@@ -61,5 +61,5 @@ Ranking on `min_ipae`, `iptm` and `binder_plddt` (the rule from the task descrip
 
 | Date | Event |
 |---|---|
-| 2026-11-14 | HER2 design, prepare, Boltz-2 predict and score run completed in `~/rfd4/runs/her2` (started by an unknown session) |
+| 2026-11-14 | HER2 design, prepare, Boltz-2 predict and score run completed in `~/hackathon-team-3/apheris/rfd4/runs/her2` (started by an unknown session) |
 | 2026-11-14 | This file created |
