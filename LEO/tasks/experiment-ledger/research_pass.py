@@ -199,6 +199,16 @@ def fetch(core: str, query: str, limit: int, key: str) -> tuple[str, str | None]
             fh.write(payload)
         return "fetched", None
     except urllib.error.HTTPError as exc:
+        # A 403 "out of API credits" will not fix itself on the next query, so
+        # report it distinctly and let the caller stop rather than make one
+        # doomed call per remaining query (pass-006 made seven).
+        detail = ""
+        try:
+            detail = exc.read().decode("utf-8", "replace")[:300]
+        except Exception:  # noqa: BLE001
+            pass
+        if exc.code == 403 and "credit" in detail.lower():
+            return "no_credits", "HTTP 403: out of AMASS API credits"
         return "failed", f"HTTP {exc.code}"
     except Exception as exc:  # noqa: BLE001
         return "failed", type(exc).__name__
@@ -357,12 +367,22 @@ def main() -> int:
 
     key = read_key(args.key_file) if allowed_new else ""
     fetched, failed = [], []
+    credits_exhausted = False
     for i, (tid, core, q) in enumerate(allowed_new):
         status, err = fetch(core, q, args.limit, key)
         if status == "fetched":
             fetched.append((tid, core, q))
             print(f"  ok     [{tid}] {core}: {q}")
-        elif status == "failed":
+        elif status == "no_credits":
+            credits_exhausted = True
+            remaining = allowed_new[i:]
+            for rt, rc, rq in remaining:
+                deferred.append((rt, rc, rq))
+            print(f"  STOP   out of AMASS API credits — abandoning this pass "
+                  f"after {len(fetched)} fetched, {len(remaining)} not attempted")
+            print("         top up at https://platform.amass.tech/settings/credits")
+            break
+        else:
             failed.append((tid, core, q, err))
             print(f"  FAIL   [{tid}] {core}: {q} -> {err}")
         if i < len(allowed_new) - 1:
@@ -457,6 +477,14 @@ def main() -> int:
         for t in targets:
             w(f"| {t['id']} | _pending_ | _pending_ |\n")
         w("\n")
+
+    if credits_exhausted:
+        with open(mpath, "a", encoding="utf-8") as fh:
+            fh.write("\n> **AMASS credits exhausted during this pass.** The API "
+                     "returned HTTP 403 \"You are out of API credits\". Queries "
+                     "not attempted are listed as deferred above. Until credits "
+                     "are topped up, only the free repo-scan half of the cycle "
+                     "can run.\n")
 
     print(f"\nwrote {os.path.relpath(mpath, HERE)} and "
           f"{os.path.relpath(jpath, HERE)}")

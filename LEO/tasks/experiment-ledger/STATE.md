@@ -8,11 +8,11 @@
 
 | | |
 |---|---|
-| Experiments | 3 (`worked` 2, `inconclusive` 1) |
-| Theories | 14 active + 1 retired — `low` 0, `medium` 8, `high` 6 |
-| Ideas | 12 open/lit-checked, 1 done |
-| Research passes | 5 |
-| AMASS spend | 11 searches, $0.55 of the ~2,000-search team budget (hard stop at 400) |
+| Experiments | 5 (`worked` 4, `inconclusive` 1) |
+| Theories | 15 active + 2 retired — `low` 1, `medium` 7, `high` 7 |
+| Ideas | 13 open/lit-checked, 2 done |
+| Research passes | 7 |
+| AMASS spend | 14 searches, $0.70 — **team credits now exhausted**, see Blocked |
 | Published | PR #2 **merged** into `main` at `27b6982`; later work goes out as a new PR |
 
 ## What this task is
@@ -26,11 +26,15 @@ not on the designs alone. See [`PROMPT.md`](PROMPT.md) for the full cycle.
 
 ## Right now
 
-**Autoresearch loop running** — one pass every 30 minutes (at :07 and :37) until
-18:00 local, each pass applying its findings, committing, and pushing to
-`fork` (`leossgh/ai_hackaton`), which feeds **open PR #2** against
-`niccolocard99/ai_hackaton:main`. Pushes go to `fork`, never `origin`:
-`leossgh` has no write access upstream, so each pass extends the PR instead.
+**Autoresearch loop running** — one pass every 15 minutes (at :08, :23, :38,
+:53) until 18:00 local, pushing to `fork` (`leossgh/ai_hackaton`), which feeds
+**open PR #3** against `niccolocard99/ai_hackaton:main`. Pushes go to `fork`,
+never `origin`: `leossgh` has no write access upstream.
+
+**Step B (AMASS) is blocked — credits exhausted.** Step A, the repo scan, is
+free and is where every substantive result has come from: EXP-002 through
+EXP-005 were all found by reading teammates' commits. Passes continue on Step A
+alone until credits are topped up.
 
 ## Done so far
 
@@ -46,6 +50,7 @@ not on the designs alone. See [`PROMPT.md`](PROMPT.md) for the full cycle.
 
 | Item | Blocker | Needed to unblock |
 |---|---|---|
+| **AMASS research (Step B)** | HTTP 403 `"You are out of API credits"`. This ledger spent 14 searches / $0.70, so the ~2,000-search team budget went elsewhere — the sibling literature task ran ~30 queries plus a full-text corpus fetch, which costs far more per record | Top up at <https://platform.amass.tech/settings/credits>, or accept repo-scan-only passes. `research_pass.py` now stops on the first credits 403 instead of retrying every query |
 | Theory confidence above `medium` | No measured result of our own yet; everything rests on literature | A design run with a recorded hypothesis (IDEA-006 is cheapest) |
 | TH-007 / IDEA-003 (thermostability predictor) | All candidates are trained on proxies (TS50), not the Tm Adaptyv measures | A dedicated pass, then a decision |
 | EXP-001 promotion from `inconclusive` | Single Boltz-2 seed, 2 of 4 designs refolded, novelty unchecked, `abguard` never run | IDEA-006 plus base validation |
@@ -53,6 +58,7 @@ not on the designs alone. See [`PROMPT.md`](PROMPT.md) for the full cycle.
 
 ## Next, in order
 
+0. **Top up AMASS credits** (or accept repo-scan-only passes). Step B cannot run at all until then — though note Step A has produced every substantive result so far.
 1. **IDEA-011 — switch the ranker.** Adopt the sequence pre-filter (`NICCOLO/eda/prefilter.py`, branch `origin/nick`) as the primary ranking for optimisation-track designs. Costs no GPU, runs on a laptop, and replaces a metric EXP-003 shows is near-useless (Boltz-2 ipTM AUROC 0.645) with one at Spearman +0.622 against measured KD. Highest-value action available.
 2. **IDEA-008 — hand the design to whoever has the GPU**, now with measured substitutions: A106→L, D108→V, plus a deliberate choice between M107→H (safe, costs affinity) and D102→Q/E (largest measured gain, but contacts in 6 of 8 structures). 63.6% identity either way.
 3. **IDEA-005 — add a VHH** alongside the scFv designs. TH-012: the only format where both no-proxy properties (Tm, structure accuracy) are covered.
@@ -80,3 +86,6 @@ not on the designs alone. See [`PROMPT.md`](PROMPT.md) for the full cycle.
 | 2026-11-14 | pass-004 ($0.15, 3 searches, scoped TH-011): repo scan found nothing new. TH-011 `medium` → **`high`** — AlphaFold3 needs **20 seeds** for a 2.9 Å median CDR-H3 (PMID:40814020), and four methods 2009-2025 converge on 2.4-2.9 Å. IDEA-006 rescoped from "second seed" to "measure the spread". New **TH-012**: a VHH is better supported by our tooling on two legs, so IDEA-005 → high |
 | 2026-11-14 | **Repo scan found `origin/nick` `aec87f4`** (NICCOLO HER2 CDRH3 pre-filter). Recorded as **EXP-003**, the most consequential result so far: Boltz-2 ipTM separates real from shuffled HER2 pairs at AUROC 0.645 with 94.3% of decoys scoring ≥0.7, while a one-hot sequence model reaches Spearman +0.622 against measured log10 KD. New **TH-013/014/015**; TH-011's last caveat closed by direct measurement; EXP-001's scores shown to sit inside the decoy distribution. IDEA-011/012 opened, IDEA-006 downgraded to medium, IDEA-008 given measured substitutions |
 | 2026-11-14 | pass-005 ($0.15, 3 searches, scoped TH-013): **no published validation of ipTM/ipAE as a binder screen exists** in what the searches returned, so our own decoy control is the best evidence on it. New IDEA-013 (ESM-IF1 vs ProteinMPNN, 6.5% vs 1.5% predicted binder success). Recorded the de novo ranking gap as open |
+| 2026-11-14 | **Repo scan found three more teammate commits.** `3dc1f24` recorded as **EXP-004**: fold confidence calibrated against *measured KD* on 60 SPR variants — ipTM AUROC 0.502, min_ipae 0.497, sequence-only 0.849, and ipTM ≥ 0.7 passes **100%** of true non-binders. TH-013's "keep it as a coarse filter" clause **retracted**. `8743169`+`e542324` recorded as **EXP-005**: NanoMelt is the only usable Tm predictor, and **CDRH3 is thermostability-inert** (0 of 40 beyond MAE, framework control p=0.002). TH-005 → `high`, TH-007 **retired**, new TH-016/TH-017, IDEA-003 **done**, IDEA-014/015 opened |
+| 2026-11-14 | Merged `origin/main` (track checkers moved `scripts/` → `NICCOLO/scripts/`, so base-validation commands in root `AGENTS.md` now point at the new path) |
+| 2026-11-14 | pass-006 (3 searches, auto scope): TH-002 `medium` → **`low`** — EXP-005 shows CDRH3 cannot move Tm, so the trade-off it asserts does not exist in our design space; two papers show affinity and stability improved together. New IDEA-016 (expression/self-association scoring, a gap nothing covered). **Then AMASS credits ran out mid-pass**; `research_pass.py` fixed to stop on the first credits 403 rather than make seven doomed calls. pass-007 confirmed the stop works |
