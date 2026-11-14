@@ -105,7 +105,6 @@ Two consequences for agents: **record the reasoning** behind every design that m
 | Path | Contents |
 |---|---|
 | `LEO/README.md` | Full notes: data, docs, setup, rules, submission, tasks, progress log |
-| `LEO/docs/` | The two challenge PDFs (deck and task description) |
 | `LEO/.venv/` | Python venv with `pypdf` (git-ignored) |
 | `apheris/hackathon-data/` | Synced from S3 (4.7 GB). Never commit it. |
 | `apheris/rfd4/` | Synced Foundry docs. Start with `18-vm.md`, then `Tutorial.html`. Run all model commands from here. |
@@ -124,7 +123,7 @@ All organiser-supplied tooling lives in `apheris/`. Paths below are relative to 
 | `hackathon-data/` | 4.7 GB from `s3://apheris-oslo-hackathon/data/`. `README.md` explains every file. Git-ignored, read-only |
 | `foundry-assistant/` | Offline docs Q&A: `make ask Q="..."` (needs llama.cpp at `/opt/llama.cpp`, models in `models/`) |
 | `apheris-gui/` | Streamlit dashboard for the Docker commands (the VM has no Foundry Hub). `./run.sh` serves `localhost:8501`; from a laptop `ssh -L 8501:localhost:8501 <vm>`. Runs one heavy job at a time |
-| `challenge/` | The two challenge PDFs and their `.md` conversions (task description, deck). The `.md` files are the easiest to grep |
+| `challenge/` | The two challenge documents (task description, deck) as `.md`. The PDFs were removed from the repo; use the `.md` |
 
 **How to run models.** No Foundry Hub and no `apheris-foundry` CLI here. Every model is a Docker image `quay.io/apheris/oslo-hackathon:*`, already pulled, no login needed:
 
@@ -188,13 +187,16 @@ The RFD4-Proteina metrics only speak to binding. Thermostability and epitope pre
 
 ## Rules for agents
 
+- **Read the `.md`, never the PDF.** The challenge documents live as Markdown in `apheris/challenge/`; the PDFs are removed. Always open the `.md`. If you add a new PDF, convert it to `.md` next to it first and use that.
+- **Unzip the participant bundle before working.** If `participant-03/` does not exist but `participant-03*.zip` does, unzip it (see "Tools and accounts") before using Nebius or JapanFold.
+
 - Always run **BASE VALIDATION** (above) on every design before ranking or submitting it.
 - Never commit secrets or API keys, nor `apheris/hackathon-data/`, `apheris/rfd4/runs/` and `LEO/.venv/`.
 - Do not commit or push unless asked. End commit messages with a `Co-Authored-By:` line naming the model you are actually running as.
 - Record every design run: input spec, weight image, settings, seed, and resulting scores. Put run notes in the owner's folder, not in shared folders.
 - Keep each design's provenance and its **predicted** track (from its identity numbers) with the design. The real track assignment only comes from `abguard`, so treat local labels as predictions and verify them.
 - When something is blocked or unclear, record it in the progress log in `LEO/README.md` rather than guessing.
-- Prefer verifying a rule against `LEO/docs/*.pdf` over trusting a summary, including this one. The PDFs contradict themselves in at least one place (the mutation count).
+- Prefer verifying a rule against `apheris/challenge/*.md` over trusting a summary, including this one. The documents contradict themselves in at least one place (the mutation count).
 
 ## Open items
 
