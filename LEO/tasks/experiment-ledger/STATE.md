@@ -8,9 +8,9 @@
 
 | | |
 |---|---|
-| Experiments | 6 (`worked` 4, `failed` 1, `inconclusive` 1) — **1 of them ours** |
-| Theories | 15 active + 2 retired — `low` 1, `medium` 7, `high` 7 |
-| Ideas | 13 open/lit-checked, 2 done |
+| Experiments | 9 (`worked` 7, `failed` 1, `inconclusive` 1) — **3 of them ours** |
+| Theories | 17 active + 2 retired — `low` 1, `medium` 7, `high` 9 |
+| Ideas | 15 open/lit-checked, 2 done |
 | Research passes | 7 (step B blocked: no credits) |
 | AMASS spend | 14 searches, $0.70 — **team credits now exhausted**, see Blocked |
 | Published | PR #2 **merged** into `main` at `27b6982`; later work goes out as a new PR |
@@ -28,7 +28,7 @@ not on the designs alone. See [`PROMPT.md`](PROMPT.md) for the full cycle.
 
 **Autoresearch loop running** — one pass every 15 minutes (at :08, :23, :38,
 :53) until 18:00 local, pushing to `fork` (`leossgh/ai_hackaton`), which feeds
-**open PR #6** against `niccolocard99/ai_hackaton:main`. Pushes go to `fork`,
+**open PR (see Log)** against `niccolocard99/ai_hackaton:main`. Pushes go to `fork`,
 never `origin`: `leossgh` has no write access upstream.
 
 **Step B (AMASS) is blocked — credits exhausted.** Step A, the repo scan, is
@@ -60,7 +60,8 @@ alone until credits are topped up.
 
 0. **Top up AMASS credits** (or accept repo-scan-only passes). Step B cannot run at all until then — though note Step A has produced every substantive result so far.
 1. **IDEA-011 — switch the ranker.** Adopt the sequence pre-filter (`NICCOLO/eda/prefilter.py`, branch `origin/nick`) as the primary ranking for optimisation-track designs. Costs no GPU, runs on a laptop, and replaces a metric EXP-003 shows is near-useless (Boltz-2 ipTM AUROC 0.645) with one at Spearman +0.622 against measured KD. Highest-value action available.
-2. **IDEA-008 — hand the design to whoever has the GPU**, now with measured substitutions: A106→L, D108→V, plus a deliberate choice between M107→H (safe, costs affinity) and D102→Q/E (largest measured gain, but contacts in 6 of 8 structures). 63.6% identity either way.
+2. **IDEA-017 — pull the full SPR-768 table** (one `scp`, then re-run two scripts we have). Every affinity number here comes from a 60-variant calibration subset that was *chosen*, not sampled, so TH-019's hit rate is an existence proof rather than a frequency. Cheapest high-value item on the board.
+3. **IDEA-008 — hand the design to whoever has the GPU**, now with measured substitutions: A106→L, D108→V, plus a deliberate choice between M107→H (safe, costs affinity) and D102→Q/E (largest measured gain, but contacts in 6 of 8 structures). 63.6% identity either way.
 3. **IDEA-005 — add a VHH** alongside the scFv designs. TH-012: the only format where both no-proxy properties (Tm, structure accuracy) are covered.
 4. Each pass: scan the repo for new committed results, `--scope` the weakest theory, apply, commit.
 5. IDEA-010 — energetics for Y109, the one assumption IDEA-008 rests on and the one position SPR-768 cannot speak to. pass-003 proved the literature will not answer it.
@@ -92,3 +93,6 @@ alone until credits are topped up.
 | 2026-11-14 | **PR #3 merged** into `main` at `da498b8`; PR #4 (nick) merged too, so the teammate work is on main. Merged `origin/main`, moved to fork branch `LEO-experiment-ledger-3` and opened a fresh PR |
 | 2026-11-14 | **EXP-006, our own first experiment.** Hypothesis stated before the run: Protenix ranks binders better than Boltz-2. **Wrong** — all ten Protenix metrics span AUROC 0.426-0.526 on the same 60 measured variants, and `px_iptm_ab_her2`, the antibody↔HER2 chain-pair ipTM, is *below* chance at 0.448. TH-013 broadened from one model to the class. Closes a GPU-hungry line of enquiry for two minutes of analysis |
 | 2026-11-14 | Repo scan also found `dac6935` (ranking power of fold metrics vs random) and `fd1b002` (`AGENT_GUIDE.md` for the pre-filter). `dac6935` committed the script but **not its output**, so its conclusion is recorded from the commit message, not from numbers we can cite. The guide supplied the out-of-fold figures now in TH-014: top 10 at 14 nM against 74 nM for a random 10 |
+| 2026-11-14 | **PR #6 merged** at `661ddcc`. Merged `origin/main`, moved to fork branch `LEO-experiment-ledger-4` |
+| 2026-11-14 | **EXP-007 corrects two of our own numbers.** The design band is **>=4** substitutions, not >=3 (3/10 = exactly 70%, and the rule is *strictly* under) — a teammate caught it independently in `fcb238e`. And the **1.42 nM top-20 median we published was never achievable**: that top 20 is full of 1-2 substitution variants the identity rule forbids. In the legal band it is **6.5 nM**. TH-014's numbers corrected to 0.913 / +0.628; new **TH-018** on the ~4x cost of the constraint |
+| 2026-11-14 | **EXP-008 (ours) found the bar and the pattern.** Trastuzumab's own CDRH3 measures **0.152 nM**; exactly **1 of 21** legal variants beats it, by 1.6x. Across the 8 tightest legal variants M107 is mutated 8/8, D102 8/8, A106 7/8 — and A106/M107 are precisely the never-contacting positions from EXP-002. **IDEA-008's recipe revised** to D102 + A106 + M107 + one of F104/D108. New **TH-019**: binding alone is a weak basis for an S-tier claim |
