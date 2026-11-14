@@ -40,7 +40,7 @@ So "which track are we doing?" is the wrong question. The right one is "what is 
 
 > **Off-by-one warning.** Page 2 of the task description says "at least 2 mutations", but the flowchart and the hard-filter list both say *more than* 2. Use **3 as the minimum** for optimisation designs so nothing is lost to the stricter reading.
 >
-> **The CDRH3 identity rule binds before either mutation count.** Trastuzumab's CDRH3 is `SRWGGDGFYAMDY` (13 aa), so at equal length a design needs **at least 4 substitutions** to fall under 70% identity (9/13 = 69.2%; 3 substitutions = 76.9%). Indels were not tested. The 3-mutation floor is checked against every CDRH3 in the reference set, not only trastuzumab. Verified 14 Nov with `scripts/check_optimisation.py`: a 3-substitution test variant scored 77% identity and was also only 2 mutations from a CDRH3 in the FACS table, and failed on both.
+> **The CDRH3 identity rule binds before either mutation count.** Trastuzumab's CDRH3 is `SRWGGDGFYAMDY` (13 aa), so at equal length a design needs **at least 4 substitutions** to fall under 70% identity (9/13 = 69.2%; 3 substitutions = 76.9%). Indels were not tested. The 3-mutation floor is checked against every CDRH3 in the reference set, not only trastuzumab. Verified 14 Nov with `NICCOLO/scripts/check_optimisation.py`: a 3-substitution test variant scored 77% identity and was also only 2 mutations from a CDRH3 in the FACS table, and failed on both.
 
 **Novelty set**
 - A design's CDRH3 must differ from all **525,063** CDRH3s in the HER2 tables (`apheris/hackathon-data/her2-trastuzumab/`). The 524,346 figure elsewhere is the FACS variant count, a different number for a different purpose.
@@ -58,11 +58,11 @@ So "which track are we doing?" is the wrong question. The right one is "what is 
 Every design must go through base validation **before** it is ranked, refolded, written into a submission list, or reported as a candidate. No exceptions, and re-run it whenever a sequence changes. A design that has not passed is not a candidate.
 
 1. Put the designs in a table with columns `sequence_id, kind, heavy_sequence, light_sequence, design_description` (`kind` is `vhh`, `scfv` or `paired`; a VHH or scFv goes whole in `heavy_sequence`).
-2. Run **both** track scripts from `scripts/` on that table. They wrap `abguard` (numbering, format, length, cysteines, novelty) and add each track's extra rules:
+2. Run **both** track scripts from `NICCOLO/scripts/` on that table. They wrap `abguard` (numbering, format, length, cysteines, novelty) and add each track's extra rules:
 
 ```bash
-scripts/check_denovo.py       designs.csv -o reports/denovo.csv
-scripts/check_optimisation.py designs.csv -o reports/optimisation.csv \
+NICCOLO/scripts/check_denovo.py       designs.csv -o reports/denovo.csv
+NICCOLO/scripts/check_optimisation.py designs.csv -o reports/optimisation.csv \
     --provided apheris/hackathon-data/her2-trastuzumab/trastuzumab_her2_spr_all_768.csv
 ```
 
@@ -111,7 +111,7 @@ Two consequences for agents: **record the reasoning** behind every design that m
 | `apheris/hackathon-data/` | Synced from S3 (4.7 GB). Never commit it. |
 | `apheris/rfd4/` | Synced Foundry docs. Start with `18-vm.md`, then `Tutorial.html`. Run all model commands from here. |
 | `apheris/` | **Everything Apheris on this VM.** See "Apheris toolkit" below |
-| `scripts/` | `check_denovo.py`, `check_optimisation.py`: per-track design checks on top of `abguard` |
+| `NICCOLO/scripts/` | `check_denovo.py`, `check_optimisation.py`: per-track design checks on top of `abguard` |
 
 ## Apheris toolkit (`apheris/`)
 
@@ -149,7 +149,7 @@ Tasks per image: `design`, `refold-prepare`, `refold-score`, `metrics`, `finetun
 
 **`abguard` (the validity gate) and the track checkers**
 - `abguard` and `immunum` are on `PATH` (see the caveats under Base validation). The uv cache (`~/.cache/uv/archive-v0/*/bin/abguard`) holds two builds; only the newer has the novelty gate. The scripts find the right build themselves, or set `ABGUARD_PY`. Its reference database is the 525,063 HER2 CDRH3s plus prior art.
-- `scripts/check_denovo.py` and `scripts/check_optimisation.py` wrap it and add each track's extra rules (see their docstrings). Usage: `scripts/check_<track>.py designs.csv [-o report.csv] [--strict-exit]`; optimisation also takes `--provided trastuzumab_her2_spr_all_768.csv`.
+- `NICCOLO/scripts/check_denovo.py` and `NICCOLO/scripts/check_optimisation.py` wrap it and add each track's extra rules (see their docstrings). Usage: `NICCOLO/scripts/check_<track>.py designs.csv [-o report.csv] [--strict-exit]`; optimisation also takes `--provided trastuzumab_her2_spr_all_768.csv`.
 - Local results are predictions. The real track assignment is `abguard`'s, at submission time.
 
 **MCP tools.** The RCSB PDB MCP (`mcp__rcsb-mcp__*`) is registered for Claude Code: structures, sequences, UniProt (HER2, trastuzumab = 1N8Z).

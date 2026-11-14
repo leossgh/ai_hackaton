@@ -212,7 +212,7 @@ uv venv ~/.venvs/abguard --python 3.12
 WHL=$(ls -t ~/.cache/uv/sdists-v10/path/*/*/abguard-0.1.0-py3-none-any.whl | head -1)
 uv pip install --python ~/.venvs/abguard/bin/python "$WHL"
 ln -sf ~/.venvs/abguard/bin/abguard ~/.venvs/abguard/bin/immunum ~/.local/bin/
-scripts/check_optimisation.py designs.csv -o reports/optimisation.csv \
+NICCOLO/scripts/check_optimisation.py designs.csv -o reports/optimisation.csv \
     --provided apheris/hackathon-data/her2-trastuzumab/trastuzumab_her2_spr_all_768.csv
 ```
 
