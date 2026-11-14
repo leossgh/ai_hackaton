@@ -1,0 +1,3 @@
+enzyme_scaffold:
+  input: motif.cif.zst
+  input_as_annotated_cif: true

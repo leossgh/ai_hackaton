@@ -1,0 +1,28 @@
+# Redesign trastuzumab's CDRH3 (heavy chain B, residues 99-108 in this file's numbering) against HER2 domain IV.
+# B99-108 appear in no condition below, so the model designs their sequence and structure. C_SEQ fixes the
+# sequence of everything else. C_CRDGRP keeps the internal geometry of group 1 (antibody framework and the other
+# CDRs) and group 2 (HER2 backbone). C_HOT marks the HER2 atoms nearest CDRH3 in PDB 1N8Z as contact hotspots.
+# HER2 is split at its unresolved loop (581-590) into chains C (489-580) and D (591-607), because input
+# validation rejects a numbering gap inside one chain. Structure: PDB 1N8Z cropped to the Fv and HER2 domain IV.
+her2_cdrh3:
+  input: her2_fv_1n8z.cif
+  conditions:
+    C_CRDGRP:
+      1:
+        - select: "sel('A') and not has_nan_coord()"
+        - select: "sel('B/*/[1-98, 109-120]') and not has_nan_coord()"
+      2:
+        - select: "sel('C/*/*/[N,CA,C,O]') and not has_nan_coord()"
+        - select: "sel('D/*/*/[N,CA,C,O]') and not has_nan_coord()"
+    C_SEQ:
+      true:
+        - select: "sel('A')"
+        - select: "sel('B/*/[1-98, 109-120]')"
+        - select: "sel('C')"
+        - select: "sel('D')"
+    C_HOT:
+      true:
+        - select: "sel('D/*/593/NZ')"
+        - select: "sel('C/*/573/CD1')"
+        - select: "sel('D/*/591/CG2')"
+        - select: "sel('C/*/572/CD')"

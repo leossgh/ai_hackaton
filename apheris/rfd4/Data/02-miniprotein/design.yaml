@@ -1,0 +1,11 @@
+pdl1_miniprotein:
+  input: target.cif.zst
+  contig: "50-80, /0, A17-131"
+  conditions:
+    C_CRD: {true: [{select: "sel('A/*/*/[N,CA,C,O]')"}]}
+    C_SEQ: {true: [{select: "sel('A')"}]}
+    C_HOT:
+      true:
+        - select: "sel('A/*/56/[CG,OH]')"
+        - select: "sel('A/*/115/[CG,SD]')"
+        - select: "sel('A/*/123/[CD2,OH]')"

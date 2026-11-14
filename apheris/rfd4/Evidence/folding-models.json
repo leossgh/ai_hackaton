@@ -1,0 +1,67 @@
+{
+  "source_commit": "958ea8c723c3aa2f6b1f955c29adf35f03e6750c",
+  "source_repository": "https://github.com/apheris/apheris-cofolding",
+  "models": [
+    {
+      "model": "openfold3",
+      "weights": [
+        "of3ob",
+        "of3p2"
+      ],
+      "protein_template": true,
+      "score_labels": [
+        "openfold3-of3ob",
+        "openfold3-of3p2"
+      ]
+    },
+    {
+      "model": "protenix",
+      "weights": [
+        "v2",
+        "v1-default"
+      ],
+      "protein_template": true,
+      "score_labels": [
+        "protenix-v2",
+        "protenix-v1-default"
+      ]
+    },
+    {
+      "model": "boltz",
+      "weights": [
+        "boltz2"
+      ],
+      "protein_template": true,
+      "score_labels": [
+        "boltz2"
+      ]
+    },
+    {
+      "model": "mol1",
+      "weights": [
+        "base"
+      ],
+      "protein_template": true,
+      "score_labels": [
+        "mol1-base"
+      ]
+    },
+    {
+      "model": "boltz",
+      "weights": [
+        "boltz1"
+      ],
+      "protein_template": false
+    },
+    {
+      "model": "protenix",
+      "weights": [
+        "v0.5",
+        "mini-v0.5",
+        "tiny-v0.5"
+      ],
+      "protein_template": false
+    }
+  ],
+  "workflow_availability": "Select from the deployed workflow catalogue; module support does not ensure a workflow exposes it."
+}

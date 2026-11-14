@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+# Secrets and organiser-supplied credential bundles: never commit
+.env
+japanfold-*codes*.txt
+participant-*.zip
+participant-*/
+# Large / generated (also covered in apheris/.gitignore)
+apheris/hackathon-data/
+apheris/rfd4/runs/

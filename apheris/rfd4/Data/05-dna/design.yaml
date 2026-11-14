@@ -1,0 +1,3 @@
+dna_binder:
+  input: dna.cif.zst
+  input_as_annotated_cif: true

@@ -1,0 +1,3 @@
+sam_binder:
+  input: ligand.cif.zst
+  input_as_annotated_cif: true

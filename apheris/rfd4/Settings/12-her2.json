@@ -1,0 +1,11 @@
+{
+  "sequenceTsrK": 2,
+  "numReplicates": 100,
+  "batchSize": 1,
+  "seed": 1,
+  "recycleStrategy": "high/front_loaded",
+  "compile": false,
+  "refold": true,
+  "refoldTopN": 20,
+  "resampleHotspots": false
+}

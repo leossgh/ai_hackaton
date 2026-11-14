@@ -1,0 +1,11 @@
+{
+  "numReplicates": 8,
+  "batchSize": 1,
+  "seed": 43,
+  "partialTrajectoryFraction": 0.4,
+  "resampleHotspots": false,
+  "recycleStrategy": "medium/front_loaded",
+  "compile": false,
+  "refold": true,
+  "refoldTopN": 8
+}

@@ -1,0 +1,17 @@
+{
+  "scope": "miniproteins only",
+  "generated_backbones": 6225,
+  "screened_sequences": 2040,
+  "campaign_passes": 162,
+  "refined_passes": 144,
+  "gate_tiers": {
+    "strict": "Pose RMSD <=2.5 A, interface PAE <=1.5 A, binder pLDDT >=80.",
+    "relaxed": "Pose RMSD <=3 A, interface PAE <=3 A, binder pLDDT >=75.",
+    "both": "At least two central-peptide contacts and C-terminal tag clearance >=8 A."
+  },
+  "limitations": [
+    "One Protenix seed/sample per reviewed candidate.",
+    "No WT or empty-HLA predictions for the reviewed candidates.",
+    "Computational filters, not experimental binding or specificity."
+  ]
+}

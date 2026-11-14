@@ -1,0 +1,8 @@
+# Organiser data and model outputs are large, never commit them
+hackathon-data/
+rfd4/runs/
+rfd4/.gitignore
+__pycache__/
+.venv/
+*.log
+.gui_job.json

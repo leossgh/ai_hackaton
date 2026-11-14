@@ -1,0 +1,133 @@
+{
+  "Data/01-monomer/design.yaml": {
+    "bytes": 71,
+    "sha256": "49604f62e16362bc9140b135ed1d5b02047e17633a2d67397fca7d39dd08c287"
+  },
+  "Data/01-monomer/monomer-short.cif.zst": {
+    "bytes": 774,
+    "sha256": "5e66073220a3314d3426ca5d7828c02492e61d24321966d4d73dff08481cfa37",
+    "source_checkout_path": "vendor/rfd4-proteina/data/benchmarks/monomer/monomer-short.cif.zst"
+  },
+  "Data/02-miniprotein/design.yaml": {
+    "bytes": 338,
+    "sha256": "f024f2ebdecf91c02d4685d7cacc4300c0ff1f0432e55b21272fb59ec97c7522"
+  },
+  "Data/02-miniprotein/target.cif.zst": {
+    "bytes": 27393,
+    "sha256": "95e2a099fac25dc93bac6d7073da0241d3616db997c0ba3a12a856dc9fa4acb8",
+    "source_checkout_path": "vendor/rfd4-proteina/docs/examples/inputs/5o45_cropped.cif.zst"
+  },
+  "Data/03-fv/design.json": {
+    "bytes": 1289,
+    "sha256": "e9b8bb524ad8119b90ae6e035d6715be8d36335faeff241e0145cca3de434eab",
+    "source_checkout_path": "experiments/refold-loop/inputs/vhvl_1ubq/ubq_vhvl.json"
+  },
+  "Data/03-fv/framework_adalimumab.cif": {
+    "bytes": 79970,
+    "sha256": "080ddb11f7540aa14e69368a36c8380c2963595513d56907b92cc1fb9491e67c",
+    "source_checkout_path": "experiments/refold-loop/inputs/vhvl_1ubq/framework_adalimumab.cif"
+  },
+  "Data/03-fv/target_F.cif": {
+    "bytes": 40241,
+    "sha256": "79d4b3514e8d521812d057c5cceff4b9ce2d556e9e7b69583a6a7a24af804097",
+    "source_checkout_path": "experiments/refold-loop/inputs/vhvl_1ubq/target_F.cif"
+  },
+  "Data/03-vhh/pmvk_caplacizumab.cif.zst": {
+    "bytes": 85058,
+    "sha256": "52a6799ba55989f47346fd2b7ef5208bd7910f351012a607bc1d6bc5058273f0",
+    "source_checkout_path": "vendor/rfd4-proteina/examples/antibody_design/structures/vhh/pmvk_3CH4__VHH_caplacizumab_cdr123.cif.zst"
+  },
+  "Data/05-dna/design.yaml": {
+    "bytes": 64,
+    "sha256": "d16add2a770fc9288459bc0c973f4dc9154b829e61d49e06d741b2327cce18eb"
+  },
+  "Data/05-dna/dna.cif.zst": {
+    "bytes": 19644,
+    "sha256": "b71c38f8cfe7526d68c9ff1b6899ce6bc4664aab8393aef1f87874019f990c41",
+    "source_checkout_path": "vendor/rfd4-proteina/data/benchmarks/dna_binder/dna_binder_denovo_val/7m5w_structure_context.cif.zst"
+  },
+  "Data/05-enzyme/design.yaml": {
+    "bytes": 71,
+    "sha256": "88f21a3cadf13bad2d3d79835de6e94bd7167070a3a024ee6b7614e630ca2e50"
+  },
+  "Data/05-enzyme/motif.cif.zst": {
+    "bytes": 7836,
+    "sha256": "a300d2b45c41dcbe44b8be6496257b5a92bcc2ceb020e4354f40b400845f6d6f",
+    "source_checkout_path": "vendor/rfd4-proteina/data/benchmarks/mcsa/mcsa_37/M0907_1rbl.cif.zst"
+  },
+  "Data/05-ligand/design.yaml": {
+    "bytes": 67,
+    "sha256": "3de5d3ea3ae3dfbbb605df43390dca903ccf9d14e20cd3e3c2f7beb4c1d9c8ee"
+  },
+  "Data/05-ligand/ligand.cif.zst": {
+    "bytes": 2932,
+    "sha256": "b898c23fef122131f9923439ceeb74d72a5fe62ee633dcf9c0a9b449201d54aa",
+    "source_checkout_path": "vendor/rfd4-proteina/data/benchmarks/small_molecule_binder/sm_binder/SAM.cif.zst"
+  },
+  "Data/12-her2/her2_cdrh3.yaml": {
+    "bytes": 1339,
+    "sha256": "668d383aec56dde8af2f5c7983856cd12cfd78812baf284c0f009033f8d30037",
+    "source_checkout_path": "examples/her2/her2_cdrh3.yaml"
+  },
+  "Data/12-her2/her2_fv_1n8z.cif": {
+    "bytes": 302300,
+    "sha256": "8136a9abb040fc92f993a416e9af98e618f1a9a4932eace743e6b009efcd0c5b",
+    "source_checkout_path": "examples/her2/her2_fv_1n8z.cif"
+  },
+  "Evidence/campaign-summary.json": {
+    "bytes": 628,
+    "sha256": "06f129d762dc3c7283a9d7a133f2b7392a295bd86505cf321af08a513440b63c"
+  },
+  "Evidence/folding-models.json": {
+    "bytes": 1320,
+    "sha256": "6345fff35b2d47895cd887b2040f0ed4c8a0bb1cfc4cd7f21fffb1759fb9c5ab"
+  },
+  "Settings/01-monomer.json": {
+    "bytes": 158,
+    "sha256": "f2466415daa8a21ecb01d0340dccdc01a249d6395fa36436ddae7e4e485e8620"
+  },
+  "Settings/02-miniprotein.json": {
+    "bytes": 158,
+    "sha256": "f2466415daa8a21ecb01d0340dccdc01a249d6395fa36436ddae7e4e485e8620"
+  },
+  "Settings/03-fv.json": {
+    "bytes": 185,
+    "sha256": "474dddc979f185aba935d30ff240a07918f78d0e43b89080ca7d980c7510c25c"
+  },
+  "Settings/03-vhh.json": {
+    "bytes": 185,
+    "sha256": "474dddc979f185aba935d30ff240a07918f78d0e43b89080ca7d980c7510c25c"
+  },
+  "Settings/04-refine-antibody.json": {
+    "bytes": 221,
+    "sha256": "90513fcf7bc1ae112fe7915262a57bbae8975bc255f3f157451a6fd68b390b2c"
+  },
+  "Settings/04-refine.json": {
+    "bytes": 223,
+    "sha256": "c8e178a86ff7590074a7611cbad9c75e19fbfc0b5f8a29e6901d1c5d5173f9cb"
+  },
+  "Settings/05-dna.json": {
+    "bytes": 140,
+    "sha256": "5aaef8382d942a1d9727120a90a5b9b9c88fa9d6a70e6db213f0fab4214e90a6"
+  },
+  "Settings/05-enzyme.json": {
+    "bytes": 135,
+    "sha256": "4e7fe7ae4b60b9850671d549e324cc97eaf74c18a9e278cd5c346b85efaf7c5b"
+  },
+  "Settings/05-ligand.json": {
+    "bytes": 135,
+    "sha256": "4e7fe7ae4b60b9850671d549e324cc97eaf74c18a9e278cd5c346b85efaf7c5b"
+  },
+  "Settings/06-holo-model-params.json": {
+    "bytes": 165,
+    "sha256": "2c440d0bfc948d09cb676435a5f870e576d65018999cab4dfa302cffaf753bd1"
+  },
+  "Settings/06-untemplated-model-params.json": {
+    "bytes": 119,
+    "sha256": "5a2b6152a68cdad8b50a2bf7cb14c647dd0e7e5ab80912d9c1db0b8bcf10e8ca"
+  },
+  "Settings/12-her2.json": {
+    "bytes": 208,
+    "sha256": "7447f47db77910f7c6b1df74cdaef76d2ad21ed2953aea14fd0f9dde0cfef7af"
+  }
+}

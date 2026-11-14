@@ -1,0 +1,7 @@
+.venv/
+models/
+run/
+*.gguf
+__pycache__/
+.env
+.coverage

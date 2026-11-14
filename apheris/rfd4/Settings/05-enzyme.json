@@ -1,0 +1,8 @@
+{
+  "numReplicates": 4,
+  "batchSize": 1,
+  "seed": 42,
+  "recycleStrategy": "medium/midpeak",
+  "compile": false,
+  "refold": false
+}

@@ -1,0 +1,61 @@
+{
+  "ubq_fv_adalimumab": {
+    "input": [
+      "target_F.cif",
+      "framework_adalimumab.cif"
+    ],
+    "contig": "F1-76, /0, H1-22, 13-15, H24-37, 9-10, H39-75, 11-22, H77-87, /0, L1-23, 11-14, L25-38, 8-8, L40-71, 8-12, L73-82",
+    "conditions": {
+      "C_CRD": {
+        "true": [
+          {
+            "select": "sel('F/*/*/[N,CA,C,O]')"
+          }
+        ]
+      },
+      "C_CRDGRP": {
+        "1": [
+          {
+            "select": "sel('H/*/[1-22, 24-37, 39-75, 77-87]/[N,CA,C,O]')"
+          },
+          {
+            "select": "sel('L/*/[1-23, 25-38, 40-71, 73-82]/[N,CA,C,O]')"
+          }
+        ]
+      },
+      "C_SEQ": {
+        "true": [
+          {
+            "select": "sel('F')"
+          },
+          {
+            "select": "sel('H/*/[1-22, 24-37, 39-75, 77-87]')"
+          },
+          {
+            "select": "sel('L/*/[1-23, 25-38, 40-71, 73-82]')"
+          }
+        ]
+      },
+      "C_HOT": {
+        "true": [
+          {
+            "select": "sel('F/*/8/CD1')"
+          },
+          {
+            "select": "sel('F/*/70/CG1')"
+          }
+        ]
+      },
+      "C_CATH": {
+        "2.60.40": [
+          {
+            "select": "sel('H')"
+          },
+          {
+            "select": "sel('L')"
+          }
+        ]
+      }
+    }
+  }
+}

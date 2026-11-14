@@ -1,0 +1,11 @@
+{
+  "template_paths": [
+    "template.cif"
+  ],
+  "write_detailed_scores": true,
+  "num_diffusion_samples": 1,
+  "seeds": [
+    42
+  ],
+  "query_failures": "skip"
+}
