@@ -16,6 +16,31 @@ Where this file and the root file conflict, this one wins inside `LEO/`. Conflic
 
 If either file is missing, stop and say so rather than guessing at the rules.
 
+## Scope: you may only write inside `LEO/`
+
+**Everything under `LEO/` is yours to edit. Everything outside it is off limits.** This is a hard rule, not a preference.
+
+Allowed to write:
+
+- Any path under `/home/hackathon/hackathon-team-3/LEO/`.
+- Your task's own folder, `LEO/tasks/<short-task-name>/` — see below. Prefer this over writing loose files at the top of `LEO/`.
+- Scratch files in the session scratchpad directory, for throwaway intermediates.
+
+**Explicitly denied**, even when it looks harmless or helpful:
+
+| Path | Why |
+|---|---|
+| `../AGENTS.md`, `../README.md` | Team-shared files. Leo maintains them. |
+| `../JAHN/`, `../NICCOLO/`, `../ANDERS/` | Other people's folders. Never, for any reason. |
+| Anything else at the repo root | Shared. |
+| `~/rfd4/`, `~/foundry-assistant/`, `~/hackathon-data/` | Organiser-supplied and shared across the team. Read freely, write nothing. |
+| Another task's folder or state file | Not yours, and it causes merge conflicts. |
+| Anything outside the repo, except scratch | Not part of this work. |
+
+Reading outside `LEO/` is fine and often necessary — read `../AGENTS.md`, the organiser docs, previous run outputs. The restriction is on **writing**.
+
+If a task seems to require a change outside `LEO/`, do not make it. Describe the change you would make and why, and let Leo decide. A run that needs to write its outputs somewhere puts them under your task folder, not next to the shared inputs.
+
 ## Branching: `LEO` is the working main
 
 Treat `LEO` as the main branch for day-to-day work. `main` is the team-facing branch and is off limits without Leo's explicit permission.
@@ -46,15 +71,27 @@ Use `--no-ff` so the branch point stays visible in the history. Delete the sub-b
 
 | Branch | Who merges into it | When | State file |
 |---|---|---|---|
-| `LEO/<task>` | the agent doing the task | commit freely while working | `LEO/state/<task>.md`, kept current |
+| `LEO/<task>` | the agent doing the task | commit freely while working | `LEO/tasks/<task>/STATE.md`, kept current |
 | `LEO` | the agent, when a feature is finished | after the task works | `LEO/STATE.md`, the roll-up |
 | `main` | **only on Leo's explicit request** | never on an agent's own judgment | — |
 
-## Every sub-branch carries its own state file
+## Every sub-branch and sub-agent works in its own folder
 
-The first commit on a new sub-branch creates `LEO/state/<short-task-name>.md` — same name as the branch. One file per branch, so two sub-branches never collide when they merge back into `LEO`. Never edit another branch's state file.
+A new sub-branch creates `LEO/tasks/<short-task-name>/` — same name as the branch — and keeps **all** its files there: scripts, configs, run outputs, notes, its state file. Nothing loose at the top of `LEO/`.
 
-Copy [`state/TEMPLATE.md`](state/TEMPLATE.md) and fill it in. It must answer, at any moment someone looks:
+```
+LEO/tasks/novelty-filter/
+  STATE.md          # required, created in the first commit
+  ...               # whatever the task needs
+```
+
+One folder per branch, so two branches never touch the same path and never conflict when they merge back into `LEO`. **Never write in another task's folder.** If you need something from one, read it or copy it into yours.
+
+A sub-agent gets its own subfolder under the task that spawned it: `LEO/tasks/<task>/<subagent-name>/`, with its own `STATE.md` on the same rules. The parent task's `STATE.md` says which sub-agents are running and what each is for. Tell every sub-agent its folder and that it may not write outside it — a sub-agent that was not told inherits none of this.
+
+## Every task carries a state file
+
+The first commit on a new sub-branch creates `LEO/tasks/<short-task-name>/STATE.md`. Copy [`tasks/TEMPLATE.md`](tasks/TEMPLATE.md) and fill it in. It must answer, at any moment someone looks:
 
 - **What this task is** — one or two sentences, and why it matters for the submission.
 - **Right now** — what the agent is doing this minute, or `idle` / `waiting on X`. Not a plan: the actual current activity.
@@ -65,7 +102,7 @@ Copy [`state/TEMPLATE.md`](state/TEMPLATE.md) and fill it in. It must answer, at
 
 Update it whenever the answer to "what are you doing?" changes — before starting a long run, after it finishes, and when hitting a blocker. Commit the update with the work it describes, not as a separate tidy-up at the end.
 
-When the branch merges into `LEO`, fold anything still true into [`STATE.md`](STATE.md) and delete the per-branch file in the merge commit. `STATE.md` is the roll-up across all branches; the per-branch files are the detail while work is in flight.
+When the branch merges into `LEO`, fold anything still true into [`STATE.md`](STATE.md) and delete the task's `STATE.md` in the merge commit. `LEO/STATE.md` is the roll-up across all branches; the per-task files are the detail while work is in flight. Keep the rest of the task folder — that is the work.
 
 ## Other rules in this folder
 

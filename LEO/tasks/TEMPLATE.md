@@ -4,7 +4,7 @@
 
 **Read both agents files:** `../AGENTS.md` (root, shared) ☐ · `LEO/AGENTS.md` (Leo's) ☐ — tick both before starting work.
 
-Copy this file to `LEO/state/<short-task-name>.md` on the first commit of a new sub-branch, then delete these instructions. Keep it current: update it before a long run, after it finishes, and whenever you hit a blocker. Times in UTC.
+Copy this file to `LEO/tasks/<short-task-name>/STATE.md` on the first commit of a new sub-branch, then delete these instructions. Keep everything for this task in that folder and write nothing outside it. Keep this file current: update it before a long run, after it finishes, and whenever you hit a blocker. Times in UTC.
 
 ## What this task is
 
@@ -25,6 +25,14 @@ Only what has been verified, each with the commit that did it.
 ## Blocked
 
 | Item | Blocker | Needed to unblock |
+|---|---|---|
+| | | |
+
+## Sub-agents
+
+Delete this section if none. Each gets its own folder under this one and its own `STATE.md`.
+
+| Sub-agent | Folder | What it is doing |
 |---|---|---|
 | | | |
 
