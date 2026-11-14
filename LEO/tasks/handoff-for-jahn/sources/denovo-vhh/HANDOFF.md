@@ -44,7 +44,7 @@ Round 2 is two steps, in order:
 
 ## 4. Where everything is
 
-Laptop worktree: `C:\Users\LESCHI\hackathon\.worktrees\denovo-vhh\LEO\tasks\denovo-vhh-epitope\`.
+Laptop worktree: `<laptop>\hackathon\.worktrees\denovo-vhh\LEO\tasks\denovo-vhh-epitope\`.
 VM: `ssh team-2`, then `~/hackathon-team-3/LEO/tasks/denovo-vhh-epitope/` (the VM checkout is on branch
 `main-loop` and holds this folder as an **untracked directory**: remove it before any `git pull` there).
 

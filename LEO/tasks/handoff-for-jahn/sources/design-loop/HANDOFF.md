@@ -162,7 +162,7 @@ The user's deadline is 18:00 Oslo (17:00 UTC), and the VM shuts down at the end 
 | Item | Location |
 | --- | --- |
 | Working folder (VM) | `~/wt/leo-design-loop/LEO/tasks/design-loop/`, branch `LEO/design-loop` off `origin/main` 5d639b1; nothing committed |
-| Laptop copy | `c:\Users\LESCHI\hackathon\LEO\tasks\design-loop\`, synced at 16:02 UTC |
+| Laptop copy | `<laptop>\hackathon\LEO\tasks\design-loop\`, synced at 16:02 UTC |
 | Results | `out/` holds `pool.csv`, `round_*/`, `rfd4_*.csv`, `FINAL.*` and `loop.log`; raw RFD4 designs are in `rfd4/<tag>/design/generation/inference_samples/` |
 | Ledger copy | `ledger/runs.csv` and `ledger/variants.csv`: 38 run rows and 1,392 variant rows at 16:03 UTC |
 | State and recipe | `STATE.md` and `README.md` in the working folder; `STATE.md` was updated at 16:02 UTC |
