@@ -30,8 +30,9 @@ Random CV on this data is meaningless: variants differ by 1–2 residues, so nei
 of a split. Three guards:
 
 1. **Grouped CV.** Single-linkage clusters at Hamming ≤ 2 are held out together (179 quantified variants → 120 clusters).
-2. **Constraint band.** Everything is also reported on variants ≥3 mutations from trastuzumab, since
-   `abguard` requires >2 mutations. That is the region we are actually allowed to design in.
+2. **Constraint band.** Everything is also reported inside the legal design band. `abguard` requires >2
+   mutations, but the 70% CDRH3 identity rule binds first and needs **≥4 substitutions** at equal length,
+   so the band is ≥4. `validate()` prints both ≥3 and ≥4.
 3. **No FACS leakage.** The 31 SPR sequences present in the FACS training data are removed before the
    FACS model is fitted, so its score is never a leaked label downstream.
 
@@ -43,24 +44,27 @@ are not novelty scores — hence guard 2 and the external check below.
 
 **Stage 1 — classifier, "will this give a measurable KD?"** (620 SPR outcomes, 179 positive)
 
-| Model | AUROC | AP | AUROC, ≥3 mut |
+| Model | AUROC | AP | AUROC, ≥4 mut |
 |---|---|---|---|
-| one-hot logistic | **0.927** | 0.875 | **0.915** |
+| one-hot logistic | **0.927** | 0.875 | **0.913** |
 | + mutation count + FACS score | 0.926 | 0.878 | 0.914 |
 | mutation count alone | 0.800 | 0.645 | 0.763 |
 | FACS score alone | 0.696 | 0.453 | 0.678 |
 
 **Stage 2 — ranker, log10 KD** (179 quantified, grouped CV)
 
-| Model | Spearman | ≥3 mut | Median true KD of its top 20 |
+| Model | Spearman | ≥4 mut | Median true KD of its top 20 |
 |---|---|---|---|
-| one-hot + mut count + FACS ridge | **+0.687** | **+0.622** | **1.42 nM** |
+| one-hot + mut count + FACS ridge | **+0.687** | **+0.628** | **1.42 nM** (6.5 nM in band) |
 | one-hot ridge | +0.667 | +0.610 | 1.42 nM |
 | mutation count alone | +0.387 | +0.242 | 4.89 nM |
 | FACS score alone | +0.063 | +0.131 | 81 nM |
 
 Overall median KD is 86 nM, so the ranker's top 20 is a ~60× improvement in median affinity, and it
-recovers the 0.023 nM best binder in the set.
+recovers the 0.023 nM best binder. **That top 20 is mostly 1–2 substitution variants the 70% identity rule
+forbids**: inside the legal band (≥4 substitutions) the top-20 median is 6.5 nM, ~13× better than the
+median. The tightest binders here are the ones closest to trastuzumab, so the legal band costs roughly 4×
+in achievable affinity before any model is involved.
 
 **Ensemble verdict.** Use both stages, but the ensemble *features* barely help: adding the FACS score and
 mutation count to the ranker is worth +0.02 Spearman and nothing at all to the classifier. The two stages
