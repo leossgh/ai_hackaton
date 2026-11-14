@@ -143,6 +143,65 @@ make down
   - Use `batchSize 1` for the longest input to avoid running out of GPU memory.
   - A custom checkpoint must match the image's architecture and paired autoencoder.
 
+### 4.5 Getting Compute: Connecting to the VM and Moving Work onto It
+
+The compute is one shared VM per team (one H100, 16 vCPUs, 200 GB RAM, 500 GB disk). You don't launch jobs through a scheduler. You SSH in, then copy code and data over and run it there.
+
+- **VM IP:** `89.169.114.1`
+- **User:** `hackathon` (shared by the whole team)
+- **Team label on the key:** `team-2`
+- **Key:** the team's private SSH key was sent through a one-time Bitwarden Send link in the organisers' message. Download it from there. **Never commit the key or paste the link into the repo.**
+
+**Connect (macOS/Linux; on Windows use PowerShell or WSL with the matching key path):**
+
+```bash
+mv ~/Downloads/team-2 ~/.ssh/team-2
+chmod 600 ~/.ssh/team-2
+ssh -i ~/.ssh/team-2 hackathon@89.169.114.1
+```
+
+Optional shortcut in `~/.ssh/config`, after which `ssh hackvm` works:
+
+```
+Host hackvm
+    HostName 89.169.114.1
+    User hackathon
+    IdentityFile ~/.ssh/team-2
+```
+
+**Shared machine rules:**
+
+- Everyone uses the same user, home directory and GPU. Work in your own folder (`~/<your name>`) so you don't overwrite each other's files.
+- Check `nvidia-smi` before starting a GPU job, so you don't run out of memory next to a teammate's run.
+- Use `tmux` or `screen` for long jobs, so they survive a dropped SSH session.
+
+**Copy code and data to the VM (run on your laptop):**
+
+```bash
+# one file or folder
+scp -i ~/.ssh/team-2 -r ./my_folder hackathon@89.169.114.1:~/<your name>/
+
+# resumable sync, skips unchanged files (preferred for repeat pushes)
+rsync -avz --progress -e "ssh -i ~/.ssh/team-2" \
+  --exclude '.git' --exclude 'hackathon-data' \
+  ./ hackathon@89.169.114.1:~/<your name>/ai_hackaton/
+```
+
+Alternatively, `git clone` the repo on the VM and `git pull` to update it. Don't push the datasets through git. Pull them straight from S3 on the VM (section 2 and section 3 have the `aws s3 sync` commands).
+
+**Copy results back (run on your laptop):**
+
+```bash
+rsync -avz -e "ssh -i ~/.ssh/team-2" \
+  hackathon@89.169.114.1:~/<your name>/results/ ./results/
+```
+
+**Run models on the VM:** every Foundry model is already on the VM as a Docker image, and there is no Foundry Hub. Follow `18-vm.md` (section 3) for the image names and commands. Claude Code is also pre-installed on the VM.
+
+**Before the deadline:** the VMs shut down at the end of Saturday 14 November. Copy results back with the `rsync` command above before then.
+
+**Open point:** the other notes in this README use the path `~/hackathon-team-3/`, while the VM message names the team `team-2`. Check which one is right once you're logged in.
+
 ## 5. Reference Documents
 
 ### 5a. Apheris Challenge Deck (`docs/2026-11_Oslo_hackathon_Apheris_challenge.pdf`, 9 pages)
