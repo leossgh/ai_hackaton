@@ -8,10 +8,10 @@
 
 | | |
 |---|---|
-| Experiments | 5 (`worked` 4, `inconclusive` 1) |
+| Experiments | 6 (`worked` 4, `failed` 1, `inconclusive` 1) — **1 of them ours** |
 | Theories | 15 active + 2 retired — `low` 1, `medium` 7, `high` 7 |
 | Ideas | 13 open/lit-checked, 2 done |
-| Research passes | 7 |
+| Research passes | 7 (step B blocked: no credits) |
 | AMASS spend | 14 searches, $0.70 — **team credits now exhausted**, see Blocked |
 | Published | PR #2 **merged** into `main` at `27b6982`; later work goes out as a new PR |
 
@@ -28,7 +28,7 @@ not on the designs alone. See [`PROMPT.md`](PROMPT.md) for the full cycle.
 
 **Autoresearch loop running** — one pass every 15 minutes (at :08, :23, :38,
 :53) until 18:00 local, pushing to `fork` (`leossgh/ai_hackaton`), which feeds
-**open PR #3** against `niccolocard99/ai_hackaton:main`. Pushes go to `fork`,
+**open PR #5** against `niccolocard99/ai_hackaton:main`. Pushes go to `fork`,
 never `origin`: `leossgh` has no write access upstream.
 
 **Step B (AMASS) is blocked — credits exhausted.** Step A, the repo scan, is
@@ -89,3 +89,6 @@ alone until credits are topped up.
 | 2026-11-14 | **Repo scan found three more teammate commits.** `3dc1f24` recorded as **EXP-004**: fold confidence calibrated against *measured KD* on 60 SPR variants — ipTM AUROC 0.502, min_ipae 0.497, sequence-only 0.849, and ipTM ≥ 0.7 passes **100%** of true non-binders. TH-013's "keep it as a coarse filter" clause **retracted**. `8743169`+`e542324` recorded as **EXP-005**: NanoMelt is the only usable Tm predictor, and **CDRH3 is thermostability-inert** (0 of 40 beyond MAE, framework control p=0.002). TH-005 → `high`, TH-007 **retired**, new TH-016/TH-017, IDEA-003 **done**, IDEA-014/015 opened |
 | 2026-11-14 | Merged `origin/main` (track checkers moved `scripts/` → `NICCOLO/scripts/`, so base-validation commands in root `AGENTS.md` now point at the new path) |
 | 2026-11-14 | pass-006 (3 searches, auto scope): TH-002 `medium` → **`low`** — EXP-005 shows CDRH3 cannot move Tm, so the trade-off it asserts does not exist in our design space; two papers show affinity and stability improved together. New IDEA-016 (expression/self-association scoring, a gap nothing covered). **Then AMASS credits ran out mid-pass**; `research_pass.py` fixed to stop on the first credits 403 rather than make seven doomed calls. pass-007 confirmed the stop works |
+| 2026-11-14 | **PR #3 merged** into `main` at `da498b8`; PR #4 (nick) merged too, so the teammate work is on main. Merged `origin/main`, moved to fork branch `LEO-experiment-ledger-3` and opened a fresh PR |
+| 2026-11-14 | **EXP-006, our own first experiment.** Hypothesis stated before the run: Protenix ranks binders better than Boltz-2. **Wrong** — all ten Protenix metrics span AUROC 0.426-0.526 on the same 60 measured variants, and `px_iptm_ab_her2`, the antibody↔HER2 chain-pair ipTM, is *below* chance at 0.448. TH-013 broadened from one model to the class. Closes a GPU-hungry line of enquiry for two minutes of analysis |
+| 2026-11-14 | Repo scan also found `dac6935` (ranking power of fold metrics vs random) and `fd1b002` (`AGENT_GUIDE.md` for the pre-filter). `dac6935` committed the script but **not its output**, so its conclusion is recorded from the commit message, not from numbers we can cite. The guide supplied the out-of-fold figures now in TH-014: top 10 at 14 nM against 74 nM for a random 10 |

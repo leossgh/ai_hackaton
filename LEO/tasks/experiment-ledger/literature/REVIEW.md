@@ -283,3 +283,38 @@ recipe sacrifices.
    control a standing rule: shuffle the pairings, score both sets, check they
    separate. It costs almost nothing and it is the difference between a number
    and a measurement.
+
+### 9a. Switching folding models does not help (EXP-006, ours)
+
+The natural response to EXP-004 was "try a different folder" — `AGENTS.md`
+prefers template-taking models (OpenFold3, Protenix, Boltz-2, Mol-1). We tested
+that against measured KD on the same 60 variants, using a teammate's committed
+two-model table and our own statistics ([`../analysis/px_calibration.py`](../analysis/px_calibration.py)).
+
+| Metric | AUROC |
+|---|---|
+| `px_iptm_BD` | 0.526 |
+| `boltz2_iptm` | 0.502 |
+| `px_iptm` | 0.498 |
+| `px_ptm` | 0.486 |
+| `px_plddt` | 0.459 |
+| **`px_iptm_ab_her2`** (antibody↔HER2 chain pair) | **0.448** |
+| `px_gpde` | 0.426 |
+
+Protenix fails identically to Boltz-2, and the *most targeted* score available —
+the antibody↔HER2 chain-pair ipTM — is below chance. So the EXP-004 negative is
+a property of fixed-framework CDRH3 optimisation, not a quirk of one model, and
+no amount of refolding with another tool will produce a screen. At 7.9 s per
+structure that was a tempting and expensive mistake to avoid.
+
+**Why it is not just a resolution artefact:** the "326 of 336 tokens are
+identical" explanation covers global scores, but not `min_ipae` (spread 3.0,
+EXP-004) and not a chain-pair ipTM that ignores the framework. The likelier
+reading is that a template-given pose makes any CDRH3 look geometrically
+plausible, and these scores report plausibility rather than binding.
+
+**Sequence ranking, honest figures only:** AUROC 0.927 overall and 0.915 in the
+≥3-mutation band; log10 KD Spearman +0.687 and +0.622 in band; out-of-fold top
+10 averaging 14 nM against 74 nM for a random 10. The 0.980 AUROC that
+`p_binder` scores on this 60-variant table is **in-sample** — those rows are in
+its training data — and must never be quoted as validation.
