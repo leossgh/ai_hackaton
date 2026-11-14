@@ -112,6 +112,7 @@ Two consequences for agents: **record the reasoning** behind every design that m
 | `apheris/rfd4/` | Synced Foundry docs. Start with `18-vm.md`, then `Tutorial.html`. Run all model commands from here. |
 | `apheris/` | **Everything Apheris on this VM.** See "Apheris toolkit" below |
 | `NICCOLO/scripts/` | `check_denovo.py`, `check_optimisation.py`: per-track design checks on top of `abguard` |
+| `JAHN/pipeline/configs/stage1_frozen.yaml` | **Stage 1 of the pipeline, frozen.** Generate, filter, score and rank in one runnable config. Copy it to experiment; do not edit it |
 | `NICCOLO/PIPELINE.md` | **Pipeline status**: what runs, what each stage was trained and tested on, what is rejected and why, and the gaps |
 | `NICCOLO/eda/AGENT_GUIDE.md` | **Read before ranking any optimisation design.** The CDRH3 pre-filter: which classifier and ranker to use, how to call them, and the measured reasons not to screen on ipTM |
 
