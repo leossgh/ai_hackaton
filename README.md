@@ -7,6 +7,13 @@ Owner: Leo
 - **Data and docs bucket:** `s3://apheris-oslo-hackathon/`
 - **Main topic:** nanobody / antibody design with RFD4-Proteina on Apheris Foundry
 - **Key constraint:** designed CDRH3 sequences must differ from all 525,063 CDRH3s in the HER2 tables (novelty filter)
+- **The track is assigned per design, not chosen by the team.** `abguard` decides: identity to the nearest known antibody under 70% puts a design in the de novo track, everything else goes to optimisation. A design is never moved between tracks; if it misses its own track's criteria it is rejected, not reclassified. Teams may submit any mix of the two tracks.
+
+### Numbers that look inconsistent but are not
+
+- **524,346** — CDRH3 variants in the FACS screen (Chinery et al.), the headline dataset.
+- **525,063** — the total across the HER2 tables, which is the set the novelty filter compares against.
+- Use 525,063 as the novelty set. Use 524,346 when describing the FACS data itself.
 
 ## 2. Data
 
@@ -26,6 +33,8 @@ aws s3 sync s3://apheris-oslo-hackathon/data/ hackathon-data/
 
 Total: about 5 GB. Each folder's `README.md` explains its files.
 
+**Status: not downloaded yet.** As of 2026-11-14 there is no `hackathon-data/` on this VM and `/home/hackathon/data` is empty. Run the sync above before anything else. Do not commit the data to git.
+
 ## 3. Docs and Instructions
 
 Download with:
@@ -35,6 +44,8 @@ aws s3 sync s3://apheris-oslo-hackathon/rfd4-proteina/docs/ ~/rfd4
 ```
 
 Then open `~/rfd4/Tutorial.html`.
+
+**Status: not downloaded yet.** There is no `~/rfd4` on this VM as of 2026-11-14.
 
 | File | What it covers | Where to start |
 |---|---|---|
@@ -137,8 +148,8 @@ make down
 ### 5a. Apheris Challenge Deck (`docs/2026-11_Oslo_hackathon_Apheris_challenge.pdf`, 9 pages)
 
 - **Task:** build better HER2 binders with Apheris Foundry
-- **Tracks** (prize pot of $1,500 per track, draft amounts):
-  - *Optimisation:* improve trastuzumab. Same format as trastuzumab. Requires at most 70% CDRH3 identity to trastuzumab and at least 2 mutations from every sequence in the provided data.
+- **Tracks** (the deck's prize figures are marked draft; see section 6 for the task description's numbers, which are newer):
+  - *Optimisation:* improve trastuzumab. Same format as trastuzumab. Requires CDRH3 identity to trastuzumab strictly under 70% and strictly more than 2 point mutations from any provided sequence.
   - *De novo:* design a new HER2 binder. VHH, scFv or Fab from scratch. Requires under 70% identity to any known antibody, checked against Adaptyv's antibody database.
 - **Entry checks:** run automatically at submission. Failing designs are not sent to the lab. No unpaired cysteines; up to about 250 aa in scFv format.
 - **Selection:** each team ranks its own designs. Adaptyv makes and tests 100 designs: 64 guaranteed (4 per team × 16 teams) and 36 extra.
@@ -149,7 +160,7 @@ make down
 ### 5b. Task Description (`docs/ai-antibodies-hackathon-apheris.pdf`, 9 pages)
 
 - **Task:** improve an existing antibody (trastuzumab) with Apheris Foundry, Nebius and JapanFold, using multi-modal data.
-- **Two modes:**
+- **Two modes** (assigned by `abguard`, not chosen):
   - *Optimisation:* point mutations to trastuzumab to improve affinity and thermostability.
   - *De novo:* a new antibody that keeps the original epitope.
 - **Judging (per design, against the trastuzumab baseline):**
@@ -158,7 +169,14 @@ make down
   3. Thermostability.
   - Tiers: S = 3 of 3, A = 2 of 3, B = 1 of 3, unsuccessful = 0 of 3.
 - **Formats:** VHH, Fab or scFv.
-- **Hard checks:** numbering confidence at least 0.1 (immunum), total length at most 250 aa, no unpaired cysteines, and identity to the nearest known antibody under 70%.
+- **Hard checks, exactly as `abguard` applies them:**
+  1. `immunum` extracts the antibody sequence, stripping tags and linkers.
+  2. *Shared checks, every design:* numbering confidence at least 0.1 (is it an antibody?); format is VHH, scFv or Fab; total length at most 250 aa (a single scFv or VHH, or VH and VL combined); no unpaired cysteines.
+  3. *Type-aware identity comparison:* a VHH is compared against known VHHs and heavy chains; an scFv or Fab is split into paired chains and compared as paired antibodies.
+  4. *Track assignment:* identity to nearest known antibody under 70% → de novo; otherwise → optimisation.
+  5. *De novo only:* at least 2 CDRH3 mutations away from trastuzumab.
+  6. *Optimisation only:* CDRH3 identity to trastuzumab under 70%, **and strictly more than 2 point mutations** from any provided data point.
+- **Watch the mutation count.** Page 2 of the PDF says "at least 2 mutations", but the flowchart on page 3 and the hard-filter list on page 6 both say *more than* 2 ("strictly more than 2 point mutations"). Treat 3 as the minimum for the optimisation track, so a design with exactly 2 mutations is not lost to the stricter reading.
 - **Supporting data:**
   - General VHH-antigen data: 454 true-negative pairs (21 with AF3 ipTM at or above 0.7), 2 non-cognate labels, 15 cognate affinities (sub-micromolar), and 1.8M predicted complexes (Smorodina et al.).
   - Trastuzumab: 524,346 CDRH3 variants vs HER2 by FACS (Chinery et al.), and about 700 optimisation designs, 190 with SPR affinity.
@@ -188,8 +206,88 @@ make down
 | `her2-novel-2026-11-09` | 4% | 86% | 6.8 |
 
 - **Checking designs:** run `refold-prepare`, fold the inputs with any Predict Structure model, then run `refold-score`. For the HER2 exercise, rank on `min_ipae`, `iptm` and `binder_plddt`. Filter for novelty before ranking, because known binders fail the filter.
+- **Which folding model to refold with.** For binders, prefer a model that takes a template: it gives a fairer check, because ESMFold2 folds the target unguided.
 
-## 6. Tasks and Ideas
+| Model | Weights | Template support |
+|---|---|---|
+| OpenFold3 | OpenBind, preview 2 | Yes |
+| Protenix | v2, v1 | Yes |
+| Boltz-2 | Boltz-2 | Yes |
+| Boltz-1 | Boltz-1 | No |
+| Mol-1 | base | Yes |
+| ESMFold2 | release | No |
+
+- **`refold-score` pass criteria** are interface PAE, binder pLDDT and RMSD to the design. For the HER2 exercise the pass column stays empty, so rank on the three metrics above instead of relying on a pass flag.
+
+## 6. Submission, Pitch and Prizes
+
+This is the part that decides how much of our work actually gets tested. It was missing from the earlier notes.
+
+### 6.1 Pitch day judging (decides how many designs get tested)
+
+Pitches are judged on four criteria:
+
+| Weight | Criterion |
+|---|---|
+| 40% | **Judgment** — clear reasoning behind the molecules you chose |
+| 20% | **Execution** — a reproducible pipeline in a GitHub repo |
+| 20% | **User fit** — what your design is for, and who needs it |
+| 20% | **Path to value** — a credible route to real use, for the molecule or the method |
+
+Judgment is the largest single weight, so the reasoning for why we picked each design matters more than the volume of designs. Execution is scored on a reproducible GitHub repo, which is what this repo is for: keep the pipeline runnable end to end.
+
+### 6.2 How many designs get tested
+
+- Each team submits a **ranked list of up to 20 designs** (16 assuming a win, plus 4 spare in case of duplication between teams). Only the **top N** of that list goes to the lab, so ranking order is the decision that matters.
+- **Every team gets 4 designs tested, whatever happens.**
+- Pitch placement adds more: 1st **+12** (16 total), 2nd **+8** (12 total), 3rd **+4** (8 total).
+- Each of the **6 judges** nominates a favourite team for **+2** designs.
+- Teams may submit **any proportion** of de novo and optimisation designs. The two tracks are evaluated independently.
+
+Practical consequence: assume 4 tested unless we place. Our top 4 in rank order should be our highest-conviction designs, not our most novel or most numerous.
+
+### 6.3 Experimental evaluation
+
+Adaptyv does **cell-free expression** of each design, then measures:
+
+| Property | How it is measured |
+|---|---|
+| Binding to HER2 | SPR |
+| Epitope preservation | Competitive binding against trastuzumab |
+| Thermostability | Direct measurement |
+
+Trastuzumab itself is measured too, and is the baseline every design is compared against.
+
+### 6.4 Post-evaluation ranking
+
+- **S-tier:** improves on all three (affinity, epitope preserved, thermostability)
+- **A-tier:** improves on two of three
+- **B-tier:** improves on one of three
+
+Teams are ranked by most S-tier designs, then most A-tier, and so on. Ten designs that each improve one property lose to two designs that improve all three. So a few designs that win on all three beat a large pile of partial wins.
+
+### 6.5 Prizes
+
+- Total fund **€3000**, split equally between the de novo and optimisation tracks (€1500 each).
+- Per track: **€800** (1st), **€500** (2nd), **€200** (3rd).
+- **Best Pitch:** an extra $500 on the day.
+- **AMASS:** picks the team that best uses their platform and awards one month free.
+- Note: the challenge deck quotes $720/$360/$270 and marks the figures as draft. The task description's euro figures above are the newer ones.
+
+## 7. Developability and Expression
+
+Two of the three judged properties (thermostability and epitope preservation) have no proxy in the RFD4-Proteina scoring metrics, and a design that does not express cannot be measured at all. There is **no hard filter** for expression, but Adaptyv reports that expression success improved once participants scored candidates with:
+
+- **Aggrescan 3D** — aggregation propensity from structure
+- **SoluProt** — solubility prediction
+- **NetSolP** — solubility prediction
+- **ProteinMPNN with soluble weights** — sequence design biased toward solubility
+
+The task description links a fuller write-up ("Please check the whole write-up here"), which is not captured here. Find that link on the hackathon site.
+
+Open gap: nothing in the provided tooling predicts **thermostability** directly. Worth deciding early whether to add a thermostability predictor, since it is one of the three S-tier conditions.
+
+## 8. Tasks and Ideas
 
 Goal: do interesting things with the data.
 
@@ -198,7 +296,7 @@ Goal: do interesting things with the data.
 - [ ] Bring in other models that seem promising
 - [ ] Design CDRH3s with RFD4-Proteina and pass the novelty filter against the 525,063 HER2 CDRH3s
 
-## 7. Progress Log
+## 9. Progress Log
 
 | Date | Item | Status |
 |---|---|---|
@@ -208,3 +306,7 @@ Goal: do interesting things with the data.
 | 2026-11-14 | Participant guide: fetch returned empty | Open |
 | 2026-11-14 | Step 1 setup: connect Foundry, AMASS, JapanFold, Nebius, abguard | In progress |
 | 2026-11-14 | Local foundry-assistant reviewed and documented (not yet started) | Done |
+| 2026-11-14 | Full PDF re-read; corrected track assignment, mutation count, hard checks | Done |
+| 2026-11-14 | Added submission/pitch/prize rules and developability tools (were missing) | Done |
+| 2026-11-14 | Sync `hackathon-data/` and `~/rfd4` from S3 | **Not started** |
+| 2026-11-14 | Pick a thermostability predictor | Open |
