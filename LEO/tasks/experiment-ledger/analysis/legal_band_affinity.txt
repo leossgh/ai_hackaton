@@ -1,0 +1,30 @@
+Can a legal (>=4 substitution) CDRH3 beat trastuzumab on measured KD?
+Source: fold_calibration_both_models.csv | quantified binders n=30
+Trastuzumab CDRH3 WGGDGFYAMD: measured KD = 0.152 nM
+
+By substitution count (measured KD, nM):
+nmut     n      best      median
+2        4    13.000      35.476
+3        4     0.023       3.734
+>=4 (legal)  21     0.095     127.521
+
+Legal band, tightest first (top 8):
+  WGGSGPYLFD  nmut=4  KD=    0.095 nM   D102S F104P A106L M107F
+  WGAEGFYYWD  nmut=4  KD=    0.368 nM   G101A D102E A106Y M107W
+  YLGSSFYVFG  nmut=7  KD=    2.900 nM   W99Y G100L D102S G103S A106V M107F D108G
+  WGECDFYVHD  nmut=5  KD=    4.600 nM   G101E D102C G103D A106V M107H
+  WASCSFYSFD  nmut=6  KD=    9.242 nM   G100A G101S D102C G103S A106S M107F
+  WDAGGFYAKV  nmut=5  KD=   15.366 nM   G100D G101A D102G M107K D108V
+  WTRPGLYVFA  nmut=7  KD=   21.000 nM   G100T G101R D102P F104L A106V M107F D108A
+  WGGTGDYRYD  nmut=4  KD=   48.412 nM   D102T F104D A106R M107Y
+
+Legal variants beating trastuzumab (0.152 nM): 1 of 21
+  WGGSGPYLFD  nmut=4  KD=0.095 nM  (1.6x better)  D102S F104P A106L M107F
+
+For contrast, the best binder below the legal band: WGSQGFYAYD nmut=3 KD=0.02343889 nM (6.5x better than trastuzumab) - forbidden by the identity rule.
+
+SAMPLING CAVEAT: these 60 variants were chosen for a fold-calibration
+set (30 binders spanning the KD range, 30 non-binders), not sampled at
+random from SPR-768's 179 quantified variants. So the counts above are
+existence proofs, not base rates. Re-run on the full SPR table for a
+real hit rate.
