@@ -47,6 +47,19 @@ QUERIES=(
   "patentcore|anti-HER2 antibody affinity matured humanized claim"
   # --- clinical / regulatory context for user-fit framing ---
   "trialcore|trastuzumab HER2 breast cancer resistance"
+
+  # --- BATCH 2: specific structural / biochemical / thermodynamic gaps ---
+  # Added after batch 1 showed abstracts carried no trastuzumab thermodynamics,
+  # no fragment Tm baseline, and no alanine-scan data.
+  "biomedcore|trastuzumab HER2 isothermal titration calorimetry enthalpy entropy binding"
+  "biomedcore|trastuzumab alanine scanning mutagenesis HER2 binding hot spot residues"
+  "biomedcore|trastuzumab Fab melting temperature nanoDSF domain unfolding biosimilar"
+  "biomedcore|trastuzumab scFv single chain construct thermal stability expression"
+  "biomedcore|trastuzumab association dissociation rate constants kon koff surface plasmon resonance"
+  "biomedcore|HER2 antibody interface buried surface area shape complementarity crystal structure"
+  "biomedcore|CDR grafting epitope retention sequence identity threshold antibody"
+  "biomedcore|antibody binding thermodynamics enthalpy entropy compensation affinity maturation"
+  "patentcore|machine learning computational designed antibody CDR sequence"
 )
 
 slug() { echo "$1" | tr '[:upper:] ' '[:lower:]-' | tr -cd 'a-z0-9-' | cut -c1-60; }
