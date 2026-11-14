@@ -155,31 +155,24 @@ def analyse(path, cutoff):
         print("  !! no trastuzumab heavy chain found (CDRH3 motif absent) - skipped")
         return None
 
-    # Trastuzumab residues, with a fused extra domain peeled off the light chain.
+    # Trastuzumab residues, with any fused extra domain peeled off the N-terminus.
     tras_res, fused = set(), defaultdict(set)
     cdr_auth = {}
-    for ch, nums, seq in roles["tras_H"]:
-        span = longest_common_span(seq, TRAS_H)
-        lo, hi = span if span else (0, len(seq) - 1)
-        tras_res |= {(ch, n) for n in nums[lo:hi + 1]}
-        extra = set(nums) - {n for n in nums[lo:hi + 1]}
-        if extra:
-            fused[f"{ch}(non-trastuzumab part)"] |= {(ch, n) for n in extra}
-        cdr_auth.update({k: (ch,) + v for k, v in
-                         locate_cdrs_in(seq, nums).items() if k.startswith("H")})
-    for ch, nums, seq in roles.get("tras_L", []):
-        span = longest_common_span(seq, TRAS_L)
-        lo, hi = span if span else (0, len(seq) - 1)
-        tras_res |= {(ch, n) for n in nums[lo:hi + 1]}
-        extra = set(nums) - {n for n in nums[lo:hi + 1]}
-        if extra:
-            fused[f"{ch}(non-trastuzumab part)"] |= {(ch, n) for n in extra}
-            print(f"  chain {ch} carries a FUSED non-trastuzumab domain: "
-                  f"{len(extra)} residues, auth "
-                  f"{min(n for _c, n in fused[f'{ch}(non-trastuzumab part)'])}.."
-                  f"{max(n for _c, n in fused[f'{ch}(non-trastuzumab part)'])}")
-        cdr_auth.update({k: (ch,) + v for k, v in
-                         locate_cdrs_in(seq, nums).items() if k.startswith("L")})
+    for logical, role in (("H", "tras_H"), ("L", "tras_L")):
+        for ch, nums, seq in roles.get(role, []):
+            start = tras_start_index(seq, logical)
+            tras_res |= {(ch, n) for n in nums[start:]}
+            if start > 0:
+                extra = nums[:start]
+                label = f"{ch}:{extra[0]}-{extra[-1]} (FUSED non-trastuzumab domain)"
+                fused[label] |= {(ch, n) for n in extra}
+                print(f"  chain {ch} is a FUSION: author residues "
+                      f"{extra[0]}-{extra[-1]} ({len(extra)} res) are NOT "
+                      f"trastuzumab; trastuzumab {logical} chain starts at "
+                      f"author {nums[start]}")
+            cdr_auth.update({k: (ch,) + v for k, v in
+                             locate_cdrs_in(seq, nums).items()
+                             if k.startswith(logical)})
 
     # Candidate partners: every HER2 chain, every 'other' chain, plus any fused
     # domain carved out of a trastuzumab chain.

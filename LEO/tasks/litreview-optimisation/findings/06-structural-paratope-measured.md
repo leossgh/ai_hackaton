@@ -172,3 +172,87 @@ Other stable observations across cutoffs:
 - **Heavy:light stays near 50:50 to 55:45** at every cutoff — the light chain's anchor role is real.
 - At ≥5.0 Å, framework residues appear (TYR49, and ARG66 at 5.5 Å) — worth noting as near-interface
   positions that should not be touched by framework stability engineering.
+
+---
+
+# ⚠⚠ CORRECTION (same day): the "6 free positions" headline was WRONG
+
+**1N8Z does not resolve HER2 residues 581–590**, and that unresolved loop sits directly under
+CDRH3's C-terminal half. Verified two ways:
+
+1. The chain C sequence in `interface_1n8z.txt` has a 10-residue gap starting at 581:
+   `...CVACAHYKDPPFCVARCPS----------IWKFPDEEGA`
+2. **The organisers' own input file says so explicitly** — `apheris/rfd4/Data/12-her2/her2_cdrh3.yaml`:
+   *"HER2 is split at its unresolved loop (581-590) into chains C (489-580) and D (591-607), because
+   input validation rejects a numbering gap inside one chain."*
+
+So the cutoff sweep (§7) tested the wrong axis. It varied the distance threshold but every run used a
+structure that is **blind to part of the epitope**. The right test is other structures.
+
+## Cross-structure result (the corrected basis for design)
+
+Eight trastuzumab structures were analysed. **Four are clean** — full-length trastuzumab H+L plus a
+single intact HER2 chain: **6BGT, 6OGE, 8PWH, 8Q6J**. Excluded, with reasons:
+`7PKL` (**no HER2 chain at all** — it is an anti-idiotypic complex, so its contacts are to another
+antibody), `7MN8` (CDRH3's partner auto-assigned as "other", not HER2 — ambiguous),
+`22GC`/`22GE` (HER2 fragmented across chains / trastuzumab H truncated to 103–121 residues).
+
+`8Q6J` **does** resolve the missing loop, and there `G100` contacts VAL582 and `D102` contacts
+VAL582 (3.42 Å), PRO579 (3.43 Å) and ASP570 (3.86 Å).
+
+| Pos | aa | HER2 contact in n of 5 (4 clean + 1N8Z) | Verdict |
+|---|---|---|---|
+| 99 | W | **4/5** | untouchable (also Ala-scan hotspot 50–5000×) |
+| 100 | G | 2/5 | **demoted — not free** |
+| 101 | G | **1/5** | priced fallback |
+| 102 | D | **4/5** | **contacts HER2 — but see below** |
+| 103 | G | **5/5** | untouchable (shortest contact; structural Gly) |
+| 104 | F | 2/5 | priced fallback (Ala-scan only 1.5–2×) |
+| 105 | Y | **5/5** | untouchable (Ala-scan hotspot 50–5000×) |
+| **106** | **A** | **0/5** | **free** |
+| **107** | **M** | **0/5** | **free** |
+| **108** | **D** | **0/5** | **free** |
+| 109 | Y | **1/5** | priced fallback |
+
+**Only three positions never contact HER2: `A106`, `M107`, `D108`.** Four substitutions are required
+for <70% identity, so **at least one contacting position must change.** The original claim —
+"<70% identity without disturbing a single measured contact" — **does not hold.**
+
+## The corrected design prescription
+
+| Substitutions | Positions | Identity | Rationale |
+|---|---|---|---|
+| 3 | A106, M107, D108 | 72.7% — **fails** | zero HER2 contact in any structure |
+| **4** | + **Y109** or **G101** (1/5 each, longest-distance class) | **63.6%** ✓ | minimum viable |
+| **5** | + **D102W** or **D102F** | **54.5%** ✓ | **adds a measured affinity gain** |
+
+**Why `D102` is still the right fifth choice even though it contacts HER2 in 4/5 structures:** its
+alanine-scan effect is only **1.5–2×** (not a hotspot), it was **"the most poorly conserved residue,
+mutated in 98% of selected phage clones"**, and **`D98W` is measured by SPR to give a 3-fold
+improvement in affinity** over wild-type Fab — by removing electrostatic repulsion with the
+charge-dense epitope (findings 08 §2). **A contacting residue can be suboptimal and improvable.**
+Use `D102` deliberately as an affinity-improving substitution, not because it is free.
+
+**Caveat:** `D98W` is published, so a design must stay ≥3 mutations from that single mutant. Combined
+with 3+ other substitutions this is satisfied.
+
+## Also corrected: do not run the organisers' default spec unmodified
+
+`her2_cdrh3.yaml` redesigns **`B99-108`**. That window includes **all** of W99, G103, F104 and Y105 —
+every contacting position, including both Ala-scan hotspots and the structural glycine — while holding
+contact-free **Y109 fixed**. Running the provided spec as-is designs away the load-bearing residues.
+**Constrain the design window to the free/priced set instead.**
+
+## What survived the stress test
+
+- **CDRH3 is never a majority of the interface** — 26% in 1N8Z, 34% in 8Q6J, consistently a minority.
+  The five CDRs we keep always carry the rest. **The anchor argument holds.**
+- **`A106`, `M107`, `D108` contact HER2 in none of the structures.**
+- The HER2 epitope span **557–605** reproduces across structures.
+- `G103` and `Y105` are contacts in **5/5** — the untouchable calls were right, and the Ala scan
+  independently confirms W99 and Y105 as 50–5000× hotspots.
+
+**Note on provenance:** the cross-check was computed by `crosscheck_structures.py`, written by a
+parallel task and **not yet reviewed line by line**. The 581–590 gap and the organisers' chain split
+are verified directly. The per-structure contact calls should be re-checked before the pitch, and the
+HER2 numbering offsets between constructs normalised.
