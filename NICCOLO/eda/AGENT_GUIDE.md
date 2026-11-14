@@ -17,8 +17,9 @@ designs (<70% identity to known antibodies) — we have no labelled data for tho
 |---|---|---|
 | **Question** | Will this variant give a measurable KD at all? | Among those, how tight? |
 | **Model** | Logistic regression, L2, `C=0.3` | Ridge regression, `alpha=3.0` |
-| **Features** | one-hot CDRH3 (10 positions × 20 residues = 200) | the same 200, plus mutation count and the FACS score (202) |
+| **Features** | one-hot CDRH3 (10 positions × 20 residues = 200) | the same 200, plus mutation count (201) |
 | **Trained on** | 620 measured SPR outcomes (179 with a KD, 441 without) | the 179 variants with a measured KD |
+| **Needs the FACS data?** | no | no — `use_facs=True` restores it, worth +0.00 |
 | **Target** | `quantified_binding` vs `no_reportable_kd` | log10 KD in nM |
 | **Validated** | AUROC **0.927**; **0.913** inside the legal design band | Spearman **+0.687**; **+0.628** in band |
 | **Beats** | mutation count alone (0.800), FACS score alone (0.696) | mutation count alone (+0.412), FACS alone (+0.063) |
@@ -28,7 +29,8 @@ both the ≥3 and ≥4 bands.
 
 Both are in `prefilter.py`. Linear models are not a compromise here: gradient boosting and random forests
 were tried and lost on both tasks (classifier 0.915 vs 0.927; ranker +0.628 vs +0.667). With 620 labels and
-a 200-dimensional one-hot space, regularised linear models are the right capacity.
+a 200-dimensional one-hot space, regularised linear models are the right capacity. Hyperparameters are not
+fitted to the test folds either — nested CV, choosing them inside each fold, gives 0.925 and +0.649 (§3).
 
 ### How they work
 
@@ -60,8 +62,9 @@ Set up the data once (the inputs are git-ignored; `K=~/.ssh/team-2`, `H=hackatho
 ```bash
 cd NICCOLO/eda && mkdir -p data
 scp -i $K $H:hackathon-team-3/apheris/hackathon-data/her2-trastuzumab/trastuzumab_her2_spr_all_768.csv data/
-# the FACS clonotype splits, extracted on the VM from zenodo-10831512-trastuzumab-ngs/data.zip
-scp -i $K -r $H:nick-work/splits data/
+# only for use_facs=True or to rerun the FACS experiments: the clonotype splits,
+# extracted on the VM from zenodo-10831512-trastuzumab-ngs/data.zip
+# scp -i $K -r $H:nick-work/splits data/
 ```
 
 Then:
@@ -70,10 +73,13 @@ Then:
 import sys; sys.path.insert(0, "NICCOLO/eda")
 from prefilter import PreFilter, load
 
-spr, facs = load()
-pf = PreFilter().fit(spr, facs)              # ~10 s, dominated by the FACS model
+spr, _ = load()                               # SPR table only; no FACS download needed
+pf = PreFilter().fit(spr)                     # < 1 s
 out = pf.score(["WGGDGFYAMD", "WAADGFYSIE"])  # any number of 10-mers
 ```
+
+`PreFilter(use_facs=True).fit(spr, facs)` adds the FACS feature and a `p_facs_high` column. The audit
+below shows it is worth nothing, so the default leaves it out.
 
 `score()` returns one row per sequence:
 
@@ -82,7 +88,6 @@ out = pf.score(["WGGDGFYAMD", "WAADGFYSIE"])  # any number of 10-mers
 | `n_mut` | Hamming distance to trastuzumab's CDRH3 | **≥4** in practice, see below |
 | `p_binder` | P(measurable KD) | **gate** on this |
 | `pred_log10_kd` | predicted log10 KD, nM | **rank** on this, lower is tighter |
-| `p_facs_high` | FACS high-binder probability | context only; weak on its own |
 
 Recommended cascade:
 
@@ -108,16 +113,56 @@ Measured on a laptop, single process, 2M random 10-mers:
 
 | Stage | Rate |
 |---|---|
-| Featurise + classifier | **1.29M sequences/s** |
-| Full pipeline incl. the FACS model | 160k/s |
+| Featurise + classifier | **1.5M sequences/s** |
+| Full pipeline (default, no FACS) | 540k/s |
+| Full pipeline with `use_facs=True` | 160k/s |
 
-The FACS gradient-boosting model is the only slow part (~285k/s) and contributes almost nothing. For a large
-screen, skip it: use the classifier plus a ranker without the `p_facs` feature (+0.667 vs +0.687 Spearman)
-and run at ~1M/s. **No GPU is needed for screening.** Reproduce with `python prefilter.py`.
+**No GPU is needed for screening.** Reproduce with `python prefilter.py`.
 
 ---
 
-## 3. Four mistakes to avoid
+## 3. Leakage audit, and the one limit that matters
+
+`p10_leakage_audit.py` checks whether the headline numbers are really out-of-sample.
+
+| Check | Result |
+|---|---|
+| Identical sequences shared train/test | **0** in every fold |
+| Closest train–test pair | Hamming **3** (grouping threshold 2, so it holds) |
+| Permuted labels, classifier | **0.486** ± 0.023 |
+| Permuted labels, ranker | **+0.045** ± 0.028 |
+| Nested CV (hyperparameters chosen inside each fold) | 0.925 / +0.649, vs 0.930 / +0.671 fixed |
+| Train on ≤4 mutations, test beyond (classifier) | **0.904**, vs 0.738 for mutation count |
+
+No label leakage, no shared sequences, and model selection is worth only ~0.005 AUROC and ~0.02 Spearman.
+
+### The ranker interpolates — this is the real limit
+
+Sweeping the clustering threshold, with training-set size fixed at 143 by construction, so only train–test
+*similarity* changes:
+
+| Grouping | Classifier AUROC | Ranker Spearman |
+|---|---|---|
+| none (random CV) | 0.933 | +0.730 |
+| Hamming ≤2 (reported) | 0.930 | +0.671 |
+| Hamming ≤3 | 0.917 | +0.641 |
+| Hamming ≤4 | 0.902 | **+0.433** |
+| Hamming ≤5 | 0.845 | **−0.057** |
+
+**Push test sequences ~5 mutations away from everything the ranker trained on and its signal vanishes.**
+This is not a data-volume artefact: subsampling the training set at threshold 2 down to the same 143 points
+still gives +0.670, against +0.433 and −0.057 for the genuinely distant splits.
+
+What this means in practice:
+
+- **Trust the classifier further than the ranker.** It degrades gracefully and survives distance
+  extrapolation (0.904 training on ≤4 mutations and testing beyond).
+- **The ranker is only meaningful for designs with close relatives among the 179 measured variants.** Check
+  that before believing a `pred_log10_kd`: compute the minimum Hamming distance from your design to the
+  training CDRH3s. At ≥5, treat the ranker's output as uninformative, not as a weak signal.
+- This is the sharpest argument for getting more measured affinity data in the region we actually design in.
+
+## 4. Four mistakes to avoid
 
 1. **Do not validate with random cross-validation.** Variants differ by 1–2 residues, so neighbours land on
    both sides of a random split and every score inflates. Use `clusters()` (single-linkage, Hamming ≤2) as
@@ -130,11 +175,12 @@ and run at ~1M/s. **No GPU is needed for screening.** Reproduce with `python pre
 3. **Do not use the FACS classes to rank affinity.** They do not track KD. Among the 37 CDRH3s shared with
    the SPR table, median KD is 7.2 nM for `high`, 4.2 nM for `medium` and 15.4 nM for `low` — not monotonic.
    The 524k table is for coarse binder/non-binder signal and for the novelty filter.
-4. **Do not screen or rank on fold confidence.** See §4.
+4. **Do not screen or rank on fold confidence.** See §5.
+5. **Do not believe `pred_log10_kd` for a design far from the training set.** See §3.
 
 ---
 
-## 4. Refolding: measured, and it does not screen
+## 5. Refolding: measured, and it does not screen
 
 We folded 60 SPR variants with known outcomes (30 with KD from 0.023 to 13,863 nM, 30 with no measurable
 KD) against HER2 domain IV with the 1N8Z template, using **Boltz-2** and **Protenix v2**.
@@ -175,7 +221,7 @@ Do not use refolding to screen or rank, and do not rank on ipTM alone even for d
 
 ---
 
-## 5. What is not covered
+## 6. What is not covered
 
 - **Thermostability** and **epitope preservation** — two of the three judged properties. No labelled data
   for either, and no predictor chosen. The pre-filter says nothing about them.
@@ -185,7 +231,7 @@ Do not use refolding to screen or rank, and do not rank on ipTM alone even for d
   puts trastuzumab's own CDRH3 at 1.8 nM against a measured 0.03–0.18 nM. Treat the output as a ranking, not
   a predicted KD.
 
-## 6. Reproducing the numbers
+## 7. Reproducing the numbers
 
 ```bash
 cd NICCOLO/eda
@@ -197,6 +243,7 @@ python p5_ranker.py        # full model comparison, both tasks
 python p6_iptm_calib.py    # do fold metrics add anything?
 python p7_ipae.py          # interface PAE from the detailed scores
 python p9_protenix.py      # second fold model
+python p10_leakage_audit.py # leakage audit: permutation, threshold sweep, nested CV, extrapolation
 ```
 
 Requires `pandas numpy scikit-learn scipy matplotlib cbor2`. Full results and caveats: `README.md`.

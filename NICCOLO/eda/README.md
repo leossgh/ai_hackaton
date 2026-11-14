@@ -40,6 +40,30 @@ The published clonotype splits are clean (zero sequence and zero cluster overlap
 sequences still sit 1 mutation from a training sequence** (a random split gives 90%). So in-library scores
 are not novelty scores — hence guard 2 and the external check below.
 
+## Leakage audit (`p10_leakage_audit.py`)
+
+Permuted labels collapse both models (classifier 0.486, ranker +0.045), no fold shares a sequence, the
+closest train–test pair is Hamming 3, and nested CV costs only ~0.005 AUROC / ~0.02 Spearman. So the
+headline numbers are genuinely out-of-sample.
+
+The audit did find a real limit. Sweeping the clustering threshold with training size fixed at 143:
+
+| Grouping | Classifier AUROC | Ranker Spearman |
+|---|---|---|
+| none (random CV) | 0.933 | +0.730 |
+| Hamming ≤2 (reported) | 0.930 | +0.671 |
+| Hamming ≤3 | 0.917 | +0.641 |
+| Hamming ≤4 | 0.902 | +0.433 |
+| Hamming ≤5 | 0.845 | −0.057 |
+
+**The ranker interpolates.** Beyond ~4 mutations' separation from its training set its signal disappears,
+and subsampling training data at threshold 2 to the same size still gives +0.670, so this is novelty, not
+data volume. The classifier is robust by comparison and survives distance extrapolation (0.904 training on
+≤4 mutations, testing beyond, against 0.738 for mutation count).
+
+The audit also killed the FACS feature: ranker +0.671 with it, +0.673 without, +0.012 alone. `PreFilter`
+now defaults to `use_facs=False`, which drops an 11 MB data dependency and triples throughput.
+
 ## Results
 
 **Stage 1 — classifier, "will this give a measurable KD?"** (620 SPR outcomes, 179 positive)
@@ -74,12 +98,12 @@ answer different questions (will it bind / how tightly), so both are kept.
 
 | Stage | Rate |
 |---|---|
-| Featurise + classifier | **1.29M sequences/s** |
-| Full pipeline incl. FACS GBM | 160k sequences/s |
+| Featurise + classifier | **1.5M sequences/s** |
+| Full pipeline (default, no FACS) | 540k sequences/s |
+| Full pipeline with `use_facs=True` | 160k sequences/s |
 
-The FACS gradient-boosting model is the only slow part (~285k/s) and contributes almost nothing, so for a
-large screen drop it and run at ~1M/s. The entire 20^10 space is out of reach, but any realistic candidate
-set (10^5–10^7) screens in seconds to minutes on CPU. **No GPU is needed for the pre-filter.**
+The entire 20^10 space is out of reach, but any realistic candidate set (10^5–10^7) screens in seconds to
+minutes on CPU. **No GPU is needed for the pre-filter.**
 
 ## What the data does and does not support
 
