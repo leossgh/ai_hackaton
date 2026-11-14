@@ -39,6 +39,8 @@ So "which track are we doing?" is the wrong question. The right one is "what is 
 - **Strictly more than 2** point mutations from any provided data point
 
 > **Off-by-one warning.** Page 2 of the task description says "at least 2 mutations", but the flowchart and the hard-filter list both say *more than* 2. Use **3 as the minimum** for optimisation designs so nothing is lost to the stricter reading.
+>
+> **The CDRH3 identity rule binds before either mutation count.** Trastuzumab's CDRH3 is `SRWGGDGFYAMDY` (13 aa), so at equal length a design needs **at least 4 substitutions** to fall under 70% identity (9/13 = 69.2%; 3 substitutions = 76.9%). Indels were not tested. The 3-mutation floor is checked against every CDRH3 in the reference set, not only trastuzumab. Verified 14 Nov with `scripts/check_optimisation.py`: a 3-substitution test variant scored 77% identity and was also only 2 mutations from a CDRH3 in the FACS table, and failed on both.
 
 **Novelty set**
 - A design's CDRH3 must differ from all **525,063** CDRH3s in the HER2 tables (`apheris/hackathon-data/her2-trastuzumab/`). The 524,346 figure elsewhere is the FACS variant count, a different number for a different purpose.
@@ -73,7 +75,7 @@ What the scripts check:
 - **Optimisation:** identity 70% or more (abguard `novel` class), CDRH3 identity to trastuzumab under 70%, at least 3 mutations from every provided data point (CDRH3 vs the reference, and whole VH+VL vs `--provided`).
 
 Caveats:
-- `abguard` is not on PATH. The scripts find the newest build with the novelty gate in `~/.cache/uv/archive-v0`; set `ABGUARD_PY` to override. The older cached build has no novelty gate.
+- `abguard` and `immunum` are on `PATH` since 14 Nov (`~/.local/bin`, venv `~/.venvs/abguard`, abguard 0.1.0 installed from the wheel in the uv cache; `abguard --help` lists the `--reference-db` novelty gate). The scripts still fall back to the newest uv-cache build with the novelty gate; set `ABGUARD_PY` to override. The older cached build has no novelty gate. This is the build found on the VM; it has not been confirmed to be the organisers' official release.
 - abguard measures the 70% identity against trastuzumab only, not all known antibodies, so a design near some other known antibody can still be labelled de novo. Treat the script verdict as necessary, not sufficient, until the organisers' official `abguard` is run.
 - The bundled reference is abguard's own CDRH3 index. For the full check, sync `hackathon-data/` and pass `--reference-db` built from it.
 - Passing base validation says nothing about binding, epitope or thermostability. It is only the gate.
@@ -125,7 +127,7 @@ All organiser-supplied tooling lives in `apheris/`. Paths below are relative to 
 | `apheris-gui/` | Streamlit dashboard for the Docker commands (the VM has no Foundry Hub). `./run.sh` serves `localhost:8501`; from a laptop `ssh -L 8501:localhost:8501 <vm>`. Runs one heavy job at a time |
 | `challenge/` | The two challenge documents (task description, deck) as `.md`. The PDFs were removed from the repo; use the `.md` |
 
-**How to run models.** No Foundry Hub and no `apheris-foundry` CLI here. Every model is a Docker image `quay.io/apheris/oslo-hackathon:*`, already pulled, no login needed:
+**How to run models.** No Foundry Hub and no `apheris-foundry` CLI here. `foundry-toolkit` (lists and describes Foundry modules) is installed at `/usr/local/bin`; `foundry-toolkit module list` needs `FOUNDRY_REGISTRY`, `FOUNDRY_USERNAME` and `FOUNDRY_PASSWORD` in the environment, which `~/.bashrc` exports for interactive shells but a one-shot `ssh host cmd` does not. Its `login` is browser-based and not needed. Docker GPU passthrough is verified (`nvidia-smi` runs inside the images). Every model is a Docker image `quay.io/apheris/oslo-hackathon:*`, already pulled, no login needed:
 
 ```bash
 cd ~/hackathon-team-3/apheris/rfd4
@@ -146,7 +148,7 @@ Tasks per image: `design`, `refold-prepare`, `refold-score`, `metrics`, `finetun
 - Untrusted downloads and archives: unzip into their own new empty directory and read with `python3 -I`. The FACS table is a `.zip`; `zenodo-10831512-trastuzumab-ngs/data.zip` is 4 GB unzipped, so extract outside the repo or into a git-ignored folder.
 
 **`abguard` (the validity gate) and the track checkers**
-- `abguard` is not on `PATH`. It is in the uv cache (`~/.cache/uv/archive-v0/*/bin/abguard`, two builds; only the newer has the novelty gate). The scripts find the right build themselves, or set `ABGUARD_PY`. Its reference database is the 525,063 HER2 CDRH3s plus prior art.
+- `abguard` and `immunum` are on `PATH` (see the caveats under Base validation). The uv cache (`~/.cache/uv/archive-v0/*/bin/abguard`) holds two builds; only the newer has the novelty gate. The scripts find the right build themselves, or set `ABGUARD_PY`. Its reference database is the 525,063 HER2 CDRH3s plus prior art.
 - `scripts/check_denovo.py` and `scripts/check_optimisation.py` wrap it and add each track's extra rules (see their docstrings). Usage: `scripts/check_<track>.py designs.csv [-o report.csv] [--strict-exit]`; optimisation also takes `--provided trastuzumab_her2_spr_all_768.csv`.
 - Local results are predictions. The real track assignment is `abguard`'s, at submission time.
 
@@ -179,19 +181,23 @@ Check designs with `refold-prepare` → fold with a Predict Structure model → 
 
 The RFD4-Proteina metrics only speak to binding. Thermostability and epitope preservation do not appear in them, and a design that fails to express cannot be measured at all. There is no hard filter for expression, but Adaptyv reports expression success improved when participants scored candidates with **Aggrescan 3D**, **SoluProt**, **NetSolP**, and **ProteinMPNN with soluble weights**. No thermostability predictor is provided; choosing one is an open decision.
 
+Checked on the VM on 14 Nov: Aggrescan 3D, SoluProt, NetSolP and ProteinMPNN are **not installed** (not on `PATH`; `$HOME` searched to depth 4; a `proteinmpnn` skill folder exists in `~/.claude/skills` but no executable was found and its contents were not inspected), and none appears in the Nebius or JapanFold model lists. Two tools that sound relevant are **not** thermostability predictors: Nebius `stab-ddg` predicts *binding* ddG for point mutants of a complex (`predict-binding-ddg`, an affinity proxy), and JapanFold `opendde` / `opendde-abag` dock protein and antibody-antigen complexes.
+
 ## Tools and accounts
 
-- **AMASS:** literature, trial, patent and drug search. One person per team claims the $100 credits. The API key comes from the `AMASS_API_KEY` environment variable. Never write a key into the repo. Budget is roughly 2,000 searches; cache anything re-run.
-- **Nebius Tools, JapanFold:** see `LEO/README.md` section 4. Setup files are in the Slack folder.
+- **AMASS:** literature, trial, patent and drug search. One person per team claims the $100 credits. The API key comes from the `AMASS_API_KEY` environment variable. Never write a key into the repo. Budget is roughly 2,000 searches; cache anything re-run. **Not claimed yet:** `AMASS_API_KEY` is unset on the VM (checked 14 Nov).
+- **Nebius Scientific AI (set up 14 Nov):** the participant kit is extracted to `~/nebius-kit/participant-03/` (outside the repo) and `install.sh` put the 51-skill bundle plus the `nebius-scientific-ai` client in `~/.claude/skills`. `NEBIUS_CREDS` (exported in `~/.bashrc`) points at the credentials file. Use `python3 ~/.claude/skills/nebius-scientific-ai/forge.py --creds "$NEBIUS_CREDS" models|schema|run|submit|status|wait|fetch`. Tested: the API key authenticates and lists models; one schema (`stab-ddg`) was read. **No Nebius job has been run yet.** Models of interest: `antifold`, `abodybuilder3`, `nanobodybuilder2`, `igbert`, `esm-if1`, `saprot-inverse-folding`, `stab-ddg` (binding ddG, see Developability), `boltzgen`, `rfdiffusion`, `rfd4-proteina`, `alphafold3`, `chai1`.
+- **JapanFold (set up 14 Nov):** API at `https://api.japanfold.aiand.com`. Key in `~/.config/japanfold/api_key` (mode 600), exported as `JAPANFOLD_API_KEY` from `~/.bashrc`. Skill at `~/.claude/skills/japanfold/`, `japanfold` CLI 1.1.1 (venv `~/.venvs/japanfold`), and a `japanfold` MCP server registered at user scope (shows Connected). Balance was $1,100.00 before the first job ($1,000 hackathon credit + $100 signup). Models (`GET /v1/models`, no key needed): predict `rf3` (RoseTTAFold3), `openfold3`, `boltz2`, `esmfold2`, `esmfold2-fast`, `mol1`, `openbind`; dock `opendde`, `opendde-abag`; score an existing binder `af2ig`; design `boltzgen`, `rfd3`, `pxdesign`, `rfd4`, with protocols such as `nanobody-anything`, `antibody-anything` and `rfd4-binder`. Verified: an RF3 fold of the trastuzumab Fv (227 residues) succeeded in about 50 s for about $0.0017. Typical p90 cost is roughly $0.001 to $0.02 per target. Never print the key; test it with `[ -n "$JAPANFOLD_API_KEY" ]`.
+- **Rebuild commands** for abguard, Nebius and JapanFold are in `README.md` section 4.6.
 - **Claude Code:** pre-installed on the VM.
 
 ## Rules for agents
 
 - **Read the `.md`, never the PDF.** The challenge documents live as Markdown in `apheris/challenge/`; the PDFs are removed. Always open the `.md`. If you add a new PDF, convert it to `.md` next to it first and use that.
-- **Unzip the participant bundle before working.** If `participant-03/` does not exist but `participant-03*.zip` does, unzip it (see "Tools and accounts") before using Nebius or JapanFold.
+- **The Nebius participant bundle is already extracted and installed** (`~/nebius-kit/participant-03/`, see "Tools and accounts"). Do not unzip it again into the repo. JapanFold is configured separately and is not in that bundle.
 
 - Always run **BASE VALIDATION** (above) on every design before ranking or submitting it.
-- Never commit secrets or API keys, nor `apheris/hackathon-data/`, `apheris/rfd4/runs/` and `LEO/.venv/`.
+- Never print or echo a key; refer to `$JAPANFOLD_API_KEY` and `$NEBIUS_CREDS` by name. Never commit secrets or API keys, nor `apheris/hackathon-data/`, `apheris/rfd4/runs/` and `LEO/.venv/`.
 - Do not commit or push unless asked. End commit messages with a `Co-Authored-By:` line naming the model you are actually running as.
 - Record every design run: input spec, weight image, settings, seed, and resulting scores. Put run notes in the owner's folder, not in shared folders.
 - Keep each design's provenance and its **predicted** track (from its identity numbers) with the design. The real track assignment only comes from `abguard`, so treat local labels as predictions and verify them.
@@ -202,7 +208,8 @@ The RFD4-Proteina metrics only speak to binding. Thermostability and epitope pre
 
 - Participant field guide did not load when fetched. Open it in a browser and add its contents to `LEO/README.md`.
 - The developability write-up linked from the task description ("check the whole write-up here") is not captured. Find it on the hackathon site.
-- JapanFold link and login are not yet recorded.
-- `abguard` works from the uv cache but is not on `PATH`. Nebius setup files are in the Slack folder.
+- The JapanFold key was shared in a chat on 14 Nov. Rotate it at `japanfold.aiand.com/account/token`, overwrite `~/.config/japanfold/api_key`, and re-run `claude mcp add` for the `japanfold` server (the MCP entry stores the old key in `~/.claude.json`).
+- Confirm with the organisers that the installed `abguard` 0.1.0 is the official release.
+- AMASS credits are not claimed.
 - AMASS onboarding walkthrough link returned 404.
-- No thermostability predictor chosen.
+- No thermostability predictor chosen, and no developability scorer installed (Aggrescan 3D, SoluProt, NetSolP, ProteinMPNN).
