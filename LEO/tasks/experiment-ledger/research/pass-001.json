@@ -1,0 +1,91 @@
+{
+  "pass": 1,
+  "date": "2026-11-14",
+  "scope": "auto",
+  "rationale": "auto: low/untested theories first (8), then unbacked ideas (1)",
+  "targets": [
+    "TH-007",
+    "TH-008",
+    "TH-001",
+    "IDEA-007"
+  ],
+  "queries": {
+    "cached": 0,
+    "fetched": 0,
+    "failed": [],
+    "deferred": [
+      [
+        "TH-007",
+        "biomedcore",
+        "scFv thermostability prediction machine learning validation Tm"
+      ],
+      [
+        "TH-007",
+        "biomedcore",
+        "antibody melting temperature predictor benchmark accuracy"
+      ],
+      [
+        "TH-007",
+        "biomedcore",
+        "TEMPRO nanobody Tm protein embedding prediction"
+      ],
+      [
+        "TH-008",
+        "biomedcore",
+        "trastuzumab HER2 contact residues 1N8Z interface paratope"
+      ],
+      [
+        "TH-008",
+        "biomedcore",
+        "alanine scanning trastuzumab HER2 hot spot energetic contribution"
+      ],
+      [
+        "TH-008",
+        "biomedcore",
+        "buried surface area shape complementarity HER2 antibody interface"
+      ],
+      [
+        "TH-001",
+        "biomedcore",
+        "CDRH3 library randomization affinity gain anti-HER2 scFv"
+      ],
+      [
+        "TH-001",
+        "biomedcore",
+        "CDR3 diversification picomolar affinity maturation"
+      ],
+      [
+        "TH-001",
+        "biomedcore",
+        "long CDRH3 20 residue loop tolerance substitution"
+      ],
+      [
+        "IDEA-007",
+        "patentcore",
+        "anti-HER2 antibody CDR sequence claim variant"
+      ],
+      [
+        "IDEA-007",
+        "patentcore",
+        "trastuzumab biosimilar CDRH3 sequence claim"
+      ],
+      [
+        "IDEA-007",
+        "patentcore",
+        "computationally designed antibody CDR freedom to operate"
+      ]
+    ]
+  },
+  "spend_this_pass_usd": 0.0,
+  "spend_total": {
+    "searches": 0,
+    "usd": 0.0,
+    "passes": 1
+  },
+  "findings": {
+    "TH-007": [],
+    "TH-008": [],
+    "TH-001": [],
+    "IDEA-007": []
+  }
+}
