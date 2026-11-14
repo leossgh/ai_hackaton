@@ -160,9 +160,11 @@ def main() -> int:
         for ref in refs(row.get("theory_ids", "")):
             if ref not in theories:
                 errors.append(f"{where}: unknown theory {ref}")
-        idea = (row.get("idea_id") or "").strip()
-        if idea and idea not in ideas:
-            errors.append(f"{where}: unknown idea {idea}")
+        # idea_id is a semicolon list, like theory_ids: one experiment can
+        # close several ideas at once (EXP-005 closed IDEA-003 and IDEA-001).
+        for ref in refs(row.get("idea_id", "")):
+            if ref not in ideas:
+                errors.append(f"{where}: unknown idea {ref}")
         sup = (row.get("supersedes") or "").strip()
         if sup and sup not in seen and sup not in {r.get("exp_id") for r in rows}:
             errors.append(f"{where}: supersedes unknown experiment {sup}")

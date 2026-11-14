@@ -19,6 +19,7 @@ suggested it) | `team`.
 - **source:** literature
 - **evidence:** PMID:40653772
 - **notes:** The HER2 images only redesign CDRH3, so the framework half needs `antibody-2026-10-30`. This is the only idea here that attacks two scored properties at once, which is what S-tier requires.
+  **EXP-005 turned this from a hunch into the measured strategy.** CDRH3 is thermostability-**inert**: 41 variants of the identical VH differing only in CDRH3 span 4.63 °C with 0 of 40 beyond the 4.1 °C MAE, while framework point mutations in the same VH do move Tm (p = 0.002). So the split is not a compromise, it is the only way to touch Tm at all. Caveat from TH-017: the framework gains available are small (best single +3.74 °C, inside the error bar; stacking sub-additive) and candidates must avoid the →Glu charge bias, unpaired cysteines, and position 98 at the CDRH3 junction.
 
 ### IDEA-002 — Cap arginine content in designed CDRH3 and check whether it costs predicted affinity
 
@@ -32,14 +33,15 @@ suggested it) | `team`.
 
 ### IDEA-003 — Choose the thermostability predictor and commit to it
 
-- **status:** lit-checked
+- **status:** done
 - **priority:** high
-- **tests:** TH-007
+- **tests:** TH-016
 - **cost:** one research pass plus setup; no GPU
 - **source:** team
 - **evidence:** PMID:36683173; PMID:39154093; PMID:41564239
 - **query_terms:** scFv Tm predictor validation benchmark antibody fragment; nanobody thermostability deep learning screening criterion
 - **notes:** Named as an open decision in `AGENTS.md`. Two of the three scored properties have no built-in proxy and this is the cheaper one to fix. Blocking for any S-tier claim. **pass-002 split this in two:** for a **VHH** submission use TEMPRO (PMID:39154093, MAE 4.03 °C) cross-checked against the `Tm > 65 °C` criterion in PMID:41564239 — both sdAb-specific and both reporting on Tm directly. For an **scFv** there is still no Tm-trained predictor; the best available is the TS50-trained pair in PMID:36683173, which recovered 18 of 20 known thermostable positions on a held-out mAb. Recommendation: if we submit a VHH, this decision is effectively closed; if scFv only, flag the predictor as a known weakness in the pitch rather than overclaiming.
+  **DONE by EXP-005**, and the recommendation held up. The answer: **NanoMelt** (MAE 4.1 °C on 639 measured nanobody Tm), installed on the VM and verified against its own reference output. Neither platform ships anything else — Nebius `stab-ddg` is StaB-ddG (*binding* ddG), Foundry AQ is small-molecule — and cheap features reach only Pearson +0.40. It is nanobody-trained, so it is in-domain for a VHH and out-of-domain for our scFv/VH, exactly the split pass-002 predicted. See TH-016.
 
 ### IDEA-004 — Extract per-residue energetic contributions at the 1N8Z interface, not just the contact list
 
@@ -129,7 +131,7 @@ suggested it) | `team`.
 - **source:** experiment
 - **evidence:** EXP-003
 - **query_terms:** sequence based antibody affinity ranker deployment validation
-- **notes:** The highest-value change available and it costs no GPU time. We currently rank on min_ipae, which EXP-003 shows separates real HER2 pairs from shuffled ones at AUROC 0.645 while a one-hot sequence model reaches Spearman +0.622 against measured log10 KD in the >=3-mutation band. Use the two stages as intended: classifier for "will this bind at all", ranker for "how tightly", and keep a structure score only as a coarse filter that discards the clearly bad. Coordination note: this is a teammate's code in `NICCOLO/`, which we must not write into — use it, cite it, and ask before changing it. Scope limit from TH-014: optimisation track only, since no labels exist for de novo designs.
+- **notes:** **A guide now exists:** `NICCOLO/eda/AGENT_GUIDE.md` (commit fd1b002) documents the two models, the setup (`scp` the SPR-768 table and the FACS splits into `NICCOLO/eda/data/`), and the mistakes to avoid — read it before ranking anything. Model form: logistic L2 `C=0.3` classifier, ridge `alpha=3.0` ranker, one-hot CDRH3 over 10 positions. Out-of-fold the top 10 average 14 nM against 74 nM for a random 10. One stale path to watch: the guide points base validation at `scripts/check_*.py`, which moved to `NICCOLO/scripts/` in commit f4d8da8. The highest-value change available and it costs no GPU time. We currently rank on min_ipae, which EXP-003 shows separates real HER2 pairs from shuffled ones at AUROC 0.645 while a one-hot sequence model reaches Spearman +0.622 against measured log10 KD in the >=3-mutation band. Use the two stages as intended: classifier for "will this bind at all", ranker for "how tightly", and keep a structure score only as a coarse filter that discards the clearly bad. Coordination note: this is a teammate's code in `NICCOLO/`, which we must not write into — use it, cite it, and ask before changing it. Scope limit from TH-014: optimisation track only, since no labels exist for de novo designs.
 
 ### IDEA-012 — Run a decoy control before trusting any score we rank on
 
@@ -152,3 +154,36 @@ suggested it) | `team`.
 - **evidence:** PMID:37880344
 - **query_terms:** ESM-IF1 inverse folding binder design success rate; inverse folding model comparison protein binder design benchmark
 - **notes:** `AGENTS.md` names ProteinMPNN with soluble weights as a developability filter, which is a different job from designing a binder. PMID:37880344 reports ESM-IF1 producing successful binder designs toward 185 heteromeric interfaces (6.5%) against ProteinMPNN's 18 (1.5%) from 100 samples each — a ~4x difference at exactly the step where we would pick sequences for a designed backbone. **Caveat that keeps this at medium:** "successful" there means *predicted* interface RMSD <= 2 A, not measured binding, so it is one predicted metric preferring another. Per IDEA-012 this is precisely the kind of number that needs a control before it drives a decision. Worth a cheap comparison, not worth reorganising the pipeline around.
+
+### IDEA-014 — Score every submission candidate with NanoMelt, and say which format the number is in-domain for
+
+- **status:** open
+- **priority:** high
+- **tests:** TH-016; TH-012
+- **cost:** negligible: ~45 sequences/s on the H100, already installed and verified on the VM
+- **source:** experiment
+- **evidence:** EXP-005
+- **query_terms:** nanobody thermostability prediction applicability domain
+- **notes:** Thermostability is one of three judged properties and the only one with no labelled data, so a predicted Tm with an honest domain caveat beats no number at all. Run NanoMelt over the final ranked list. For a **VHH** the 4.1 °C MAE applies and the ranking is defensible; for an **scFv/VH** the number is out-of-domain and must be reported as such — the ->Glu bias and `V37F` hits show the model reaching for its training domain. Pair this with the cysteine check: NanoMelt's own training data reproduces the odd/even cysteine effect (41 °C at 0, 67 °C at 2, 73 °C at 4, 53 °C at 5), which is the same rule `abguard` enforces, so a design that fails one will likely look bad in the other.
+
+### IDEA-015 — Spend one submission slot on a framework-stabilised variant, filtered for the three known traps
+
+- **status:** open
+- **priority:** medium
+- **tests:** TH-017; TH-005
+- **cost:** sequence-level work plus one refold as a plausibility check; no design run needed
+- **source:** experiment
+- **evidence:** EXP-005
+- **query_terms:** framework stabilising mutation combination epistasis antibody VH
+- **notes:** 12 of 29 tested combinations clear the 4.1 °C error bar and random 6-mutation subsets reach +6.09 °C, so there is something to win — but TH-017 says it is bounded and contaminated. Any candidate must: exclude the fragile positions (W36, C22, C96, L20, M83, V48, D73, E89), exclude position 98 at the `...YYC-S-R|WGGDGFYAMD` junction since it dominates the top hits and is nearest the paratope, keep the cysteine count unchanged so `abguard` does not reject it, and not be a pure net-charge shift (11 of the top 12 singles are ->Glu, with unknown cost to expression). One slot, because the Tm gain is predicted by a model that is out-of-domain for a VH.
+
+### IDEA-016 — Score the final list for expression and self-association, not just the three judged properties
+
+- **status:** open
+- **priority:** medium
+- **tests:**
+- **cost:** low: all four tools are sequence/structure-level, no GPU design run
+- **source:** literature
+- **evidence:** PMID:31181988; PMID:23995618
+- **query_terms:** scFv self association viscosity concentration dependent developability; cell-free expression failure sequence determinants antibody fragment
+- **notes:** A design that fails to express is not scored badly, it is **unmeasurable** — and Adaptyv reports expression success improved when participants used Aggrescan3D, SoluProt, NetSolP and ProteinMPNN soluble weights (root `AGENTS.md`). Nothing in this backlog covered that until now, which is a gap given the whole submission depends on the assays returning numbers at all. Also worth noting that a high Tm does not clear developability on its own: tibulizumab's anti-IL-17 scFv had Tm 73.1 °C by DSC yet showed concentration-dependent, initially reversible self-association (PMID:31181988), while CDR-restricted scFv engineering reached 100 mg/ml with <2% HMW species after 7 weeks (PMID:23995618). Cheap insurance on the four designs that actually get tested.

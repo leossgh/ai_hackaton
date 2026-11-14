@@ -1,0 +1,32 @@
+Fold-metric calibration against measured affinity, Boltz-2 vs Protenix
+Input: fold_calibration_both_models.csv (origin/nick fd1b002), n=60, 30 binders / 30 non-binders
+Measured KD among binders: 0.023-13863.2 nM
+
+AUROC = binder vs non-binder separation (0.5 is chance)
+Spearman = agreement with tighter binding among the 30 binders (positive means the metric is right)
+
+metric                 AUROC  Spearman
+--------------------------------------
+p_binder               0.980     0.830
+px_iptm_BD             0.526     0.165
+boltz2_iptm            0.502     0.140
+px_iptm                0.498     0.237
+px_rank                0.496     0.234
+px_ptm                 0.486     0.206
+px_plddt               0.459     0.134
+px_iptm_ab_her2        0.448     0.239
+px_iptm_BC             0.446     0.200
+px_gpde                0.426     0.213
+
+Reading: every Protenix metric sits as close to chance as Boltz-2's
+ipTM does -- AUROC 0.426 to 0.526 across ten metrics, including the
+antibody<->HER2 chain-pair ipTM. So the EXP-004 failure is a property
+of fixed-framework CDRH3 optimisation, not of Boltz-2 specifically,
+and switching to another template-taking model will not fix it.
+
+DO NOT QUOTE p_binder's 0.980 AS VALIDATION. These 60 variants are
+part of the classifier's own training data, so that figure is
+in-sample and inflated. The honest numbers are the grouped-CV ones
+from EXP-003/EXP-004: AUROC 0.927 overall, 0.915 in the >=3-mutation
+band, and 0.849 on this 60-variant subset. It is shown here only to
+make the scale of the fold-metric failure legible.

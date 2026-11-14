@@ -33,15 +33,16 @@ evidence yet supports, so that a pass can knock them down.
 
 ### TH-002 — Affinity gains bought in CDRH3 cost thermostability, so the two prize properties are in direct tension and must be co-optimised, not optimised in sequence
 
-- **confidence:** medium
+- **confidence:** low
 - **status:** active
 - **property:** binding; thermostability
 - **falsified_by:** Our top-affinity designs show no Tm penalty relative to trastuzumab, or the penalty is uncorrelated with the number of CDRH3 substitutions.
 - **evidence_for:** PMID:30666176 — review of affinity/specificity/stability/solubility trade-offs, states improvements in one property commonly cause deficits in another; PMID:21540796
-- **evidence_against:** PMID:40653772 — stabilising framework mutations distal to the CDRs preserved HER2 engagement, which suggests the tension can be *sidestepped* rather than traded (see TH-005)
+- **evidence_against:** PMID:40653772 — stabilising framework mutations distal to the CDRs preserved HER2 engagement, which suggests the tension can be *sidestepped* rather than traded (see TH-005); **EXP-005 — CDRH3 is thermostability-inert** (41 variants of the identical VH differing only in CDRH3 span 4.63 °C with 0 of 40 beyond the 4.1 °C MAE; Spearman(predicted Tm, measured KD) = +0.001), so an affinity gain bought in CDRH3 cannot cost Tm in the first place; AMBC_JwGSFsFYuumYi1zgXk0571g2F5A — an AI platform reports **Tm up to ~10 °C higher** with aggregation under accelerated thermal stress falling from 100% to <5% *while* optimising affinity; PMID:23995618 — CDR-restricted engineering of native human scFvs produced highly stable, soluble bifunctional antibodies formulated at 100 mg/ml with <2% high-molecular-weight species after 7 weeks
 - **query_terms:** antibody affinity stability trade-off CDR mutation destabilizing; CDR mutation melting temperature penalty scFv; co-optimization affinity stability antibody engineering
 - **history:**
   - 2026-11-14 created, confidence medium — the supporting source is a review, not primary measurement; the counter-evidence is primary and trastuzumab-specific (pass-001)
+  - 2026-11-14 medium → **low** (EXP-005, pass-006). The mechanism this theory asserts does not exist in our design space: EXP-005 shows CDRH3 changes do not move Tm at all, with a control proving the predictor is not blind. Two further cases show affinity and stability being improved together rather than traded (AMBC_JwGSFsFYuumYi1zgXk0571g2F5A, PMID:23995618). **Downgraded, not retired**, and the distinction matters: the Tm figures in EXP-005 are *predicted* by a model that is out-of-domain for a VH (TH-016), and we have no *measured* Tm for any CDRH3 variant. The field-level trade-off (PMID:30666176) may still hold for framework and whole-molecule changes — it just does not apply to the CDRH3-only redesign our tools actually perform.
 
 ### TH-003 — Arginine-rich designed CDRH3 loops will score well on predicted affinity but fail epitope preservation, because Arg-driven affinity is non-specific
 
@@ -69,7 +70,7 @@ evidence yet supports, so that a pass can knock them down.
 
 ### TH-005 — Stability and binding can be decoupled: put all binding risk in CDRH3 and buy back thermostability with framework mutations that do not touch the epitope
 
-- **confidence:** medium
+- **confidence:** high
 - **status:** active
 - **property:** thermostability; epitope
 - **falsified_by:** Framework-stabilised variants of our designs lose HER2 competition against trastuzumab, or gain no Tm.
@@ -78,6 +79,7 @@ evidence yet supports, so that a pass can knock them down.
 - **query_terms:** framework mutation antibody thermostability preserve antigen binding trastuzumab; scFv framework stabilizing mutation melting temperature; consensus framework engineering Fv stability
 - **history:**
   - 2026-11-14 created, confidence medium — strongest theory in this set because the evidence is primary, computational-plus-experimental, and on trastuzumab itself (pass-001)
+  - 2026-11-14 medium → **high** (EXP-005). The decoupling now rests on a control, not one paper. 41 variants of the identical trastuzumab VH differing *only* in CDRH3 span 4.63 °C of predicted Tm with **0 of 40 beyond the predictor’s 4.1 °C MAE**, and Spearman(predicted Tm, measured KD) = **+0.001** — CDRH3 is inert. Framework point mutations in the same VH do move Tm (mean −0.76 °C, range −6.96 to +2.05, 3 beyond MAE) against CDRH3’s −0.09 °C and none beyond; |ΔTm| median 0.63 vs 0.19 °C, Mann–Whitney **p = 0.002**. So the model is not blind and the two regions genuinely differ. Design consequence: spend CDRH3 entirely on affinity and epitope. Tempered by TH-017 — the framework gains actually available are small and contaminated.
 
 ### TH-006 — A VHH can hold trastuzumab's own epitope at sub-nanomolar affinity, so the de novo track is viable without giving up epitope preservation
 
@@ -93,8 +95,8 @@ evidence yet supports, so that a pass can knock them down.
 
 ### TH-007 — scFv thermostability is predictable from sequence well enough to rank our designs, which closes the open "no thermostability predictor" decision
 
-- **confidence:** medium
-- **status:** active
+- **confidence:** retired
+- **status:** retired
 - **property:** thermostability
 - **falsified_by:** The chosen predictor's ranking shows no correlation with the measured Tm values Adaptyv returns.
 - **evidence_for:** PMID:39154093 — TEMPRO predicts single-domain antibody Tm from protein embeddings with **MAE 4.03 °C, RMSE 5.66 °C**, i.e. a stated error bar on the quantity Adaptyv actually measures; PMID:41564239 (2026) — synergistic deep-learning nanobody thermostability prediction proposing a concrete screening criterion, **Tm > 65 °C and Qclass IV**; PMID:36683173 — PTLM and Rosetta-feature CNN classify thermostable scFv variants, and on an independent mAb with 20 characterised thermostable mutations the TS50-trained models recovered **18 of the residue positions and 5 identical amino-acid mutations**
@@ -103,6 +105,7 @@ evidence yet supports, so that a pass can knock them down.
 - **history:**
   - 2026-11-14 created, confidence low — this is the team's named open decision and the candidates are all trained on proxies; needs a pass of its own (pass-001)
   - 2026-11-14 low → **medium** (pass-002). Two things changed. TEMPRO now gives us a numeric error bar on predicted Tm (MAE 4.03 °C), which is what a ranking needs; and PMID:36683173's 18-of-20 position recovery is stronger transfer evidence than the TS50 caveat alone suggested. Not `high`, because the predictor choice turns out to be **format-dependent**: TEMPRO and PMID:41564239 are nanobody-only, so an scFv submission still rests on TS50-trained models. This splits IDEA-003 into a VHH answer and an scFv answer.
+  - 2026-11-14 **retired** (EXP-005). The claim was that *scFv* thermostability is predictable well enough to rank, closing the open decision. The decision is now closed — with the opposite answer for scFv. Neither platform ships a Tm predictor (Nebius `stab-ddg` is StaB-ddG, *binding* ddG; Foundry’s AQ workflows are small-molecule tools), cheap features reach only Pearson +0.40 / MAE 7.6 °C against 8.3 °C for guessing the mean, and the one usable tool — NanoMelt, MAE 4.1 °C — is trained on 639 **nanobody** measurements and shows domain artefacts on a VH (11 of its top 12 single mutations are →Glu; `V37F` is a VHH hallmark position). Retired rather than downgraded, because the subject of the claim is exactly the case it cannot serve. Superseded by TH-016.
 
 ### TH-008 — The 1N8Z contact residues define which CDRH3 positions are load-bearing for the epitope, so a design that preserves those contacts preserves the epitope
 
@@ -168,18 +171,20 @@ evidence yet supports, so that a pass can knock them down.
 - **history:**
   - 2026-11-14 created, confidence medium (pass-004). A strategic rather than mechanistic theory, assembled from two findings that arrived in different passes and only mean something together: TEMPRO is sdAb-only (pass-002) and AF3 predicts nanobody H3 better (pass-004). Deliberately held at medium, not high, because the two benchmarks disagree about whether nanobody prediction is actually more accurate, and because a single domain gives up the light-chain contacts EXP-002 measured. The decision it informs is real though: IDEA-005 (submit a VHH alongside the scFv designs) is now high priority.
 
-### TH-013 — Structure-based interface scores cannot rank HER2 CDRH3 designs, and the topmodel score is actively misleading
+### TH-013 — Fold-confidence scores cannot rank HER2 CDRH3 designs, for any template-taking model tried, and the topmodel score is actively misleading
 
 - **confidence:** high
 - **status:** active
 - **property:** binding
-- **falsified_by:** A decoy control on our own designs shows min_ipae or ipTM separating real HER2 binders from shuffled pairs at AUROC well above 0.8, or the returned SPR values track our min_ipae ranking.
-- **evidence_for:** EXP-003 — real-vs-shuffled AUROC for ipTM: boltz2 **0.645**, af3 0.754, chai1 0.568; for the topmodel score: af3 **0.397**, boltz2 0.443, chai1 0.492, i.e. at or below random **with the direction inverted** (shuffled medians higher than real). Boltz-2 ipTM real median 0.911 vs shuffled 0.884, and **94.3% of 8,190 shuffled pairs score >=0.7**. Spearman between topmodel and ipTM is -0.182 (af3) and -0.658 (chai1), so the two scores disagree with each other
-- **evidence_against:** AF3 ipTM at 0.754 is weak but not useless, so a structure score is still worth keeping as a *filter* that discards the clearly bad, which is also what TH-011's ABlooper result suggested (2.49 -> 2.05 A on the most confident 75%). The study measures discrimination of shuffled pairs, not resolution between two genuinely plausible designs, which is a slightly different question
+- **falsified_by:** A decoy control on our own designs shows min_ipae or ipTM separating real HER2 binders from shuffled pairs at AUROC well above 0.8, or the returned SPR values track our min_ipae ranking, or a folding model we have not yet tried separates measured binders at AUROC well above 0.65 on the same 60-variant calibration set.
+- **evidence_for:** EXP-006 — **Protenix is no better**: across ten of its metrics, AUROC spans only 0.426–0.526 on the same 60 measured variants, with the chain-pair `px_iptm_ab_her2` at 0.448. EXP-004 — calibrated against **measured KD** on 60 SPR variants (30 with KD 0.023–13,863 nM, 30 non-measurable): ipTM AUROC **0.502**, pTM 0.504, pLDDT 0.356, **min_ipae 0.497**, mean_ipae 0.454, against sequence-only p_binder **0.849**; no fold metric tracks KD among the binders (all |Spearman| ≤ 0.21, p ≥ 0.28); adding fold features made the classifier *worse* (0.849 → 0.806); **ipTM ≥ 0.7 passes 100% of true non-binders**. EXP-003 — real-vs-shuffled AUROC for ipTM: boltz2 **0.645**, af3 0.754, chai1 0.568; for the topmodel score: af3 **0.397**, boltz2 0.443, chai1 0.492, i.e. at or below random **with the direction inverted** (shuffled medians higher than real). Boltz-2 ipTM real median 0.911 vs shuffled 0.884, and **94.3% of 8,190 shuffled pairs score >=0.7**. Spearman between topmodel and ipTM is -0.182 (af3) and -0.658 (chai1), so the two scores disagree with each other
+- **evidence_against:** **Scope, not exception:** the negative holds for *fixed-framework CDRH3 optimisation*. For **de novo** designs, where the whole binder changes, AF3 ipTM retains signal (AUROC 0.754, EXP-003), so this theory must not be read as "structure scores never work". EXP-004 also bounds itself: n=60 rules out a strong effect (AUROC > ~0.65), not a weak one. The earlier clause here — that a structure score was still worth keeping as a coarse filter — is **retracted**: measured, ipTM ≥ 0.7 passes 100% of true non-binders, so it removes nothing on this track.
 - **query_terms:** interface predicted aligned error decoy discrimination benchmark; ipTM AlphaFold screening binder hit rate validation; decoy control protein complex prediction score calibration
 - **history:**
   - 2026-11-14 created at confidence **high** (EXP-003). High because it is a direct measurement on our target with our models over thousands of decoys, not an inference. It invalidates the basis of EXP-001's ranking: ipTM 0.946 and 0.965 sit inside the band 94.3% of shuffled decoys occupy. Practical consequence: stop ranking on min_ipae, keep a structure score only as a coarse filter, and never trust a new score until its decoy control has been run - which costs nothing.
   - 2026-11-14 **no change, and the absence is the finding** (pass-005). Three targeted searches for published validation of ipTM or ipAE *as a binder screen* returned nothing on the question: loop-accuracy benchmarks, a CASP complex-prediction paper, and a small-molecule docking review. So the team's own decoy control (EXP-003) is currently better evidence on this than anything the literature offered, which makes IDEA-012 (run the decoy control before trusting any score) more valuable, not less.
+  - 2026-11-14 **strengthened, and one clause retracted** (EXP-004). EXP-003 used shuffled pairs, which are easy negatives. EXP-004 calibrates against *measured KD* and every fold metric lands at chance, `min_ipae` included. The compromise I had kept in `evidence_against` — that a structure score was still worth holding as a coarse filter — is measured false for this track: ipTM ≥ 0.7 passes **100%** of true non-binders. Retracted in place rather than quietly dropped. The “only 10 of 336 tokens vary” explanation does not cover `min_ipae`, whose spread is 3.0, so this is not a resolution artefact.
+  - 2026-11-14 **broadened from one model to the class** (EXP-006, ours). The obvious response to EXP-004 was “try a different folder”, since `AGENTS.md` prefers template-taking models. We tested that on the teammate’s committed two-model table and **Protenix fails identically**: all ten of its metrics land between AUROC 0.426 and 0.526, including `px_iptm_ab_her2`, the antibody↔HER2 chain-pair ipTM, which is the most targeted score available and sits *below* chance. Confidence stays `high` but the scope is wider and better earned. Practical value: this closes a GPU-hungry line of enquiry for two minutes of analysis — nobody need refold with OpenFold3 or Mol-1 hoping for a screen.
 
 ### TH-014 — A one-hot sequence model ranks trastuzumab CDRH3 variants well enough to choose submissions, and should replace structure scores for the optimisation track
 
@@ -187,7 +192,7 @@ evidence yet supports, so that a pass can knock them down.
 - **status:** active
 - **property:** binding
 - **falsified_by:** The measured SPR values Adaptyv returns do not correlate with the sequence model's predicted ranking, or its advantage disappears on designs further than 3 mutations from anything in the training data.
-- **evidence_for:** EXP-003 — with Hamming<=2 clusters held out together: binder classifier AUROC **0.927** overall and **0.915** on variants >=3 mutations from trastuzumab; log10 KD ranker Spearman **+0.687** overall and **+0.622** in that >=3-mutation band; median true KD of its top 20 = **1.42 nM** against 86 nM across the set (~60x), recovering the 0.023 nM best binder. Mutation count alone gives 0.800 AUROC and +0.387 Spearman, so the model is doing more than counting mutations
+- **evidence_for:** EXP-003 — with Hamming<=2 clusters held out together: binder classifier AUROC **0.927** overall and **0.915** on variants >=3 mutations from trastuzumab; log10 KD ranker Spearman **+0.687** overall and **+0.622** in that >=3-mutation band; median true KD of its top 20 = **1.42 nM** against 86 nM across the set (~60x), recovering the 0.023 nM best binder. Out-of-fold, keeping the top 10 gives **14 nM against 74 nM for a random pick of 10** (`NICCOLO/eda/AGENT_GUIDE.md`, commit fd1b002). Model form: logistic regression L2 `C=0.3` for the classifier, ridge `alpha=3.0` for the ranker; gradient boosting and random forests were tried and lost on both tasks, because the signal is close to additive across positions. Mutation count alone gives 0.800 AUROC and +0.387 Spearman, so the model is doing more than counting mutations
 - **evidence_against:** Labels exist only for **10-residue CDRH3 variants on the trastuzumab framework**, so none of this transfers to the de novo track, where there are no labels at all. The published clonotype splits also leave **57% of test sequences 1 mutation from a training sequence**, which is why only the >=3-mutation figures should be quoted. The best-residue estimates behind it rest on n=4-5 at several positions (TH-015)
 - **query_terms:** one-hot sequence model antibody affinity prediction generalisation; antibody variant effect prediction held out cluster validation; deep mutational scanning affinity model extrapolation distance
 - **history:**
@@ -204,3 +209,27 @@ evidence yet supports, so that a pass can knock them down.
 - **query_terms:** deep mutational scanning CDR position substitution affinity matrix; site saturation mutagenesis antibody affinity per position measured
 - **history:**
   - 2026-11-14 created, confidence medium (EXP-003). Medium, not high, purely because of sample size: the direction of each preference is measured, but the magnitudes rest on n=4-5. Still the most directly actionable data we have, because it covers 10 of our 11 CDRH3 positions with real SPR rather than a prediction. Note the awkward gap: the one position it cannot speak to is Y109.
+
+### TH-016 — NanoMelt is the only usable Tm predictor we have, so thermostability is rankable for a VHH and out-of-domain for a VH or scFv
+
+- **confidence:** high
+- **status:** active
+- **property:** thermostability
+- **falsified_by:** The Tm values Adaptyv returns correlate with NanoMelt's ranking just as well for our scFv designs as for a VHH, or a Tm-trained predictor for paired-chain Fv turns up.
+- **evidence_for:** EXP-005 — neither platform ships a Tm predictor (Nebius `stab-ddg` is StaB-ddG, i.e. **binding** ddG not folding stability; Foundry's AQ workflows are SandboxAQ small-molecule tools); cheap composition/charge/hydrophobicity features reach only Pearson **+0.40**, MAE 7.6 C against 8.3 C for predicting the mean; NanoMelt (mAbs 2025) has published held-out Pearson **0.853**, MAE **4.1 C** on 639 measured **nanobody** Tm, is installed on the VM, reproduces its own reference output exactly, and runs at ~45 sequences/s. Its training data also independently encodes the cysteine rule `abguard` enforces: mean Tm 41 C at 0 cysteines, 67 C at 2, 73 C at 4, 53 C at 5 (odd implies unpaired)
+- **evidence_against:** Applied to trastuzumab's VH the model shows clear domain artefacts: **11 of its top 12 single mutations are ->Glu** (the only substitution with a positive mean effect across 1,577 mutants, i.e. it has learned "more acidic = more stable"), and **`V37F`, a VHH hallmark position**, is among the top hits — the model partly wants to nanobody-ify the VH. So its 4.1 C MAE is an in-domain figure and should not be quoted for a VH or scFv
+- **query_terms:** NanoMelt nanobody melting temperature predictor validation; Fv scFv melting temperature predictor paired chain training data; protein stability predictor domain shift antibody format
+- **history:**
+  - 2026-11-14 created at confidence **high**, superseding TH-007 (EXP-005). High on the tooling facts, which are verified rather than inferred: the tool reproduces its reference output, and the alternatives were checked and are not Tm predictors at all. The part that stays uncertain is deliberately in the claim itself — "out-of-domain for a VH or scFv" — rather than hidden in a caveat. A predictor's **training domain is part of its error bar**, and that is the transferable lesson. Third leg under TH-012.
+
+### TH-017 — Framework stabilisation is real but bounded: no single mutation clears the error bar, stacking collapses, and the best hits are artefacts
+
+- **confidence:** medium
+- **status:** active
+- **property:** thermostability
+- **falsified_by:** A stacked framework variant comes back with a measured Tm gain above ~4 C that survives the charge, cysteine and position-98 filters.
+- **evidence_for:** EXP-005 — full non-CDR saturation scan, 1,577 single mutants: mean dTm **-0.59 C**, only **27.6% stabilising at all**, **0 above +4.1 C** (best single `R98A` at +3.74 C, still inside the error bar), 19 below -4.1 C. Combinations are strongly sub-additive then harmful: stack3 reaches +4.28 C where additivity predicts +6.23, and stack12 **collapses to +1.44 C** where additivity predicts +18.60 C. Random 6-mutation subsets beat greedy ordering, averaging +4.16 C with a best of +6.09 C, and 12 of 29 combinations clear +4.1 C
+- **evidence_against:** The 12-of-29 combinations that do clear the error bar are a real signal, so "bounded" is not "impossible". But they are dominated by the ->Glu charge bias, and the scan's most fragile positions (W36, C22, C96, L20, M83, V48, D73, E89) plus position 98 at the CDRH3 junction have to be excluded by hand, so the usable search space is much smaller than 1,577
+- **query_terms:** framework mutation epistasis sub-additive stability antibody; net charge mutation protein stability expression tradeoff; consensus mutation antibody VH stabilisation measured Tm
+- **history:**
+  - 2026-11-14 created, confidence medium (EXP-005). Medium because every number is a *prediction* from a model that is out-of-domain for this VH (TH-016), so the magnitudes are soft even though the pattern — sub-additivity, charge bias, greedy losing to random — is consistent and mechanistically plausible. Practical reading: framework stabilisation is worth one submission slot, not the whole strategy, and any candidate must pass the cysteine check and avoid position 98.
