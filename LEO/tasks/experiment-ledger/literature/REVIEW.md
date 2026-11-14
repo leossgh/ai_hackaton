@@ -318,3 +318,63 @@ plausible, and these scores report plausibility rather than binding.
 10 averaging 14 nM against 74 nM for a random 10. The 0.980 AUROC that
 `p_binder` scores on this 60-variant table is **in-sample** — those rows are in
 its training data — and must never be quoted as validation.
+
+## 10. The bar is 0.152 nM, and the legal band barely clears it (EXP-007, EXP-008)
+
+Two corrections and one actionable pattern, all from measured SPR values.
+
+**Correction 1 — the design band is ≥4 substitutions, not ≥3.** On a 10-residue
+CDRH3, three substitutions leave exactly 70% identity and `abguard` requires
+*strictly under*. Both this ledger and the team pre-filter carried ≥3 for hours.
+Root `AGENTS.md` warns about an off-by-one; neither of us applied that warning to
+the **identity** rule, only to the mutation-count rule it was written about.
+
+**Correction 2 — the 1.42 nM figure was never achievable.** We published a
+top-20 median KD of 1.42 nM. That top 20 is dominated by 1–2 substitution
+variants the identity rule forbids. **Inside the legal band it is 6.5 nM.** The
+model barely degrades across that boundary (AUROC 0.927 → 0.913, Spearman
++0.687 → +0.628), so the ~4.6× loss is imposed by the constraint, not by the
+ranker.
+
+**The bar.** Trastuzumab's own CDRH3 `WGGDGFYAMD` measures **0.152 nM**. That —
+not the dataset's 0.023 nM best — is what a design must beat.
+
+| | KD |
+|---|---|
+| trastuzumab | **0.152 nM** |
+| best legal (≥4 subs) variant | 0.095 nM (**1.6× better**) |
+| second-best legal | 0.368 nM (2.4× worse) |
+| legal-band median | 127.5 nM |
+| best binder overall (3 subs — **forbidden**) | 0.023 nM |
+
+**Exactly 1 of 21 legal variants beats trastuzumab.** Caveat carried: that 60-variant
+set was *chosen* for fold calibration (30 binders spanning the KD range, 30
+non-binders), so this is an existence proof, not a base rate — IDEA-017 fixes
+that with the full 179-variant table.
+
+**The actionable pattern.** Across the 8 tightest legal variants:
+
+| position | mutated in | contacts HER2 (EXP-002) |
+|---|---|---|
+| **M107** | 8 of 8 | **never** |
+| **D102** | 8 of 8 | 6 of 8 |
+| **A106** | 7 of 8 | **never** |
+| F104 | 3 of 8 | 4 of 8 |
+| D108 | 3 of 8 | never |
+
+A106 and M107 are precisely the positions EXP-002 found never contact HER2 in
+any of 8 structures — measured affinity and structural analysis converging from
+independent directions. The single legal winner is **D102S F104P A106L M107F**,
+and its `A106L` is also the best residue at that position in the per-position
+table (§9). Note it changes two *contacting* positions and still wins, so
+touching a contact is a risk to price rather than a veto.
+
+`WGGSGPYLFD` is in the HER2 dataset and so fails the novelty filter outright: a
+template to design from, never a candidate.
+
+**Consequence for the submission.** Ranking after testing counts S-tier designs
+— better on all three properties — first. This says binding is the hardest of
+the three to improve legally. A design resting only on predicted affinity is
+unlikely to be S-tier, which argues for pairing each submission with an
+independent second property story: framework-stabilised Tm (IDEA-015) or a VHH
+whose Tm prediction is in-domain (IDEA-005).
