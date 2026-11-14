@@ -1,1 +1,7 @@
 .venv/
+
+# Credentials: never commit (root .gitignore is team-shared; this file is in LEO scope)
+amass_key.txt
+*_key.txt
+*.key
+*.pem
