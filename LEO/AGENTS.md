@@ -1,6 +1,20 @@
 # Agent rules: Leo's folder
 
-Rules for any agent working in `LEO/` or on the `LEO` branch. These are mine, not the team's — the shared project context is in [`../AGENTS.md`](../AGENTS.md) and the full notes in [`README.md`](README.md). Read all three; where this file and the shared one differ, this one wins inside `LEO/`.
+Rules for any agent working in `LEO/` or on the `LEO` branch. These are mine, not the team's.
+
+## Required reading, before you touch anything
+
+**You must read both `AGENTS.md` files. Neither one is sufficient on its own.** Read them in this order, in full, before your first edit, command or commit:
+
+1. **[`../AGENTS.md`](../AGENTS.md)** — the team's shared file at the repo root. The hackathon itself: the two tracks and how they are assigned, the hard constraints `abguard` enforces, the ranking consequences of only 4 designs being tested, the model weights, the pitch criteria. None of that is repeated here.
+2. **This file** — how work is organised in `LEO/`: branching, commits, state files.
+3. **[`README.md`](README.md)** — the full notes: data, docs, setup, reference, progress log.
+
+Do not skip the root file because this one is "the personal one", and do not skip this one because you read the root file. They cover different things: the root file is *what the problem is*, this file is *how we work on it*. An agent that read only one will either break the workflow or break the science.
+
+Where this file and the root file conflict, this one wins inside `LEO/`. Conflicts are a bug — say so, so one of them gets fixed.
+
+If either file is missing, stop and say so rather than guessing at the rules.
 
 ## Branching: `LEO` is the working main
 

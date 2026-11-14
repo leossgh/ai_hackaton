@@ -2,6 +2,8 @@
 
 **Branch:** `LEO/<short-task-name>` · **Started:** YYYY-MM-DD · **Agent:** <model you are running as>
 
+**Read both agents files:** `../AGENTS.md` (root, shared) ☐ · `LEO/AGENTS.md` (Leo's) ☐ — tick both before starting work.
+
 Copy this file to `LEO/state/<short-task-name>.md` on the first commit of a new sub-branch, then delete these instructions. Keep it current: update it before a long run, after it finishes, and whenever you hit a blocker. Times in UTC.
 
 ## What this task is
