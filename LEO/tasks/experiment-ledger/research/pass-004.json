@@ -1,0 +1,147 @@
+{
+  "pass": 4,
+  "date": "2026-11-14",
+  "scope": "TH-011",
+  "rationale": "explicit scope TH-011",
+  "targets": [
+    "TH-011"
+  ],
+  "queries": {
+    "cached": 0,
+    "fetched": 3,
+    "failed": [],
+    "deferred": []
+  },
+  "spend_this_pass_usd": 0.15,
+  "spend_total": {
+    "searches": 8,
+    "usd": 0.4,
+    "passes": 5
+  },
+  "findings": {
+    "TH-011": [
+      {
+        "id": "40814020",
+        "core": "biomedcore",
+        "year": "2025",
+        "title": "What does AlphaFold3 learn about antibody and nanobody docking, and what remains unsolved?",
+        "hits": 8,
+        "quotes": [
+          "With twenty seeds, AF3 achieves a median unbound CDR H3 RMSD accuracy of 2.9 A\u030a ... and 2.2 A\u030a ... for antibodies and nanobodies, respectively."
+        ],
+        "matched": [
+          "accuracy",
+          "alphafold",
+          "antigen",
+          "boltz",
+          "loop",
+          "model",
+          "rmsd",
+          "seed"
+        ],
+        "cites": 42
+      },
+      {
+        "id": "37248282",
+        "core": "biomedcore",
+        "year": "2023",
+        "title": "ImmuneBuilder: Deep-Learning models for predicting the structures of immune proteins",
+        "hits": 7,
+        "quotes": [
+          "For example, on a benchmark of 34 recently solved antibodies, ABodyBuilder2 predicts CDR-H3 loops with an RMSD of 2.81A\u030a, a 0.09A\u030a improvement over AlphaFold-Multimer, while being over a hundred times faster.",
+          "Similar results are also achieved for nanobodies, (NanoBodyBuilder2 predicts CDR-H3 loops with an average RMSD of 2.89A\u030a, a 0.55A\u030a improvement over AlphaFold2) and TCRs."
+        ],
+        "matched": [
+          "accuracy",
+          "alphafold",
+          "antigen",
+          "benchmark",
+          "loop",
+          "model",
+          "rmsd"
+        ],
+        "cites": 307
+      },
+      {
+        "id": "19062174",
+        "core": "biomedcore",
+        "year": "2009",
+        "title": "Toward high-resolution homology modeling of antibody Fv regions and application to antibody-antigen docking",
+        "hits": 7,
+        "quotes": [
+          "The median root mean square deviation (rmsd) of the antigen binding pocket comprised of all the CDR residues was 1.5 A with 80% of the targets having an rmsd lower than 2.0 A.",
+          "The median backbone heavy atom global rmsd of the CDR H3 loop prediction was 1.6, 1.9, 2.4, 3.1, and 6.0 A for very short (4-6 residues), short (7-9), medium (10-11), long (12-14) and very long (17-22) loops, respectively."
+        ],
+        "matched": [
+          "accuracy",
+          "antigen",
+          "benchmark",
+          "conformation",
+          "loop",
+          "model",
+          "rmsd"
+        ],
+        "cites": 188
+      },
+      {
+        "id": "35099535",
+        "core": "biomedcore",
+        "year": "2022",
+        "title": "ABlooper: fast accurate antibody CDR loop structure prediction with accuracy estimation",
+        "hits": 7,
+        "quotes": [
+          "On the models of the Rosetta Antibody Benchmark, ABlooper makes predictions with an average CDR-H3 RMSD of 2.49 A\u030a, which drops to 2.05 A\u030a when considering only its 75% most confident predictions."
+        ],
+        "matched": [
+          "accuracy",
+          "antigen",
+          "benchmark",
+          "confidence",
+          "loop",
+          "model",
+          "rmsd"
+        ],
+        "cites": 156
+      },
+      {
+        "id": "29702641",
+        "core": "biomedcore",
+        "year": "2018",
+        "title": "RosettaAntibodyDesign (RAbD): A general framework for computational antibody design",
+        "hits": 6,
+        "quotes": [
+          "We tested RAbD experimentally on both a lambda and kappa antibody-antigen complex, successfully improving their affinities 10 to 50 fold by replacing individual CDRs of the native antibody with new CDR lengths and clusters."
+        ],
+        "matched": [
+          "antigen",
+          "benchmark",
+          "conformation",
+          "interface",
+          "loop",
+          "model"
+        ],
+        "cites": 230
+      },
+      {
+        "id": "37650367",
+        "core": "biomedcore",
+        "year": "2023",
+        "title": "Integrating deep learning, threading alignments, and a multi-MSA strategy for high-quality protein monomer and complex structure prediction in CASP15",
+        "hits": 6,
+        "quotes": [
+          "For 47 free modeling targets in CASP15, the final models predicted by D-I-TASSER showed average TM-score 19% higher than the standard AlphaFold2 program.",
+          "For the 38 complex targets, DMFold-Multimer generated models with an average TM-score of 0.83 and Interface Contact Score of 0.60, both significantly higher than those of competing complex prediction tools."
+        ],
+        "matched": [
+          "accuracy",
+          "alphafold",
+          "folding",
+          "interface",
+          "model",
+          "score"
+        ],
+        "cites": 66
+      }
+    ]
+  }
+}

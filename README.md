@@ -60,10 +60,10 @@ Then open `~/hackathon-team-3/apheris/rfd4/Tutorial.html`.
 |---|---|---|---|
 | Apheris Foundry (RFD4-Proteina models) | Pre-installed on VM | `18-vm.md` in the docs | Models run as Docker images on the VM |
 | Claude Code | Pre-installed on VM | - | Credits provided by Anthropic |
-| abguard (validity CLI) | To be provided by organisers | Check the Slack folder | Runs the hard checks and novelty filter |
-| Nebius Tools / Scientific AI | Available | `sciai.nebius.cloud/models` (Workbench > Apps) | No-code; can be connected to Claude as a skill. Setup files in the Slack folder |
-| JapanFold | Available | Link not in the deck. Check the Slack folder. | RoseTTAFold3, OpenDDE, AF2-IG. Can be connected as a skill to Claude Code |
-| AMASS | Available | See 4.1 | Literature, trial, patent and drug search with source links |
+| abguard (validity CLI) | **Installed on VM** (14 Nov) | `~/.venvs/abguard`, on `PATH`; rebuild in 4.6 | Runs the hard checks and novelty filter. abguard 0.1.0 from the uv-cache wheel; not confirmed as the organisers' official release |
+| Nebius Tools / Scientific AI | **Installed on VM** (14 Nov) | `sciai.nebius.cloud/models` (Workbench > Apps); skills in `~/.claude/skills`; rebuild in 4.6 | API key authenticates and lists models. No job run yet |
+| JapanFold | **Set up on VM** (14 Nov) | `https://japanfold.aiand.com/skill.md`; rebuild in 4.6 | RoseTTAFold3 (`rf3`), OpenDDE (complex docking), AF2-IG, plus design models. Skill, CLI and MCP configured; RF3 smoke test passed |
+| AMASS | Available, **not claimed** | See 4.1 | Literature, trial, patent and drug search with source links. `AMASS_API_KEY` is unset on the VM |
 | Adaptyv antibody database | Reference for de novo check | Named in the challenge deck | Used for the under-70%-identity check |
 
 ### 4.1 AMASS
@@ -112,8 +112,9 @@ Then open `~/hackathon-team-3/apheris/rfd4/Tutorial.html`.
 ### 4.3 Still to Get
 
 - **Participant field guide** (https://oslo-ai-antibodies-hackathon.vercel.app/participant_guide): the page came back empty when fetched, so its contents are not captured here. Open it in a browser.
-- **JapanFold** link and login.
-- **abguard** CLI and the **Nebius** setup files, both in the Slack folder.
+- **AMASS** credits: not yet claimed (`AMASS_API_KEY` unset).
+- **Official abguard:** the VM runs the abguard 0.1.0 wheel found in the uv cache. Confirm with the organisers that it is the official release.
+- **Developability scorers** (Aggrescan 3D, SoluProt, NetSolP, ProteinMPNN): not installed. **Thermostability predictor:** none chosen.
 
 ### 4.4 Local Tools on the VM
 
@@ -200,9 +201,50 @@ rsync -avz -e "ssh -i ~/.ssh/team-2" \
 
 **Before the deadline:** the VMs shut down at the end of Saturday 14 November. Copy results back with the `rsync` command above before then.
 
+### 4.6 Rebuilding the abguard, Nebius and JapanFold setup
+
+Done on the VM on 14 Nov. No secrets appear below; keys are read from files or the environment.
+
+**abguard and immunum** (the wheel is in the VM's uv cache; if that cache is gone, get abguard from the organisers):
+
+```bash
+uv venv ~/.venvs/abguard --python 3.12
+WHL=$(ls -t ~/.cache/uv/sdists-v10/path/*/*/abguard-0.1.0-py3-none-any.whl | head -1)
+uv pip install --python ~/.venvs/abguard/bin/python "$WHL"
+ln -sf ~/.venvs/abguard/bin/abguard ~/.venvs/abguard/bin/immunum ~/.local/bin/
+NICCOLO/scripts/check_optimisation.py designs.csv -o reports/optimisation.csv \
+    --provided apheris/hackathon-data/her2-trastuzumab/trastuzumab_her2_spr_all_768.csv
+```
+
+**Nebius** (kit zip is in the repo root, git-ignored):
+
+```bash
+unzip "participant-03 (1).zip" -d ~/nebius-kit
+bash ~/nebius-kit/participant-03/agent/install.sh        # 51 skills + client into ~/.claude/skills
+echo 'export NEBIUS_CREDS="$HOME/nebius-kit/participant-03/credentials.private.json"' >> ~/.bashrc
+python3 ~/.claude/skills/nebius-scientific-ai/forge.py --creds "$NEBIUS_CREDS" models
+```
+
+**JapanFold** (put the key in the file yourself; never paste it into a chat or the repo):
+
+```bash
+mkdir -p ~/.config/japanfold && chmod 700 ~/.config/japanfold
+# write the key to ~/.config/japanfold/api_key, then: chmod 600 ~/.config/japanfold/api_key
+echo 'export JAPANFOLD_API_KEY="$(cat $HOME/.config/japanfold/api_key)"' >> ~/.bashrc
+mkdir -p ~/.claude/skills/japanfold
+curl -sL https://japanfold.aiand.com/skill.md -o ~/.claude/skills/japanfold/SKILL.md
+uv venv ~/.venvs/japanfold --python 3.12 && uv pip install --python ~/.venvs/japanfold/bin/python japanfold
+ln -sf ~/.venvs/japanfold/bin/japanfold ~/.local/bin/
+claude mcp add --scope user --transport http japanfold https://api.japanfold.aiand.com/mcp \
+    --header "Authorization: Bearer $JAPANFOLD_API_KEY"   # stores the key in ~/.claude.json
+japanfold fold tz_fv.fasta --model rf3 --name tz_fv_test --wait   # smoke test: H and L chains of trastuzumab
+```
+
+Two caveats from testing. Non-interactive `ssh host cmd` does not read `~/.bashrc`, so the exported variables are missing there; use an interactive shell or `source` the file. And JapanFold allows two concurrent jobs per account over MCP.
+
 ## 5. Reference Documents
 
-### 5a. Apheris Challenge Deck (`docs/2026-11_Oslo_hackathon_Apheris_challenge.pdf`, 9 pages)
+### 5a. Apheris Challenge Deck (`apheris/challenge/2026-11_Oslo_hackathon_Apheris_challenge.md`, from the 9-page PDF)
 
 - **Task:** build better HER2 binders with Apheris Foundry
 - **Tracks** (the deck's prize figures are marked draft; see section 6 for the task description's numbers, which are newer):
@@ -214,7 +256,7 @@ rsync -avz -e "ssh -i ~/.ssh/team-2" \
 - **Winning:** the team with the most S-tier designs (better on all three) wins. Ties go to A-tier, then B-tier. Lab results arrive after the event.
 - **Tools mentioned:** RFD4-Proteina (Foundry), Protenix, Boltz, OpenFold3, Mol-1, ESMFold2, and the abguard CLI.
 
-### 5b. Task Description (`docs/ai-antibodies-hackathon-apheris.pdf`, 9 pages)
+### 5b. Task Description (`apheris/challenge/ai-antibodies-hackathon-apheris.md`, from the 9-page PDF)
 
 - **Task:** improve an existing antibody (trastuzumab) with Apheris Foundry, Nebius and JapanFold, using multi-modal data.
 - **Two modes** (assigned by `abguard`, not chosen):
@@ -342,7 +384,7 @@ Two of the three judged properties (thermostability and epitope preservation) ha
 
 The task description links a fuller write-up ("Please check the whole write-up here"), which is not captured here. Find that link on the hackathon site.
 
-Open gap: nothing in the provided tooling predicts **thermostability** directly. Worth deciding early whether to add a thermostability predictor, since it is one of the three S-tier conditions.
+Open gap: nothing in the provided tooling predicts **thermostability** directly. Nebius `stab-ddg` predicts *binding* ddG and JapanFold OpenDDE docks complexes; neither is a thermostability predictor. None of the four expression scorers above is installed on the VM (checked 14 Nov). Worth deciding early whether to add a thermostability predictor, since it is one of the three S-tier conditions.
 
 ## 8. Tasks and Ideas
 
@@ -361,9 +403,14 @@ Goal: do interesting things with the data.
 | 2026-11-14 | Two hackathon PDFs added to `docs/` | Done |
 | 2026-11-14 | Setup and connections (AMASS, tool checklist) organised | Done |
 | 2026-11-14 | Participant guide: fetch returned empty | Open |
-| 2026-11-14 | Step 1 setup: connect Foundry, AMASS, JapanFold, Nebius, abguard | In progress |
+| 2026-11-14 | Step 1 setup: connect Foundry, AMASS, JapanFold, Nebius, abguard | In progress (AMASS open) |
 | 2026-11-14 | Local foundry-assistant reviewed and documented (not yet started) | Done |
 | 2026-11-14 | Full PDF re-read; corrected track assignment, mutation count, hard checks | Done |
 | 2026-11-14 | Added submission/pitch/prize rules and developability tools (were missing) | Done |
 | 2026-11-14 | Sync `hackathon-data/` and `~/hackathon-team-3/apheris/rfd4` from S3 | **Done** |
 | 2026-11-14 | Pick a thermostability predictor | Open |
+| 2026-11-14 | abguard and immunum installed to `~/.venvs/abguard`, on `PATH`; both track checkers run end to end on two control designs | Done |
+| 2026-11-14 | Nebius kit extracted and installed (51 skills + client); API key authenticates | Done |
+| 2026-11-14 | JapanFold set up (key, skill, CLI, MCP); RF3 smoke test of trastuzumab Fv passed | Done |
+| 2026-11-14 | Claim AMASS credits | Open |
+| 2026-11-14 | Install developability scorers (Aggrescan 3D, SoluProt, NetSolP, ProteinMPNN) | Open |

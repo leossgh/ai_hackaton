@@ -7,7 +7,7 @@ model to use, how it works, what it is validated to do, and the four mistakes th
 designs (<70% identity to known antibodies) — we have no labelled data for those.
 
 **This is a pre-filter, not evidence of binding.** Survivors still go through BASE VALIDATION
-(`scripts/check_denovo.py`, `scripts/check_optimisation.py`, `abguard`) before they are candidates.
+(`NICCOLO/scripts/check_denovo.py`, `NICCOLO/scripts/check_optimisation.py`, `abguard`) before they are candidates.
 
 ---
 
@@ -20,8 +20,11 @@ designs (<70% identity to known antibodies) — we have no labelled data for tho
 | **Features** | one-hot CDRH3 (10 positions × 20 residues = 200) | the same 200, plus mutation count and the FACS score (202) |
 | **Trained on** | 620 measured SPR outcomes (179 with a KD, 441 without) | the 179 variants with a measured KD |
 | **Target** | `quantified_binding` vs `no_reportable_kd` | log10 KD in nM |
-| **Validated** | AUROC **0.927**, 0.915 inside the ≥3-mutation band | Spearman **+0.687**, +0.622 in band |
-| **Beats** | mutation count alone (0.800), FACS score alone (0.696) | mutation count alone (+0.387), FACS alone (+0.063) |
+| **Validated** | AUROC **0.927**; **0.913** inside the legal design band | Spearman **+0.687**; **+0.628** in band |
+| **Beats** | mutation count alone (0.800), FACS score alone (0.696) | mutation count alone (+0.412), FACS alone (+0.063) |
+
+Band figures are for ≥4 substitutions (n=556 for the classifier, n=131 for the ranker); `validate()` prints
+both the ≥3 and ≥4 bands.
 
 Both are in `prefilter.py`. Linear models are not a compromise here: gradient boosting and random forests
 were tried and lost on both tasks (classifier 0.915 vs 0.927; ranker +0.628 vs +0.667). With 620 labels and
@@ -40,9 +43,13 @@ linear models win — and it is the honest reason the pre-filter is cheap.
 
 ### Practical effect
 
-Ranking the 179 measured binders and keeping the top 20 gives a **median KD of 1.4 nM against 86 nM
-overall**, and recovers the 0.023 nM best binder in the set. A random pick of 10 gives 74 nM; the ranker
-gives 14 nM out-of-fold.
+Ranking the 179 measured binders and keeping the top 20 gives a median KD of 1.4 nM against 86 nM overall.
+But that top 20 is full of 1–2 substitution variants the identity rule forbids. **Inside the legal band
+(≥4 substitutions) the top 20 has a median KD of 6.5 nM** — still ~13x better than the 86 nM median, and the
+number to quote. A random pick of 10 gives 74 nM; the ranker gives 14 nM out-of-fold.
+
+The tightest binders in this library are the ones closest to trastuzumab, which the identity rule rules out.
+Expect the legal band to cost you roughly 4x in achievable affinity before any model is involved.
 
 ---
 
@@ -72,7 +79,7 @@ out = pf.score(["WGGDGFYAMD", "WAADGFYSIE"])  # any number of 10-mers
 
 | Column | Meaning | How to use it |
 |---|---|---|
-| `n_mut` | Hamming distance to trastuzumab's CDRH3 | must be **≥3** for the optimisation track |
+| `n_mut` | Hamming distance to trastuzumab's CDRH3 | **≥4** in practice, see below |
 | `p_binder` | P(measurable KD) | **gate** on this |
 | `pred_log10_kd` | predicted log10 KD, nM | **rank** on this, lower is tighter |
 | `p_facs_high` | FACS high-binder probability | context only; weak on its own |
@@ -80,7 +87,14 @@ out = pf.score(["WGGDGFYAMD", "WAADGFYSIE"])  # any number of 10-mers
 Recommended cascade:
 
 1. **Hard rules first.** Drop anything whose CDRH3 matches one of the 525,063 provided CDRH3s (novelty),
-   and anything with `n_mut < 3`. Cheapest stage, so it goes first.
+   and anything with `n_mut < 4`. Cheapest stage, so it goes first.
+
+   The **70% CDRH3 identity rule binds before the mutation count**: trastuzumab's CDRH3 is `SRWGGDGFYAMDY`
+   (13 aa), so at equal length a design needs **at least 4 substitutions** to fall under 70% identity
+   (9/13 = 69.2%, while 3 substitutions give 76.9%). The ">2 mutations" rule alone would let a 3-substitution
+   design through, and `NICCOLO/scripts/check_optimisation.py` then rejects it on identity. Verified in
+   `AGENTS.md`. Indels were not tested. The 3-mutation floor also applies against *every* CDRH3 in the
+   reference set, not only trastuzumab's.
 2. **Gate** on `p_binder`. There is no calibrated threshold — pick it from how many designs you can afford
    downstream, not from a magic number. `p_binder` is a ranking, and its absolute value is not a calibrated
    probability for novel designs.

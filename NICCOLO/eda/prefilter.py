@@ -90,21 +90,29 @@ def validate(spr, facs):
     p = np.zeros(len(y))
     for tr, te in GroupKFold(5).split(X, y, b.grp.values):
         p[te] = LogisticRegression(C=.3, max_iter=4000).fit(X[tr, :200], y[tr]).predict_proba(X[te, :200])[:, 1]
-    bd = b.n_mut >= 3
     out["clf"] = dict(n=len(y), pos=int(y.sum()), auroc=roc_auc_score(y, p), ap=average_precision_score(y, p),
-        auroc_band=roc_auc_score(y[bd], p[bd]), ap_band=average_precision_score(y[bd], p[bd]),
         auroc_nmut_baseline=roc_auc_score(y, -b.n_mut.values))
+    for floor in (3, 4):
+        bd = b.n_mut >= floor
+        out["clf"][f"n_ge{floor}"] = int(bd.sum())
+        out["clf"][f"auroc_ge{floor}"] = roc_auc_score(y[bd], p[bd])
+        out["clf"][f"ap_ge{floor}"] = average_precision_score(y[bd], p[bd])
     q = spr[spr.binding_result == "quantified_binding"].reset_index(drop=True)
     yq = np.log10(q.kd_nM.values)
     Xq = np.hstack([onehot(q.cdrh3.values), q[["n_mut", "p_facs"]].values])
     pq = np.zeros(len(yq))
     for tr, te in GroupKFold(5).split(Xq, yq, q.grp.values):
         pq[te] = Ridge(3.0).fit(Xq[tr], yq[tr]).predict(Xq[te])
-    qd = q.n_mut >= 3; top = np.argsort(pq)[:20]
+    top = np.argsort(pq)[:20]
     out["rank"] = dict(n=len(yq), clusters=int(q.grp.nunique()), spearman=spearmanr(pq, yq).statistic,
-        spearman_band=spearmanr(pq[qd], yq[qd]).statistic,
         spearman_nmut_baseline=spearmanr(q.n_mut.values, yq).statistic,
         median_kd_overall=float(10**np.median(yq)), median_kd_top20=float(10**np.median(yq[top])), best_kd_top20=float(10**yq[top].min()))
+    for floor in (3, 4):
+        qd = q.n_mut >= floor
+        out["rank"][f"n_ge{floor}"] = int(qd.sum())
+        out["rank"][f"spearman_ge{floor}"] = spearmanr(pq[qd], yq[qd]).statistic
+        tq = np.argsort(np.where(qd, pq, np.inf))[:20]
+        out["rank"][f"median_kd_top20_ge{floor}"] = float(10**np.median(yq[tq]))
     return out
 
 def benchmark(pf, n=2_000_000):
