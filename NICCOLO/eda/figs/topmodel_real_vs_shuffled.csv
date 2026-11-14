@@ -1,0 +1,4 @@
+model,n_real,n_shuf,real_med,shuf_med,auroc_mean_higher_is_real,auroc_min
+af3,121,14331,23.7,25.84,0.397,0.448
+boltz2,123,14974,29.96,31.04,0.443,0.461
+chai1,118,14197,46.16,47.0,0.492,0.499
