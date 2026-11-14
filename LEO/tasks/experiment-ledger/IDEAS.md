@@ -54,14 +54,15 @@ suggested it) | `team`.
 ### IDEA-005 — Submit a VHH alongside the scFv designs to hedge the track split
 
 - **status:** open
-- **priority:** medium
-- **tests:** TH-006
+- **priority:** high
+- **tests:** TH-006; TH-012
 - **cost:** one design run plus refold
 - **source:** literature
-- **evidence:** PMID:37632647
-- **notes:** The two tracks have separate prize pots and a team may submit any mix. A VHH is short, so it is comfortably inside the 250 aa limit and has no VH/VL pairing to get wrong.
+- **evidence:** PMID:37632647; PMID:39154093; PMID:40814020
+- **query_terms:** anti-HER2 nanobody VHH design affinity epitope; single domain antibody cell-free expression yield
+- **notes:** The two tracks have separate prize pots and a team may submit any mix. A VHH is short, so it is comfortably inside the 250 aa limit and has no VH/VL pairing to get wrong. **Promoted to high by pass-004 (TH-012):** a VHH is the only format where we can both predict thermostability (TEMPRO, sdAb-only, MAE 4.03 °C) and claim better structure-prediction accuracy (AF3 2.2 Å vs 2.9 Å). Of the three scored properties, that covers the two with no built-in proxy. Counter-consideration recorded in TH-012: a single domain forgoes the light-chain CDRs that carry 45% of trastuzumab's interface contacts.
 
-### IDEA-006 — Re-rank the existing 4 HER2 designs after a second Boltz-2 seed
+### IDEA-006 — Establish the seed-to-seed error bar on min_ipae before ranking anything on it
 
 - **status:** open
 - **priority:** high
@@ -70,7 +71,7 @@ suggested it) | `team`.
 - **source:** experiment
 - **evidence:** EXP-001
 - **query_terms:** folding model seed variance interface score reproducibility; antibody antigen co-folding template confidence metric
-- **notes:** EXP-001 ranked on a single seed and refolded only 2 of 4 designs. The ranking gap between the two was small (min iPAE 0.310 vs 0.331), which is inside the noise one seed can tell us about. Cheapest way to firm up the one ranking we already have. **pass-003 raised the stakes:** TH-011 says predicted H3 conformation for an 11-residue loop is only good to ~2 Å, so this is no longer just tidying — it measures whether our ranking metric can separate designs at all. Since rank order is the real submission output, this is the cheapest experiment with the largest consequence.
+- **notes:** EXP-001 ranked on a single seed and refolded only 2 of 4 designs. The gap was 0.021 min_ipae (0.310 vs 0.331) — inside the noise one seed can tell us about. **pass-003 raised the stakes** (TH-011: predicted H3 conformation for an 11-residue loop is good to only ~2 Å), and **pass-004 rescoped this idea**: PMID:40814020 needed **twenty** seeds to establish AlphaFold3's median CDR-H3 accuracy. Two seeds would not give an error bar either. So this is no longer "add a second seed" — it is: refold one design across as many Boltz-2 seeds as the shared H100 allows (5 at minimum, more if cheap), report the **spread** of min_ipae, and only then decide whether any gap between designs is real. Rank order is the submission output, so a metric without an error bar is the single largest hole in the pipeline. Runs on one design, so it is cheap.
 
 ### IDEA-007 — Check whether any of our designs sit near a claimed patent sequence
 

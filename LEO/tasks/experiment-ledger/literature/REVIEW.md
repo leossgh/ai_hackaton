@@ -195,3 +195,45 @@ energetic contribution of trastuzumab's CDRH3 Tyr109, or of any individual
 trastuzumab paratope residue. Y109 is the one contact the IDEA-008 recipe
 sacrifices, so this has to be computed, not looked up (IDEA-010, now high
 priority).
+
+### 8a. Prediction accuracy, now measured on modern co-folding models (pass-004)
+
+pass-003 left an open caveat: its RMSD figures came from homology and ab initio
+loop modelling, not from the co-folding stack we use. pass-004 closed it.
+
+| Method | CDR-H3 RMSD | Source |
+|---|---|---|
+| **AlphaFold3**, 20 seeds, antibodies | **2.9 Å** median | PMID:40814020 |
+| **AlphaFold3**, 20 seeds, nanobodies | **2.2 Å** median | PMID:40814020 |
+| ABodyBuilder2, 34 recent antibodies | 2.81 Å | PMID:37248282 |
+| AlphaFold-Multimer (same benchmark) | 2.90 Å | PMID:37248282 |
+| NanoBodyBuilder2, nanobodies | 2.89 Å | PMID:37248282 |
+| ABlooper, Rosetta Antibody Benchmark | 2.49 Å | PMID:35099535 |
+| ABlooper, its 75% most confident | **2.05 Å** | PMID:35099535 |
+| Homology modelling, 10–11 residue loops | 2.4 Å | PMID:19062174 |
+
+Four independent methods spanning 2009–2025 land in a 2.4–2.9 Å band. That
+convergence makes it a property of the problem, not of any one tool, so
+**TH-011 moved to `high`**. Ranking designs on a 0.021 min_ipae gap, as EXP-001
+did, is indefensible.
+
+Two things survive:
+
+- **Confidence-based filtering.** ABlooper's error drops 2.49 → 2.05 Å on its
+  most confident 75%, so a model's own confidence carries signal. Discarding a
+  bottom quartile is defensible; separating two close designs is not.
+- **Seeds are the instrument.** AF3 needed **twenty** seeds for its median. We
+  used one. IDEA-006 is rescoped accordingly: measure the spread first.
+
+**Caveat we are carrying ourselves:** every figure above is unbound or apo loop
+geometry. None of them measures interface-score reproducibility, which is what
+we actually rank on. The inference from loop RMSD to min_ipae noise is ours,
+not the papers'. It is recorded in TH-011's `evidence_against`.
+
+**The VHH convergence.** AF3 predicts nanobody CDR-H3 better than antibody
+CDR-H3 (2.2 vs 2.9 Å), and TEMPRO predicts sdAb Tm with a stated error bar
+while no scFv equivalent exists. Two of the three scored properties are
+therefore better covered for a VHH than for an scFv — hence TH-012 and the
+promotion of IDEA-005. Honest counterweight, also recorded: ImmuneBuilder finds
+*no* nanobody advantage (2.89 vs 2.81 Å), and a single domain gives up the
+light-chain CDRs that carry 45% of trastuzumab's interface contacts.

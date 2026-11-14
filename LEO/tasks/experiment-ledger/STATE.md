@@ -9,10 +9,10 @@
 | | |
 |---|---|
 | Experiments | 2 (`worked` 1, `inconclusive` 1) |
-| Theories | 10 active + 1 retired — `low` 0, `medium` 7, `high` 3 |
+| Theories | 11 active + 1 retired — `low` 0, `medium` 7, `high` 4 |
 | Ideas | 9 open/lit-checked, 1 done |
-| Research passes | 3 |
-| AMASS spend | 5 searches, $0.25 of the ~2,000-search team budget (hard stop at 400) |
+| Research passes | 4 |
+| AMASS spend | 8 searches, $0.40 of the ~2,000-search team budget (hard stop at 400) |
 | Published | PR #2 **merged** into `main` at `27b6982`; later work goes out as a new PR |
 
 ## What this task is
@@ -55,8 +55,9 @@ not on the designs alone. See [`PROMPT.md`](PROMPT.md) for the full cycle.
 
 1. **Hand IDEA-008 to whoever has the GPU.** Substitute A106/M107/D108/Y109 and nothing else: 63.6% CDRH3 identity, track-eligible by arithmetic before any model runs, and the lowest constructible epitope risk. Rank it first unless a model objects.
 2. Each pass: scan the repo for new committed results, `--scope` the weakest theory, apply, commit.
-3. **IDEA-006 — add a second Boltz-2 seed.** Promoted by TH-011: it measures whether our ranking metric can separate designs at all, and rank order is the real submission output. Cheapest experiment, largest consequence.
-4. IDEA-010 — energetics for Y109. The single assumption IDEA-008 rests on, and pass-003 proved the literature will not answer it.
+3. **IDEA-006 — measure the min_ipae seed spread** on one design (5+ Boltz-2 seeds, more if cheap). TH-011 is now `high` and AlphaFold3 needed 20 seeds for its median, so a metric with no error bar is the largest hole in the pipeline. Do this before ranking anything.
+4. **IDEA-005 — add a VHH** alongside the scFv designs. Promoted by TH-012: a VHH is the only format where both no-proxy properties (Tm, structure accuracy) are covered.
+5. IDEA-010 — energetics for Y109. The single assumption IDEA-008 rests on, and pass-003 proved the literature will not answer it.
 4. IDEA-001 (CDRH3 for binding + framework for Tm) — still the only idea attacking two scored properties at once, and TH-005 is unaffected by EXP-002.
 5. Resolve IDEA-003 (thermostability predictor); answer now depends on whether we submit a VHH.
 
@@ -75,3 +76,4 @@ not on the designs alone. See [`PROMPT.md`](PROMPT.md) for the full cycle.
 | 2026-11-14 | Cadence changed 30 min → 15 min, and a repo-scan step added to each pass so teammates' committed results feed the theories |
 | 2026-11-14 | **PR #2 merged** into `main` at `27b6982` (46 files). Branch rebased onto the merge; subsequent passes go out as a new PR |
 | 2026-11-14 | pass-003 ($0.15, 3 searches, scoped TH-009): found **nothing** on Y109 energetics — a negative result that escalates IDEA-010 to high. Side effects: TH-001 `medium` → `high` (PMID:29702641, 10-50 fold measured), and new **TH-011** on whether refold scores can separate close designs at all |
+| 2026-11-14 | pass-004 ($0.15, 3 searches, scoped TH-011): repo scan found nothing new. TH-011 `medium` → **`high`** — AlphaFold3 needs **20 seeds** for a 2.9 Å median CDR-H3 (PMID:40814020), and four methods 2009-2025 converge on 2.4-2.9 Å. IDEA-006 rescoped from "second seed" to "measure the spread". New **TH-012**: a VHH is better supported by our tooling on two legs, so IDEA-005 → high |
