@@ -17,6 +17,9 @@ Nothing here transfers to de novo designs (<70% identity to known antibodies); f
 | `p3_sanity.py` | Learning curve, permuted-label control, cluster purity |
 | `p4_external.py` | External check: FACS-trained model scored against measured SPR |
 | `p5_ranker.py` | Grouped-CV model comparison for both tasks, in and out of the constraint band |
+| `make_calibration.py` | Builds Boltz-2/Protenix fold inputs for SPR variants with known KD (run on the VM) |
+| `p6_iptm_calib.py` | Does fold confidence (ipTM/pTM/pLDDT) add to the sequence pre-filter? |
+| `p7_ipae.py` | Interface PAE (`min_ipae`) across the CDRH3↔HER2 interface, decoded from the detailed scores |
 
 `data/` and `models/` are git-ignored. Pull the inputs with the `scp` commands in the project README
 (SPR-768, FACS 524k, and the `clonotype_split/0.7_0.15_0.15` splits from the Mehta `data.zip`).
@@ -89,6 +92,45 @@ set (10^5–10^7) screens in seconds to minutes on CPU. **No GPU is needed for t
   a ranking, not a predicted KD.
 - **Not covered at all:** thermostability and epitope preservation, two of the three judged properties. No
   labelled data for either, so the pre-filter cannot speak to them.
+
+## Does refolding earn a place in the cascade? Measured: no (for this track)
+
+We had no ipTM for any trastuzumab variant, so it was calibrated against measured affinity: 60 SPR
+variants (30 with a KD spanning 0.023–13,863 nM, 30 with no measurable KD, trastuzumab as a control)
+folded with Boltz-2 against HER2 domain IV, with the 1N8Z template.
+
+**Cost, measured on our H100** (not from docs): 475 s for 60 structures = **7.9 s per structure**,
+including container and model load. An earlier estimate of ~80 s per fold, taken from the Nebius
+`START-HERE.md`, was wrong by ~10x for this setup.
+
+**Every fold metric lands at chance** for separating measured binders from non-binders (n=60, 30/30):
+
+| Metric | AUROC |
+|---|---|
+| ipTM | 0.502 |
+| pTM | 0.504 |
+| pLDDT | 0.356 |
+| `min_ipae`, CDRH3↔HER2 interface | 0.497 |
+| `mean_ipae`, CDRH3↔HER2 interface | 0.454 |
+| sequence-only `p_binder` (grouped CV on the same 60) | **0.849** |
+
+Among the 30 measured binders, no fold metric tracks KD (all |Spearman| ≤ 0.21, p ≥ 0.28), while the
+sequence ranker reaches Spearman +0.687 under grouped CV. Adding fold metrics to the sequence features
+made the classifier *worse* on grouped CV (0.849 → 0.806). **ipTM ≥ 0.7 passes 100% of true
+non-binders**, so as a gate it removes nothing.
+
+Why: all 60 complexes share 326 of 336 tokens — only the 10 CDRH3 residues vary — so global confidence is
+dominated by the unchanged framework and HER2, and ipTM spans just 0.070. That explanation does *not*
+cover `min_ipae`, which has a real spread of 3.0 and still sits at chance, so this is not a resolution
+artefact.
+
+**Scope of this negative result.** It applies to CDRH3 optimisation on a fixed trastuzumab framework. It
+does *not* transfer to de novo designs, where the whole binder changes — that is the regime the Smorodina
+benchmark covers, and there AF3 ipTM does carry signal (AUROC 0.75). With n=60 we can rule out a strong
+effect (AUROC > ~0.65), not a weak one.
+
+**Consequence for the pipeline:** refolding stays as a structural plausibility check on the handful of
+designs we actually submit, not as a screening stage. Screening ranks on sequence.
 
 ## How to use it
 
