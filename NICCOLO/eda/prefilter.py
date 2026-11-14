@@ -47,15 +47,34 @@ def clusters(seqs, thresh=2):
         if a != b: parent[a] = b
     return np.array([find(i) for i in range(len(seqs))])
 
-def load():
+def load(with_facs=False):
+    """SPR variants, and optionally the FACS splits. The FACS tables are only needed for use_facs=True."""
     spr = pd.read_csv(DATA/"trastuzumab_her2_spr_all_768.csv")
     v = spr[(spr.cdrh3.str.len() == L) & (spr.cdrh3 != TZ) & (spr.cdrh3 != "ARDRIVDDYYYYGMDV")]
     v = v[v.cdrh3.map(lambda s: set(s) <= set(AA))].reset_index(drop=True)
+    if not with_facs:
+        return v, None
     facs = pd.concat([pd.read_csv(DATA/"splits/train.csv"), pd.read_csv(DATA/"splits/val.csv")], ignore_index=True)
     return v, facs
 
 class PreFilter:
-    def fit(self, spr, facs):
+    """use_facs=False by default: the FACS feature is worth +0.00 Spearman to the ranker (audit F in
+    p10_leakage_audit.py) while costing an 11 MB data dependency and ~8x throughput. Pass True to restore it."""
+    def __init__(self, use_facs=False):
+        self.use_facs = use_facs
+    def fit(self, spr, facs=None):
+        if not self.use_facs:
+            self.facs = None; self.n_facs_dropped = 0
+            b = spr[spr.binding_result.isin(["quantified_binding", "no_reportable_kd"])]
+            self.clf = LogisticRegression(C=.3, max_iter=4000).fit(onehot(b.cdrh3.values),
+                (b.binding_result == "quantified_binding").astype(int).values)
+            q = spr[spr.binding_result == "quantified_binding"]
+            self.rank = Ridge(3.0).fit(np.hstack([onehot(q.cdrh3.values), nmut(q.cdrh3.values)[:, None]]),
+                np.log10(q.kd_nM.values))
+            return self
+        return self._fit_with_facs(spr, facs)
+
+    def _fit_with_facs(self, spr, facs):
         # FACS model: trained with every SPR sequence removed, so its score is never leaked downstream
         clean = facs[~facs.seq.isin(set(spr.cdrh3))]
         self.n_facs_dropped = len(facs) - len(clean)
@@ -72,16 +91,25 @@ class PreFilter:
         return self
     def score(self, seqs):
         seqs = list(seqs); oh = onehot(seqs); nm = nmut(seqs)[:, None]
-        pf = self.facs.predict_proba(ordinal(seqs))[:, 1][:, None]
-        return pd.DataFrame({"cdrh3": seqs, "n_mut": nm[:, 0], "p_facs_high": pf[:, 0],
-            "p_binder": self.clf.predict_proba(oh)[:, 1], "pred_log10_kd": self.rank.predict(np.hstack([oh, nm, pf]))})
+        out = {"cdrh3": seqs, "n_mut": nm[:, 0], "p_binder": self.clf.predict_proba(oh)[:, 1]}
+        if self.facs is None:
+            out["pred_log10_kd"] = self.rank.predict(np.hstack([oh, nm]))
+        else:
+            pf = self.facs.predict_proba(ordinal(seqs))[:, 1][:, None]
+            out["p_facs_high"] = pf[:, 0]
+            out["pred_log10_kd"] = self.rank.predict(np.hstack([oh, nm, pf]))
+        return pd.DataFrame(out)
 
-def validate(spr, facs):
+def validate(spr, facs=None):
     """Leak-free grouped CV, reported overall and inside the >=3-mutation design-constraint band."""
-    clean = facs[~facs.seq.isin(set(spr.cdrh3))]
-    fm = HistGradientBoostingClassifier(max_iter=400, max_leaf_nodes=63, categorical_features=list(range(L)),
-        random_state=0).fit(ordinal(clean.seq.values), clean.label.values)
-    spr = spr.copy(); spr["p_facs"] = fm.predict_proba(ordinal(spr.cdrh3.values))[:, 1]
+    spr = spr.copy()
+    if facs is None:
+        spr["p_facs"] = 0.0          # feature present but constant: the audited default drops it
+    else:
+        clean = facs[~facs.seq.isin(set(spr.cdrh3))]
+        fm = HistGradientBoostingClassifier(max_iter=400, max_leaf_nodes=63, categorical_features=list(range(L)),
+            random_state=0).fit(ordinal(clean.seq.values), clean.label.values)
+        spr["p_facs"] = fm.predict_proba(ordinal(spr.cdrh3.values))[:, 1]
     spr["n_mut"] = nmut(spr.cdrh3.values); spr["grp"] = clusters(spr.cdrh3.values)
     out = {}
     b = spr[spr.binding_result.isin(["quantified_binding", "no_reportable_kd"])].reset_index(drop=True)
@@ -120,18 +148,23 @@ def benchmark(pf, n=2_000_000):
     seqs = ["".join(s) for s in rng.choice(list(AA), size=(n, L))]
     t0 = time.time(); oh = onehot(seqs); t_feat = time.time()-t0
     t0 = time.time(); pf.clf.predict_proba(oh); t_clf = time.time()-t0
-    t0 = time.time(); pfs = pf.facs.predict_proba(ordinal(seqs))[:, 1]; t_facs = time.time()-t0
-    t0 = time.time(); pf.rank.predict(np.hstack([oh, nmut(seqs)[:, None], pfs[:, None]])); t_rank = time.time()-t0
+    nm = nmut(seqs)[:, None]
+    t_facs = 0.0
+    if pf.facs is None:
+        t0 = time.time(); pf.rank.predict(np.hstack([oh, nm])); t_rank = time.time()-t0
+    else:
+        t0 = time.time(); pfs = pf.facs.predict_proba(ordinal(seqs))[:, 1]; t_facs = time.time()-t0
+        t0 = time.time(); pf.rank.predict(np.hstack([oh, nm, pfs[:, None]])); t_rank = time.time()-t0
     return dict(n=n, featurise_s=t_feat, clf_s=t_clf, facs_s=t_facs, rank_s=t_rank,
         clf_seqs_per_s=int(n/(t_feat+t_clf)), full_seqs_per_s=int(n/(t_feat+t_clf+t_facs+t_rank)))
 
 if __name__ == "__main__":
-    spr, facs = load()
+    spr, facs = load(with_facs=False)
     print("=== leak-free grouped-CV validation ===")
     for k, d in validate(spr, facs).items():
         print(f"  {k}: " + ", ".join(f"{a}={b:.3f}" if isinstance(b, float) else f"{a}={b}" for a, b in d.items()))
     pf = PreFilter().fit(spr, facs)
-    print(f"\nfitted; FACS rows dropped to avoid leakage: {pf.n_facs_dropped}")
+    print(f"\nfitted (use_facs={pf.use_facs}); FACS rows dropped to avoid leakage: {pf.n_facs_dropped}")
     print("\n=== throughput (this laptop, single process) ===")
     for k, v in benchmark(pf).items(): print(f"  {k}: {v:,.3f}" if isinstance(v, float) else f"  {k}: {v:,}")
     pickle.dump(pf, open(MODELS/"prefilter.pkl", "wb"))
