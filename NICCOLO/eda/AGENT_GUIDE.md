@@ -234,6 +234,7 @@ KD) against HER2 domain IV with the 1N8Z template, using **Boltz-2** and **Prote
 | Boltz-2 pLDDT | 0.356 |
 | Protenix ipTM | 0.502 |
 | Protenix antibody↔HER2 interface ipTM | 0.552 |
+| Protenix ipTM, ranking 180 binders by KD | r = −0.065, CI [−0.190, +0.082] |
 | **sequence classifier**, grouped CV on the same 60 | **0.849** |
 
 Among the 30 measured binders no fold metric tracks KD (all p ≥ 0.20). Adding fold metrics to the sequence
@@ -246,12 +247,29 @@ by the unchanged framework and HER2, and Boltz-2 ipTM spans only 0.070. That doe
 `min_ipae`, which has a real spread of 3.0 and is still at chance. The two fold models barely agree with
 each other (Spearman +0.28).
 
+**Settled at n=180.** The one loose end was that at n=30 every Protenix metric pointed the *right* way
+(ipTM −0.237) without reaching significance. All 180 measured binders were folded with Protenix v2 to
+resolve it (`p14_protenix180.py`, 180 structures, 0 clashes):
+
+| Metric | Spearman vs log10 KD | p | 95% CI (cluster bootstrap) |
+|---|---|---|---|
+| ipTM | **−0.065** | 0.39 | [−0.190, +0.082] |
+| antibody↔HER2 interface ipTM | −0.051 | 0.49 | [−0.214, +0.070] |
+| pLDDT | −0.093 | 0.21 | [−0.208, +0.181] |
+| ranking score | −0.063 | 0.40 | [−0.189, +0.084] |
+
+The n=30 estimate of −0.237 shrank to **−0.065** at n=180 — regression to the mean of a noisy
+small-sample estimate. No metric's interval excludes zero. (`gpde` has p=0.046, but its bootstrap CI spans
+zero, and one marginal p across 11 metrics is expected by chance.)
+
+Adding the Protenix metrics to the sequence ranker is **a small, consistent harm**: +0.683 → +0.666,
+difference −0.017 with 95% CI [−0.031, −0.002], entirely below zero. Protenix metrics *alone* reach
+Spearman −0.322 out-of-fold, meaning they rank designs in actively the wrong order rather than at chance.
+
 **Limits of this result.** It covers CDRH3 optimisation on a fixed framework, one diffusion sample and one
 seed. It does **not** transfer to de novo designs, where the whole binder changes — that is the regime the
 Smorodina benchmark covers, and there AF3 ipTM does carry signal (AUROC 0.75, with Boltz-2 at 0.64 and
-Chai-1 at 0.57; see `eda.py`). At n=60 we can rule out a strong effect, not a weak one. Every Protenix
-metric correlates with KD in the *right* direction (ipTM −0.237) without reaching significance, so a
-180-binder Protenix run is in progress to resolve it; this section will be updated with the result.
+Chai-1 at 0.57; see `eda.py`).
 
 **So:** refold the designs you actually submit, as a plausibility check and because provenance is scored.
 Do not use refolding to screen or rank, and do not rank on ipTM alone even for de novo designs.
@@ -285,6 +303,7 @@ python seqfeat.py          # T0 feature builder self-test
 python p11_features.py     # T0 feature comparison, nested CV + extrapolation
 python p12_features_ci.py  # repeated randomised grouped CV
 python p13_bootstrap.py    # cluster bootstrap: the accept/reject test
+python p14_protenix180.py  # Protenix on all 180 binders: settles the ipTM-vs-KD question
 ```
 
 Requires `pandas numpy scikit-learn scipy matplotlib cbor2`. Full results and caveats: `README.md`.
