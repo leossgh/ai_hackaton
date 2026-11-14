@@ -1,0 +1,15 @@
+sequence_id,strategy,parents,parent_score,identity_to_trastuzumab,cdrh3_len,cdrh3,cdrh3_min_distance,cdrh3_dist_trastuzumab,predicted_track
+var_ext_real_vhh_8E2N_B_00,extend,real_vhh_8E2N_B,0.85,0.5496,21,NGASDIGASSSSLQSGASSWS,4,18,de_novo
+var_ext_real_vhh_8E2N_B_01,extend,real_vhh_8E2N_B,0.85,0.5496,21,NGASDIGASSNSLQSGASSWS,4,18,de_novo
+var_ext_real_vhh_8E2N_B_02,extend,real_vhh_8E2N_B,0.85,0.5496,21,NGASDIGASSRRLQSGASSWS,4,18,de_novo
+var_ext_real_vhh_6JB9_A_00,extend,real_vhh_6JB9_A,0.8,0.5789,26,GATRKYVPVRNYNGGTFALDQSSYDY,6,21,de_novo
+var_ext_real_vhh_6JB9_A_01,extend,real_vhh_6JB9_A,0.8,0.5878,24,GATRKYVPVRSRYTFALDQSSYDY,4,19,de_novo
+var_ext_real_vhh_6JB9_A_02,extend,real_vhh_6JB9_A,0.8,0.5940,26,GATRKYVPVRSDRGGYFALDQSSYDY,6,19,de_novo
+var_ext_real_vhh_8CDS_A_00,extend,real_vhh_8CDS_A,0.75,0.5420,24,AVDQLNAGLDSTSYGGDVSYDYDY,6,17,de_novo
+var_ext_real_vhh_8CDS_A_01,extend,real_vhh_8CDS_A,0.75,0.5338,26,AVDQLNAGLNRTDDGSDGDVSYDYDY,8,19,de_novo
+var_ext_real_vhh_8CDS_A_02,extend,real_vhh_8CDS_A,0.75,0.5414,26,AVDQLNAGLTSYWGNSDGDVSYDYDY,8,18,de_novo
+var_ext_real_vhh_5VLV_A_00,extend,real_vhh_5VLV_A,0.7,0.5846,23,ATRASMQVNSRGGTLTSPRVYPI,6,19,de_novo
+var_ext_real_vhh_5VLV_A_01,extend,real_vhh_5VLV_A,0.7,0.5846,23,ATRASMQVNYDNSYLTSPRVYPI,6,19,de_novo
+var_ext_real_vhh_5VLV_A_02,extend,real_vhh_5VLV_A,0.7,0.5846,23,ATRASMQVYGNNYYLTSPRVYPI,6,19,de_novo
+var_gra_real_caplacizumab_00,graft,real_caplacizumab+vhh_8E2N_B,0.65,0.6000,14,AAAGVRAEDGRVRT,6,13,de_novo
+var_gra_real_caplacizumab_02,graft,real_caplacizumab+vhh_6JB9_A,0.65,0.5917,14,AAAGVRAEDGRVRT,6,13,de_novo
