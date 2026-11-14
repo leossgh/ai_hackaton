@@ -111,10 +111,46 @@ The RFD4-Proteina metrics only speak to binding. Thermostability and epitope pre
 - **Nebius Tools, JapanFold:** see `LEO/README.md` section 4. Setup files are in the Slack folder.
 - **Claude Code:** pre-installed on the VM.
 
+## Branching: `LEO` is the working main
+
+Treat the `LEO` branch as the main branch for day-to-day work. `main` is the team-facing branch and is off limits without Leo's explicit permission.
+
+**Every new task starts on its own sub-branch of `LEO`.**
+
+```bash
+git checkout LEO
+git pull --ff-only          # if a remote exists
+git checkout -b LEO/<short-task-name>
+```
+
+Name the branch `LEO/<short-task-name>`, e.g. `LEO/novelty-filter`, `LEO/boltz-seeds`, `LEO/abguard-setup`. One task, one branch.
+
+**Commit as you go.** Do not leave work uncommitted between steps. Each commit should be one coherent change with a message saying what and why.
+
+**When the feature is finished, merge it back into `LEO`.**
+
+```bash
+git checkout LEO
+git merge --no-ff LEO/<short-task-name>
+git branch -d LEO/<short-task-name>
+```
+
+Use `--no-ff` so the branch point stays visible in the history. Delete the sub-branch after merging.
+
+**Never merge into `main` on your own.** Merging `LEO` into `main` requires Leo to ask for it explicitly, each time. "I finished the feature" is not permission. If you think a merge to `main` is due, say so and wait.
+
+| Branch | Who merges into it | When |
+|---|---|---|
+| `LEO/<task>` | the agent doing the task | commit freely while working |
+| `LEO` | the agent, when a feature is finished | after the task works |
+| `main` | **only on Leo's explicit request** | never on an agent's own judgment |
+
+If a task is abandoned, say so and leave the sub-branch in place rather than deleting unmerged work.
+
 ## Rules for agents
 
 - Never commit secrets or API keys, nor the `hackathon-data/` and `LEO/.venv/` folders.
-- Do not commit or push unless asked. End commit messages with a `Co-Authored-By:` line naming the model you are actually running as.
+- Commit all changes before finishing a task. Do not push, and do not merge into `main`, unless Leo asks. End commit messages with a `Co-Authored-By:` line naming the model you are actually running as.
 - Record every design run: input spec, weight image, settings, seed, and resulting scores. Put run notes in the owner's folder, not in shared folders.
 - Keep each design's provenance and its **predicted** track (from its identity numbers) with the design. The real track assignment only comes from `abguard`, so treat local labels as predictions and verify them.
 - When something is blocked or unclear, record it in the progress log in `LEO/README.md` rather than guessing.
