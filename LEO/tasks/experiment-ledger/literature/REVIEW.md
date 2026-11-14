@@ -44,11 +44,36 @@ predicted docking). This is an existence proof that epitope preservation does
 not require a paired VH/VL interface, which keeps the de novo VHH route open
 (TH-006).
 
-**Structural basis.** The HER2–Herceptin Fab structure (PMID:12610629) is the
-source of the domain IV contact set; the cryo-EM HER2–trastuzumab–pertuzumab
-complex (PMID:31042744) adds the ternary arrangement. Both give *contacts*.
-Neither gives per-residue energetic weight, so "which contacts are load-bearing"
-is still unanswered (TH-008, IDEA-004). A contact is not a hot spot.
+**Structural basis — now measured, and the measurement reversed the answer.**
+The HER2–Herceptin Fab structure (PMID:12610629) is the source of the domain IV
+contact set; the cryo-EM ternary complex (PMID:31042744) adds the arrangement.
+EXP-002 measured the contacts directly at 4.5 Å across **8** trastuzumab–HER2
+structures (1N8Z, 22GC, 22GE, 6BGT, 6OGE, 7MN8, 8PWH, 8Q6J).
+
+CDRH3 is **WGGDGFYAMDY**, 11 residues, so clearing the `<70%` identity gate
+needs **4 substitutions**. From 1N8Z alone, 7 positions look contact-free — but
+across all 8 structures only **3 never contact HER2** (A106, M107, D108). 1N8Z
+leaves HER2 579–593 unmodelled, and several CDRH3 positions contact there, so
+one structure under-counts contacts in exactly the direction that flatters a
+design.
+
+**Consequence:** the identity gate and epitope preservation are in quantified
+tension — at least one contacting position must be mutated. The cheapest is
+**Y109** (contacts in 1 of 8). That yields the recipe A106/M107/D108/Y109
+(TH-009, IDEA-008). This retired TH-008, which had named 1N8Z as the authority.
+
+**The HER2 epitope itself:** 34 residues contacted in at least one structure, of
+which 6 are contacted in every structure that models them — **P557, E558, P571,
+585, Q602, P603** — the core to preserve.
+
+**Interface share:** CDRH3 carries only 12–34% of contacts (26% in 1N8Z), with
+H2 at 14–47%, L3 11–29%, L1 5–17%, and framework up to 23%. All four HER2 RFD4
+weights redesign CDRH3 only, so our default tooling addresses a minority of the
+interface (TH-010, IDEA-009).
+
+Still missing: per-residue **energetics**. Contact frequency is geometry, not
+binding free energy, and Y109 is precisely the position the recipe sacrifices
+(IDEA-010). A contact is not a hot spot.
 
 **A failure mode to design against.** Arg-enriched CDR mutations raise affinity
 but cost specificity: scFv selected under weak specificity pressure were
@@ -137,3 +162,124 @@ filter, but "path to value" is 20% of the pitch score (IDEA-007).
 | Thermostability predictor unchosen | One of three scored properties has no proxy | IDEA-003 |
 | Cell-free expression determinants not extracted | A design that does not express is unmeasurable | open |
 | trialcore records returned empty titles | 20 records are unusable as cited | open |
+
+## 8. Can we trust the ranking? (added by pass-003)
+
+Rank order is the real submission output — only ~4 designs are tested — so the
+reliability of the metric we rank on matters more than any single score.
+
+**Loop prediction accuracy is the limiting factor.** Median backbone RMSD for
+CDR H3 loop prediction is **2.4 Å for medium (10–11 residue) loops**
+(PMID:19062174, benchmark), and trastuzumab's CDRH3 is 11 aa. Ab initio H3
+prediction reaches **0.5 Å** median RMSD when run *in the crystal environment
+with symmetry mates*, but without that context only **70% of cases fall under
+2.0 Å** (PMID:23255066, benchmark). Both are older methods than the co-folding
+stack we use, and ours takes a template, so these are upper bounds on the error
+rather than estimates of it — but nothing here supports separating designs on
+small score differences.
+
+For contrast, EXP-001 ranked two designs on a **0.021** min_ipae gap from a
+**single** Boltz-2 seed, with no error bar established for either the seed or
+the model. That is the gap TH-011 says we cannot currently defend, and IDEA-006
+is the cheap test.
+
+**Method note worth keeping:** RosettaAntibodyDesign improved affinity **10–50
+fold, experimentally verified**, by replacing individual CDRs with new lengths
+and clusters (PMID:29702641). This is the second independent primary result
+supporting wholesale CDR replacement as an affinity route, alongside the
+1230-fold anti-c-erbB-2 result (PMID:8918938) — which is why TH-001 moved to
+`high`. It also raises CDR *length* change as a lever we have not considered.
+
+**A gap literature cannot close.** Three targeted searches found nothing on the
+energetic contribution of trastuzumab's CDRH3 Tyr109, or of any individual
+trastuzumab paratope residue. Y109 is the one contact the IDEA-008 recipe
+sacrifices, so this has to be computed, not looked up (IDEA-010, now high
+priority).
+
+### 8a. Prediction accuracy, now measured on modern co-folding models (pass-004)
+
+pass-003 left an open caveat: its RMSD figures came from homology and ab initio
+loop modelling, not from the co-folding stack we use. pass-004 closed it.
+
+| Method | CDR-H3 RMSD | Source |
+|---|---|---|
+| **AlphaFold3**, 20 seeds, antibodies | **2.9 Å** median | PMID:40814020 |
+| **AlphaFold3**, 20 seeds, nanobodies | **2.2 Å** median | PMID:40814020 |
+| ABodyBuilder2, 34 recent antibodies | 2.81 Å | PMID:37248282 |
+| AlphaFold-Multimer (same benchmark) | 2.90 Å | PMID:37248282 |
+| NanoBodyBuilder2, nanobodies | 2.89 Å | PMID:37248282 |
+| ABlooper, Rosetta Antibody Benchmark | 2.49 Å | PMID:35099535 |
+| ABlooper, its 75% most confident | **2.05 Å** | PMID:35099535 |
+| Homology modelling, 10–11 residue loops | 2.4 Å | PMID:19062174 |
+
+Four independent methods spanning 2009–2025 land in a 2.4–2.9 Å band. That
+convergence makes it a property of the problem, not of any one tool, so
+**TH-011 moved to `high`**. Ranking designs on a 0.021 min_ipae gap, as EXP-001
+did, is indefensible.
+
+Two things survive:
+
+- **Confidence-based filtering.** ABlooper's error drops 2.49 → 2.05 Å on its
+  most confident 75%, so a model's own confidence carries signal. Discarding a
+  bottom quartile is defensible; separating two close designs is not.
+- **Seeds are the instrument.** AF3 needed **twenty** seeds for its median. We
+  used one. IDEA-006 is rescoped accordingly: measure the spread first.
+
+**Caveat we are carrying ourselves:** every figure above is unbound or apo loop
+geometry. None of them measures interface-score reproducibility, which is what
+we actually rank on. The inference from loop RMSD to min_ipae noise is ours,
+not the papers'. It is recorded in TH-011's `evidence_against`.
+
+**The VHH convergence.** AF3 predicts nanobody CDR-H3 better than antibody
+CDR-H3 (2.2 vs 2.9 Å), and TEMPRO predicts sdAb Tm with a stated error bar
+while no scFv equivalent exists. Two of the three scored properties are
+therefore better covered for a VHH than for an scFv — hence TH-012 and the
+promotion of IDEA-005. Honest counterweight, also recorded: ImmuneBuilder finds
+*no* nanobody advantage (2.89 vs 2.81 Å), and a single domain gives up the
+light-chain CDRs that carry 45% of trastuzumab's interface contacts.
+
+## 9. How to rank: measured, and it changes the pipeline (EXP-003, pass-005)
+
+**Structure scores do not rank binders on this target.** Real-vs-shuffled
+discrimination, measured on HER2 systems over thousands of decoy pairs
+(EXP-003, measured):
+
+| Model | ipTM AUROC | topmodel AUROC |
+|---|---|---|
+| AF3 | 0.754 | 0.397 |
+| **Boltz-2** | **0.645** | 0.443 |
+| Chai-1 | 0.568 | 0.492 |
+
+The topmodel score is below random **and inverted** — shuffled medians exceed
+real ones. Boltz-2 ipTM has a real median of 0.911 against a shuffled median of
+0.884, and **94.3% of 8,190 shuffled pairs score ≥0.7**. EXP-001's ipTM values
+of 0.946 and 0.965 therefore sit inside the decoy distribution; they were never
+evidence of binding (TH-013).
+
+**A sequence model does rank them.** With Hamming ≤2 clusters held out together
+and everything re-reported on the ≥3-mutation band `abguard` forces us into
+(EXP-003, measured): binder classifier AUROC **0.915**, log10 KD ranker Spearman
+**+0.622**, and a top-20 median true KD of **1.42 nM** against 86 nM across the
+set — about 60×, recovering the 0.023 nM best binder (TH-014). Quote those
+figures, not the ungrouped 0.99s.
+
+**Per-position measured preferences** cover 10 of our 11 CDRH3 positions
+(TH-015, measured): F at 99, **Q or E at 102** (log10 KD 0.15/0.18, the largest
+gain in the loop), L at 106, V at 108, with wild-type already best at 104, 105
+and 107. Caveat that keeps TH-015 at `medium`: the standout residues rest on
+n=4–5 against n=104–128 for the wild-type residues they beat. And the dataset
+is a 10-mer, so it says nothing about **Y109** — the one position TH-009's
+recipe sacrifices.
+
+**Two open gaps, stated rather than papered over:**
+
+1. **De novo has no ranker at all.** TH-014 is label-dependent and labels exist
+   only for CDRH3 variants on the trastuzumab framework. pass-005 searched for a
+   validated interface-score screen and found none — no published work measuring
+   whether ipTM or ipAE separates binders from non-binders. For de novo designs
+   we currently have no defensible ranking method, only a filter.
+2. **Nobody has validated the score we were using.** That the literature offers
+   no decoy-control benchmark for ipTM screening is why IDEA-012 makes the
+   control a standing rule: shuffle the pairings, score both sets, check they
+   separate. It costs almost nothing and it is the difference between a number
+   and a measurement.
