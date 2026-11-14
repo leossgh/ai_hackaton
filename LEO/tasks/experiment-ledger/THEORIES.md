@@ -105,12 +105,37 @@ evidence yet supports, so that a pass can knock them down.
 
 ### TH-008 — The 1N8Z contact residues define which CDRH3 positions are load-bearing for the epitope, so a design that preserves those contacts preserves the epitope
 
-- **confidence:** low
-- **status:** active
+- **confidence:** retired
+- **status:** retired
 - **property:** epitope
-- **falsified_by:** Designs that conserve the 1N8Z contact set still lose competitive binding, or designs that break it still win it.
+- **falsified_by:** Designs that conserve the 1N8Z contact set still lose competitive binding, or designs that break it still win it. — **Falsified before any design, by structure: see EXP-002.**
 - **evidence_for:** PMID:12610629 — structure of HER2 with the Herceptin Fab, the source of the contact set; PMID:31042744 — cryo-EM of the HER2-trastuzumab-pertuzumab complex
-- **evidence_against:**
+- **evidence_against:** EXP-002 — 1N8Z alone labels 7 CDRH3 positions contact-free, but across 8 trastuzumab-HER2 structures only 3 never contact HER2. 1N8Z has unmodelled HER2 regions (102-110, 303-305, 361-364, 581-590) and several CDRH3 positions contact residues in 579-593, so a single-structure contact set under-counts contacts in the direction that flatters the design
 - **query_terms:** trastuzumab HER2 contact residues 1N8Z interface paratope; alanine scanning trastuzumab HER2 hot spot energetic contribution; buried surface area shape complementarity HER2 antibody interface
 - **history:**
   - 2026-11-14 created, confidence low — we have the structure but have not yet extracted a per-residue energetic contribution, and a contact is not the same as a hot spot (pass-001)
+  - 2026-11-14 **retired** (EXP-002). Not downgraded but retired: the claim names 1N8Z as the authority, and 1N8Z is demonstrably insufficient. Superseded by TH-009 (which positions are safe) and TH-010 (how much of the interface CDRH3 even covers). Kept rather than deleted because the failure mode — concluding from one crystal structure with gaps — is the lesson.
+
+### TH-009 — The <70% CDRH3 identity gate cannot be met without mutating at least one HER2-contacting position, and the cheapest one to sacrifice is Y109
+
+- **confidence:** high
+- **status:** active
+- **property:** epitope; binding
+- **falsified_by:** A design substituting only A106/M107/D108 passes abguard's CDRH3 identity check (it should not: 3/11 = 72.7%), or a design that also substitutes Y109 loses competitive binding against trastuzumab while one sparing Y109 retains it.
+- **evidence_for:** EXP-002 — CDRH3 is WGGDGFYAMDY (11 aa, 99-109), so <70% identity needs 4 substitutions (4/11 = 63.6%); across 8 trastuzumab-HER2 structures at 4.5 A only A106, M107 and D108 never contact HER2 (0/8 each), while Y109 contacts in 1/8, G101 2/8, G100 3/8, F104 4/8, W99 5/8, D102 6/8, G103 7/8, Y105 7/8
+- **evidence_against:** Contact frequency across crystal structures is a geometric proxy, not an energetic one. A 1-of-8 contact may still be energetically important, and no alanine scan has been run to rule that out (IDEA-008)
+- **query_terms:** antibody paratope contact conservation across crystal structures; CDR position energetic hot spot alanine scan contribution; crystal packing artefact antibody antigen contact variability
+- **history:**
+  - 2026-11-14 created at confidence **high** (EXP-002). Unusually high for a new theory because the claim is arithmetic plus measured geometry across 8 independent structures, not an inference: 4 substitutions are required and only 3 safe positions exist. The design recipe A106/M107/D108 + Y109 follows directly. What is *not* high-confidence is the assumption that sacrificing a 1-of-8 contact is harmless, which is why the theory names Y109 explicitly so it can be falsified.
+
+### TH-010 — CDRH3-only redesign can address at most a third of the trastuzumab-HER2 interface, so CDRH3 is the wrong place to look for large binding gains
+
+- **confidence:** high
+- **status:** active
+- **property:** binding
+- **falsified_by:** CDRH3-only designs show SPR improvements over trastuzumab comparable to what CDR-wide or framework-inclusive redesign achieves.
+- **evidence_for:** EXP-002 — per-CDR share of interface contacts across 8 structures: H3 12-34% (26% in 1N8Z), H2 14-47%, L3 11-29%, L1 5-17%, L2 0-30%, framework up to 23% (6BGT); heavy-chain CDRs carry 55% and light-chain CDRs 45% in 1N8Z
+- **evidence_against:** Interface share counts contacts, not binding energy; a minority of contacts can carry a majority of the affinity. PMID:8918938 got a 1230-fold KD gain from VL-CDR3 and VH-CDR3 libraries alone, which shows CDR3s can dominate affinity even when they do not dominate contact count
+- **query_terms:** antibody interface contact share CDR contribution binding energy; CDR H2 L3 contribution affinity antigen; framework contact antigen antibody interface contribution
+- **history:**
+  - 2026-11-14 created at confidence **high** for the measurement, which is unambiguous across 8 structures (EXP-002). The *strategic* reading is weaker and the counter-evidence says so: PMID:8918938 is a direct case of CDR3 libraries delivering a 1230-fold gain. Practical consequence: all four HER2 RFD4 weights redesign CDRH3 only, so the tool set available to us works on a minority of the interface. If we want more, it needs `antibody-2026-10-30` on other CDRs (IDEA-009).
