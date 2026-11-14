@@ -65,11 +65,12 @@ suggested it) | `team`.
 
 - **status:** open
 - **priority:** high
-- **tests:** TH-001
+- **tests:** TH-001; TH-011
 - **cost:** two refold runs on the shared H100
 - **source:** experiment
 - **evidence:** EXP-001
-- **notes:** EXP-001 ranked on a single seed and refolded only 2 of 4 designs. The ranking gap between the two was small (min iPAE 0.310 vs 0.331), which is inside the noise one seed can tell us about. Cheapest way to firm up the one ranking we already have.
+- **query_terms:** folding model seed variance interface score reproducibility; antibody antigen co-folding template confidence metric
+- **notes:** EXP-001 ranked on a single seed and refolded only 2 of 4 designs. The ranking gap between the two was small (min iPAE 0.310 vs 0.331), which is inside the noise one seed can tell us about. Cheapest way to firm up the one ranking we already have. **pass-003 raised the stakes:** TH-011 says predicted H3 conformation for an 11-residue loop is only good to ~2 Å, so this is no longer just tidying — it measures whether our ranking metric can separate designs at all. Since rank order is the real submission output, this is the cheapest experiment with the largest consequence.
 
 ### IDEA-007 — Check whether any of our designs sit near a claimed patent sequence
 
@@ -107,7 +108,7 @@ suggested it) | `team`.
 ### IDEA-010 — Get per-residue energetics for the CDRH3 contacts, not just contact frequency
 
 - **status:** open
-- **priority:** medium
+- **priority:** high
 - **tests:** TH-009
 - **cost:** computational alanine scan or MM-GBSA style decomposition on 1N8Z; no GPU needed for the cheap version
 - **source:** experiment

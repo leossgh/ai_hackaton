@@ -20,15 +20,16 @@ evidence yet supports, so that a pass can knock them down.
 
 ### TH-001 — Diversifying CDRH3 wholesale raises anti-HER2 affinity rather than destroying it, so our <70% CDRH3 identity constraint is an opportunity, not a tax
 
-- **confidence:** medium
+- **confidence:** high
 - **status:** active
 - **property:** binding
 - **falsified_by:** A design series whose CDRH3 is >30% substituted shows systematically worse SPR KD than trastuzumab, with no high-affinity tail.
-- **evidence_for:** PMID:8918938 — sequential VL-CDR3 then VH-CDR3 library mutation of an anti-c-erbB-2 scFv gave 1230-fold KD improvement to 1.3e-11 M, and the VH CDR3 was 20 aa, i.e. long enough to tolerate library-scale change; PMID:26225765 — targeted CDR3 randomisation of an anti-HER2 antibody optimised therapeutic targeting; PMID:35545451
-- **evidence_against:**
+- **evidence_for:** PMID:8918938 — sequential VL-CDR3 then VH-CDR3 library mutation of an **anti-c-erbB-2 (HER2)** scFv gave 1230-fold KD improvement to 1.3e-11 M, with a 20 aa VH CDR3, i.e. long enough to tolerate library-scale change; PMID:29702641 — RosettaAntibodyDesign replaced individual CDRs with new **lengths and clusters** and improved affinity **10-50 fold, verified experimentally** on both a lambda and a kappa antibody-antigen complex; PMID:26225765 — targeted CDR3 randomisation of an anti-HER2 antibody optimised therapeutic targeting; PMID:35545451
+- **evidence_against:** EXP-002 — wholesale CDRH3 change is no longer epitope-free: 4 substitutions are needed for the identity gate and only 3 CDRH3 positions never contact HER2, so an affinity-motivated redesign necessarily touches a contact (TH-009). The affinity case is strong; the *freedom* is not
 - **query_terms:** CDRH3 library randomization affinity gain anti-HER2 scFv; CDR3 diversification picomolar affinity maturation; long CDRH3 20 residue loop tolerance substitution
 - **history:**
   - 2026-11-14 created, confidence medium — one strong primary result (8918938) but on C6.5, not trastuzumab, and KD measured by a 1996 method (pass-001)
+  - 2026-11-14 medium → **high** (pass-003). PMID:29702641 is a second, independent, experimentally verified result: 10-50 fold affinity gains from replacing whole CDRs including length changes. Combined with PMID:8918938, which is on an anti-HER2 scFv, two primary results now support wholesale CDR change as an affinity route. Note what did *not* move: EXP-002 added counter-evidence that the route is not epitope-free, so this theory is now "CDRH3 redesign can win affinity", not "CDRH3 redesign is safe".
 
 ### TH-002 — Affinity gains bought in CDRH3 cost thermostability, so the two prize properties are in direct tension and must be co-optimised, not optimised in sequence
 
@@ -127,6 +128,7 @@ evidence yet supports, so that a pass can knock them down.
 - **query_terms:** antibody paratope contact conservation across crystal structures; CDR position energetic hot spot alanine scan contribution; crystal packing artefact antibody antigen contact variability
 - **history:**
   - 2026-11-14 created at confidence **high** (EXP-002). Unusually high for a new theory because the claim is arithmetic plus measured geometry across 8 independent structures, not an inference: 4 substitutions are required and only 3 safe positions exist. The design recipe A106/M107/D108 + Y109 follows directly. What is *not* high-confidence is the assumption that sacrificing a 1-of-8 contact is harmless, which is why the theory names Y109 explicitly so it can be falsified.
+  - 2026-11-14 **no change**, and that is the finding (pass-003). Three targeted searches plus the full cache turned up nothing on the energetic contribution of trastuzumab CDRH3 Tyr109, or of any individual trastuzumab paratope residue. The literature cannot settle whether sacrificing Y109 is safe, so IDEA-010 is escalated to high priority: if we want that answer we have to compute it. The theory stands on geometry alone, which is exactly as strong as it was before.
 
 ### TH-010 — CDRH3-only redesign can address at most a third of the trastuzumab-HER2 interface, so CDRH3 is the wrong place to look for large binding gains
 
@@ -139,3 +141,15 @@ evidence yet supports, so that a pass can knock them down.
 - **query_terms:** antibody interface contact share CDR contribution binding energy; CDR H2 L3 contribution affinity antigen; framework contact antigen antibody interface contribution
 - **history:**
   - 2026-11-14 created at confidence **high** for the measurement, which is unambiguous across 8 structures (EXP-002). The *strategic* reading is weaker and the counter-evidence says so: PMID:8918938 is a direct case of CDR3 libraries delivering a 1230-fold gain. Practical consequence: all four HER2 RFD4 weights redesign CDRH3 only, so the tool set available to us works on a minority of the interface. If we want more, it needs `antibody-2026-10-30` on other CDRs (IDEA-009).
+
+### TH-011 — Refold scores cannot separate close CDRH3 designs, because predicted conformation for an 11-residue H3 loop is only accurate to roughly 2 A
+
+- **confidence:** medium
+- **status:** active
+- **property:** binding
+- **falsified_by:** Repeated folding of the same design across seeds and models gives min_ipae spreads much smaller than the score gaps we are ranking on, or the returned SPR values track the predicted ranking.
+- **evidence_for:** PMID:19062174 — median backbone RMSD of CDR H3 loop prediction is **2.4 A for medium (10-11 residue) loops**, and trastuzumab's CDRH3 is 11 aa; PMID:23255066 — ab initio H3 prediction reaches 0.5 A median RMSD **in the crystal environment with symmetry mates**, but without that context only 70% of cases fall under 2.0 A; EXP-001 — the two refolded designs differed by just 0.021 min_ipae on a single Boltz-2 seed, a gap with no established error bar
+- **evidence_against:** Both RMSD figures come from homology and ab initio loop modelling, not from the co-folding models we actually use (Boltz-2, OpenFold3, Protenix), which take a template and may do better on a grafted loop in a fixed framework
+- **query_terms:** CDRH3 loop conformation prediction accuracy RMSD benchmark; Boltz AlphaFold interface pAE reliability antibody antigen; folding model seed variance interface confidence score
+- **history:**
+  - 2026-11-14 created, confidence medium (pass-003). Found while looking for something else: the question "can we trust the ranking?" matters more than any single score, because only ~4 designs are tested and rank order is the real output. The two RMSD studies are older methods than our folding stack, hence medium not high. The cheap test is IDEA-006, which already exists: add a second Boltz-2 seed and see whether the 0.021 gap in EXP-001 survives.

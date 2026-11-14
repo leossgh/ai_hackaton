@@ -162,3 +162,36 @@ filter, but "path to value" is 20% of the pitch score (IDEA-007).
 | Thermostability predictor unchosen | One of three scored properties has no proxy | IDEA-003 |
 | Cell-free expression determinants not extracted | A design that does not express is unmeasurable | open |
 | trialcore records returned empty titles | 20 records are unusable as cited | open |
+
+## 8. Can we trust the ranking? (added by pass-003)
+
+Rank order is the real submission output — only ~4 designs are tested — so the
+reliability of the metric we rank on matters more than any single score.
+
+**Loop prediction accuracy is the limiting factor.** Median backbone RMSD for
+CDR H3 loop prediction is **2.4 Å for medium (10–11 residue) loops**
+(PMID:19062174, benchmark), and trastuzumab's CDRH3 is 11 aa. Ab initio H3
+prediction reaches **0.5 Å** median RMSD when run *in the crystal environment
+with symmetry mates*, but without that context only **70% of cases fall under
+2.0 Å** (PMID:23255066, benchmark). Both are older methods than the co-folding
+stack we use, and ours takes a template, so these are upper bounds on the error
+rather than estimates of it — but nothing here supports separating designs on
+small score differences.
+
+For contrast, EXP-001 ranked two designs on a **0.021** min_ipae gap from a
+**single** Boltz-2 seed, with no error bar established for either the seed or
+the model. That is the gap TH-011 says we cannot currently defend, and IDEA-006
+is the cheap test.
+
+**Method note worth keeping:** RosettaAntibodyDesign improved affinity **10–50
+fold, experimentally verified**, by replacing individual CDRs with new lengths
+and clusters (PMID:29702641). This is the second independent primary result
+supporting wholesale CDR replacement as an affinity route, alongside the
+1230-fold anti-c-erbB-2 result (PMID:8918938) — which is why TH-001 moved to
+`high`. It also raises CDR *length* change as a lever we have not considered.
+
+**A gap literature cannot close.** Three targeted searches found nothing on the
+energetic contribution of trastuzumab's CDRH3 Tyr109, or of any individual
+trastuzumab paratope residue. Y109 is the one contact the IDEA-008 recipe
+sacrifices, so this has to be computed, not looked up (IDEA-010, now high
+priority).

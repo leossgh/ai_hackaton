@@ -9,10 +9,11 @@
 | | |
 |---|---|
 | Experiments | 2 (`worked` 1, `inconclusive` 1) |
-| Theories | 9 active + 1 retired — `low` 0, `medium` 7, `high` 2 |
+| Theories | 10 active + 1 retired — `low` 0, `medium` 7, `high` 3 |
 | Ideas | 9 open/lit-checked, 1 done |
-| Research passes | 2 |
-| AMASS spend | 2 searches, $0.10 of the ~2,000-search team budget |
+| Research passes | 3 |
+| AMASS spend | 5 searches, $0.25 of the ~2,000-search team budget (hard stop at 400) |
+| Published | PR #2 **merged** into `main` at `27b6982`; later work goes out as a new PR |
 
 ## What this task is
 
@@ -54,7 +55,8 @@ not on the designs alone. See [`PROMPT.md`](PROMPT.md) for the full cycle.
 
 1. **Hand IDEA-008 to whoever has the GPU.** Substitute A106/M107/D108/Y109 and nothing else: 63.6% CDRH3 identity, track-eligible by arithmetic before any model runs, and the lowest constructible epitope risk. Rank it first unless a model objects.
 2. Each pass: scan the repo for new committed results, `--scope` the weakest theory, apply, commit.
-3. IDEA-010 — energetics for Y109. It is the single assumption IDEA-008 rests on.
+3. **IDEA-006 — add a second Boltz-2 seed.** Promoted by TH-011: it measures whether our ranking metric can separate designs at all, and rank order is the real submission output. Cheapest experiment, largest consequence.
+4. IDEA-010 — energetics for Y109. The single assumption IDEA-008 rests on, and pass-003 proved the literature will not answer it.
 4. IDEA-001 (CDRH3 for binding + framework for Tm) — still the only idea attacking two scored properties at once, and TH-005 is unaffected by EXP-002.
 5. Resolve IDEA-003 (thermostability predictor); answer now depends on whether we submit a VHH.
 
@@ -71,3 +73,5 @@ not on the designs alone. See [`PROMPT.md`](PROMPT.md) for the full cycle.
 | 2026-11-14 | Push blocker resolved: `leossgh` has no write access to `niccolocard99/ai_hackaton`, so forked to `leossgh/ai_hackaton` and opened **PR #2** from the fork. Loop now pushes to `fork` each pass |
 | 2026-11-14 | Repo scan of sibling branch `LEO-litreview-optimisation` (commits 9b45cdb, ae2cdef) found measured structural work. Recorded as **EXP-002**: TH-008 **retired**, TH-009 and TH-010 created at `high`, IDEA-004 `done`, IDEA-008/009/010 opened. First theory falsified by evidence rather than downgraded |
 | 2026-11-14 | Cadence changed 30 min → 15 min, and a repo-scan step added to each pass so teammates' committed results feed the theories |
+| 2026-11-14 | **PR #2 merged** into `main` at `27b6982` (46 files). Branch rebased onto the merge; subsequent passes go out as a new PR |
+| 2026-11-14 | pass-003 ($0.15, 3 searches, scoped TH-009): found **nothing** on Y109 energetics — a negative result that escalates IDEA-010 to high. Side effects: TH-001 `medium` → `high` (PMID:29702641, 10-50 fold measured), and new **TH-011** on whether refold scores can separate close designs at all |
