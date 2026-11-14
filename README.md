@@ -149,7 +149,7 @@ The compute is one shared VM per team (one H100, 16 vCPUs, 200 GB RAM, 500 GB di
 
 - **VM IP:** `89.169.114.1`
 - **User:** `hackathon` (shared by the whole team)
-- **Team label on the key:** `team-2`
+- **Team:** `claude-api` (team-3). The organisers' VM message labelled the key and VM `team-2`, so the key file is named `team-2`. Use it as downloaded.
 - **Key:** the team's private SSH key was sent through a one-time Bitwarden Send link in the organisers' message. Download it from there. **Never commit the key or paste the link into the repo.**
 
 **Connect (macOS/Linux; on Windows use PowerShell or WSL with the matching key path):**
@@ -199,8 +199,6 @@ rsync -avz -e "ssh -i ~/.ssh/team-2" \
 **Run models on the VM:** every Foundry model is already on the VM as a Docker image, and there is no Foundry Hub. Follow `18-vm.md` (section 3) for the image names and commands. Claude Code is also pre-installed on the VM.
 
 **Before the deadline:** the VMs shut down at the end of Saturday 14 November. Copy results back with the `rsync` command above before then.
-
-**Open point:** the other notes in this README use the path `~/hackathon-team-3/`, while the VM message names the team `team-2`. Check which one is right once you're logged in.
 
 ## 5. Reference Documents
 
