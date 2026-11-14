@@ -42,6 +42,7 @@ not on the designs alone. See [`PROMPT.md`](PROMPT.md) for the full cycle.
 
 | Item | Blocker | Needed to unblock |
 |---|---|---|
+| **Push + PR to `main`** | `git push` to `origin` returns 403: the authenticated account `leossgh` has no write access to `niccolocard99/ai_hackaton`, and `gh` is not installed | Either niccolocard99 adds `leossgh` as a collaborator, or install `gh` (`winget install GitHub.cli`) and fork to `leossgh/ai_hackaton` for a cross-fork PR. Commits are safe locally on `LEO-experiment-ledger` meanwhile |
 | Theory confidence above `medium` | No measured result of our own yet; everything rests on literature | A design run with a recorded hypothesis (IDEA-006 is cheapest) |
 | TH-007 / IDEA-003 (thermostability predictor) | All candidates are trained on proxies (TS50), not the Tm Adaptyv measures | A dedicated pass, then a decision |
 | EXP-001 promotion from `inconclusive` | Single Boltz-2 seed, 2 of 4 designs refolded, novelty unchecked, `abguard` never run | IDEA-006 plus base validation |
