@@ -28,7 +28,7 @@ not on the designs alone. See [`PROMPT.md`](PROMPT.md) for the full cycle.
 
 **Autoresearch loop running** — one pass every 15 minutes (at :08, :23, :38,
 :53) until 18:00 local, pushing to `fork` (`leossgh/ai_hackaton`), which feeds
-**open PR (see Log)** against `niccolocard99/ai_hackaton:main`. Pushes go to `fork`,
+**open PR #8** against `niccolocard99/ai_hackaton:main`. Pushes go to `fork`,
 never `origin`: `leossgh` has no write access upstream.
 
 **Step B (AMASS) is blocked — credits exhausted.** Step A, the repo scan, is
