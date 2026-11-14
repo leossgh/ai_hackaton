@@ -154,6 +154,7 @@ evidence yet supports, so that a pass can knock them down.
 - **history:**
   - 2026-11-14 created, confidence medium (pass-003). Found while looking for something else: the question "can we trust the ranking?" matters more than any single score, because only ~4 designs are tested and rank order is the real output. The two RMSD studies are older methods than our folding stack, hence medium not high. The cheap test is IDEA-006, which already exists: add a second Boltz-2 seed and see whether the 0.021 gap in EXP-001 survives.
   - 2026-11-14 medium → **high** (pass-004). The "older methods" caveat is gone: PMID:40814020 benchmarks **AlphaFold3**, the same class of co-folding model as Boltz-2, at 2.9 Å median CDR-H3 RMSD **with twenty seeds**. Three further independent benchmarks land in the same 2.5–2.9 Å band (PMID:37248282, PMID:35099535, PMID:19062174). Four methods spanning 2009–2025 converge, so this is a property of the problem, not of one tool. Consequence: ranking designs on a 0.021 min_ipae gap is indefensible. What survives is confidence-based *filtering*, per the ABlooper 75% result.
+  - 2026-11-14 **confirmed by measurement, caveat closed** (EXP-003). pass-004 left one inference as ours rather than the literature's: that loop-RMSD error implies interface-score noise. EXP-003 measures the thing itself, on our target and our models. Boltz-2 ipTM separates real from shuffled HER2 pairs at AUROC 0.645, and 94.3% of 8,190 shuffled pairs score >=0.7. Stays `high`, now resting on primary measurement instead of an analogy. Superseded in practice by TH-013, which states the consequence.
 
 ### TH-012 — A VHH submission is better supported by our tooling than an scFv, on two independent legs: thermostability is predictable and structure prediction is more accurate
 
@@ -166,3 +167,40 @@ evidence yet supports, so that a pass can knock them down.
 - **query_terms:** nanobody VHH structure prediction accuracy benchmark CDR3; single domain antibody developability expression yield comparison scFv; nanobody affinity maturation HER2 epitope
 - **history:**
   - 2026-11-14 created, confidence medium (pass-004). A strategic rather than mechanistic theory, assembled from two findings that arrived in different passes and only mean something together: TEMPRO is sdAb-only (pass-002) and AF3 predicts nanobody H3 better (pass-004). Deliberately held at medium, not high, because the two benchmarks disagree about whether nanobody prediction is actually more accurate, and because a single domain gives up the light-chain contacts EXP-002 measured. The decision it informs is real though: IDEA-005 (submit a VHH alongside the scFv designs) is now high priority.
+
+### TH-013 — Structure-based interface scores cannot rank HER2 CDRH3 designs, and the topmodel score is actively misleading
+
+- **confidence:** high
+- **status:** active
+- **property:** binding
+- **falsified_by:** A decoy control on our own designs shows min_ipae or ipTM separating real HER2 binders from shuffled pairs at AUROC well above 0.8, or the returned SPR values track our min_ipae ranking.
+- **evidence_for:** EXP-003 — real-vs-shuffled AUROC for ipTM: boltz2 **0.645**, af3 0.754, chai1 0.568; for the topmodel score: af3 **0.397**, boltz2 0.443, chai1 0.492, i.e. at or below random **with the direction inverted** (shuffled medians higher than real). Boltz-2 ipTM real median 0.911 vs shuffled 0.884, and **94.3% of 8,190 shuffled pairs score >=0.7**. Spearman between topmodel and ipTM is -0.182 (af3) and -0.658 (chai1), so the two scores disagree with each other
+- **evidence_against:** AF3 ipTM at 0.754 is weak but not useless, so a structure score is still worth keeping as a *filter* that discards the clearly bad, which is also what TH-011's ABlooper result suggested (2.49 -> 2.05 A on the most confident 75%). The study measures discrimination of shuffled pairs, not resolution between two genuinely plausible designs, which is a slightly different question
+- **query_terms:** interface predicted aligned error decoy discrimination benchmark; ipTM AlphaFold screening binder hit rate validation; decoy control protein complex prediction score calibration
+- **history:**
+  - 2026-11-14 created at confidence **high** (EXP-003). High because it is a direct measurement on our target with our models over thousands of decoys, not an inference. It invalidates the basis of EXP-001's ranking: ipTM 0.946 and 0.965 sit inside the band 94.3% of shuffled decoys occupy. Practical consequence: stop ranking on min_ipae, keep a structure score only as a coarse filter, and never trust a new score until its decoy control has been run - which costs nothing.
+  - 2026-11-14 **no change, and the absence is the finding** (pass-005). Three targeted searches for published validation of ipTM or ipAE *as a binder screen* returned nothing on the question: loop-accuracy benchmarks, a CASP complex-prediction paper, and a small-molecule docking review. So the team's own decoy control (EXP-003) is currently better evidence on this than anything the literature offered, which makes IDEA-012 (run the decoy control before trusting any score) more valuable, not less.
+
+### TH-014 — A one-hot sequence model ranks trastuzumab CDRH3 variants well enough to choose submissions, and should replace structure scores for the optimisation track
+
+- **confidence:** high
+- **status:** active
+- **property:** binding
+- **falsified_by:** The measured SPR values Adaptyv returns do not correlate with the sequence model's predicted ranking, or its advantage disappears on designs further than 3 mutations from anything in the training data.
+- **evidence_for:** EXP-003 — with Hamming<=2 clusters held out together: binder classifier AUROC **0.927** overall and **0.915** on variants >=3 mutations from trastuzumab; log10 KD ranker Spearman **+0.687** overall and **+0.622** in that >=3-mutation band; median true KD of its top 20 = **1.42 nM** against 86 nM across the set (~60x), recovering the 0.023 nM best binder. Mutation count alone gives 0.800 AUROC and +0.387 Spearman, so the model is doing more than counting mutations
+- **evidence_against:** Labels exist only for **10-residue CDRH3 variants on the trastuzumab framework**, so none of this transfers to the de novo track, where there are no labels at all. The published clonotype splits also leave **57% of test sequences 1 mutation from a training sequence**, which is why only the >=3-mutation figures should be quoted. The best-residue estimates behind it rest on n=4-5 at several positions (TH-015)
+- **query_terms:** one-hot sequence model antibody affinity prediction generalisation; antibody variant effect prediction held out cluster validation; deep mutational scanning affinity model extrapolation distance
+- **history:**
+  - 2026-11-14 created at confidence **high** (EXP-003). The leakage controls are what earn the confidence: grouped clusters, a constraint-band report, and FACS/SPR overlap removed before fitting. Quote +0.622 and 0.915, not the raw 0.99 figures from the ungrouped FACS classifier. Consequence: IDEA-011 adopts this as the primary ranker for optimisation-track designs.
+
+### TH-015 — Measured per-position SPR preferences give a data-driven CDRH3 recipe, but the best residues rest on very small samples
+
+- **confidence:** medium
+- **status:** active
+- **property:** binding
+- **falsified_by:** Designs built from the per-position favourites come back no tighter than trastuzumab, or the preferences fail to reproduce when n is increased.
+- **evidence_for:** EXP-003 — mean log10 KD by residue among quantified variants (lower is tighter), for CDRH3 positions 1-10 = W99-D108: pos1 **F 0.92** (n5) beats wild-type W 1.25 (n104); pos4 **Q 0.15** (n4) and **E 0.18** (n4) against wild-type D absent from the top 3; pos8 **L 0.64** (n4) against wild-type A; pos9 M 0.72 (n31) is wild-type and best; pos10 **V 1.05** (n4) against D 1.50 (n120); pos6 F and pos7 Y are wild-type and best
+- **evidence_against:** The standout substitutions all have **n=4-5**, against n=104-128 for the wild-type residues they beat, so each is a mean of a handful of measurements and could be noise or clone-specific. Position 11 (Y109) is **not in the dataset** at all, since SPR-768 varies a 10-mer, and Y109 is exactly the position TH-009's recipe sacrifices
+- **query_terms:** deep mutational scanning CDR position substitution affinity matrix; site saturation mutagenesis antibody affinity per position measured
+- **history:**
+  - 2026-11-14 created, confidence medium (EXP-003). Medium, not high, purely because of sample size: the direction of each preference is measured, but the magnitudes rest on n=4-5. Still the most directly actionable data we have, because it covers 10 of our 11 CDRH3 positions with real SPR rather than a prediction. Note the awkward gap: the one position it cannot speak to is Y109.

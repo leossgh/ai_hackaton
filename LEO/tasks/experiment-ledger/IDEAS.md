@@ -65,13 +65,14 @@ suggested it) | `team`.
 ### IDEA-006 — Establish the seed-to-seed error bar on min_ipae before ranking anything on it
 
 - **status:** open
-- **priority:** high
+- **priority:** medium
 - **tests:** TH-001; TH-011
 - **cost:** two refold runs on the shared H100
 - **source:** experiment
 - **evidence:** EXP-001
 - **query_terms:** folding model seed variance interface score reproducibility; antibody antigen co-folding template confidence metric
 - **notes:** EXP-001 ranked on a single seed and refolded only 2 of 4 designs. The gap was 0.021 min_ipae (0.310 vs 0.331) — inside the noise one seed can tell us about. **pass-003 raised the stakes** (TH-011: predicted H3 conformation for an 11-residue loop is good to only ~2 Å), and **pass-004 rescoped this idea**: PMID:40814020 needed **twenty** seeds to establish AlphaFold3's median CDR-H3 accuracy. Two seeds would not give an error bar either. So this is no longer "add a second seed" — it is: refold one design across as many Boltz-2 seeds as the shared H100 allows (5 at minimum, more if cheap), report the **spread** of min_ipae, and only then decide whether any gap between designs is real. Rank order is the submission output, so a metric without an error bar is the single largest hole in the pipeline. Runs on one design, so it is cheap.
+  **Downgraded high → medium by EXP-003**, and worth saying why: this idea was going to measure *how noisy* min_ipae is. EXP-003 answered the prior question instead — whether min_ipae discriminates at all — and the answer is barely (Boltz-2 ipTM AUROC 0.645, 94.3% of shuffled decoys scoring ≥0.7). Establishing the error bar on a metric we are no longer ranking on is a lower priority than switching to one that works (IDEA-011). Keep it, because a seed spread is still needed if we use a structure score as a coarse filter, but it is no longer the top of the queue.
 
 ### IDEA-007 — Check whether any of our designs sit near a claimed patent sequence
 
@@ -93,7 +94,9 @@ suggested it) | `team`.
 - **source:** experiment
 - **evidence:** EXP-002
 - **query_terms:** CDRH3 position restricted library design epitope retention; conservative CDR substitution affinity retention antibody
-- **notes:** The one design in the backlog whose track eligibility is arithmetically guaranteed before any model runs: 4 substitutions on an 11-residue CDRH3 gives 63.6% identity, clearing the `<70%` gate, while sacrificing only Y109, which contacts HER2 in 1 of 8 structures. Every other contacting position is spared. This is the design to rank first unless a model says otherwise, because its epitope risk is the lowest we can construct and we can defend the choice position by position in the pitch.
+- **notes:** The one design in the backlog whose track eligibility is arithmetically guaranteed before any model runs: 4 substitutions on an 11-residue CDRH3 gives 63.6% identity, clearing the `<70%` gate, while sacrificing only Y109, which contacts HER2 in 1 of 8 structures. Every other contacting position is spared. Lowest constructible epitope risk, defensible position by position in the pitch.
+  **EXP-003 makes the substitutions specific instead of arbitrary** (measured mean log10 KD, lower is tighter): A106 → **L** (0.64 vs wild-type A, which does not reach the top 3), D108 → **V** (1.05 vs D 1.50), M107 → **H** (0.96; note wild-type M at 0.72 is better, so this position *costs* affinity and is being spent only to reach the fourth substitution), Y109 → no data, since SPR-768 varies a 10-mer and stops at D108.
+  **Open choice worth deciding deliberately:** the largest measured gain anywhere in the loop is D102 → **Q (0.15)** or **E (0.18)**, roughly a 10-fold improvement. D102 contacts HER2 in 6 of 8 structures, so TH-009 calls it risky — but a substitution that *improves* measured binding is not an epitope loss, it is a better contact. Substituting D102 instead of M107 would raise expected affinity and keep the 4-substitution count. The counter-argument is that epitope preservation is scored by competition with trastuzumab, not by affinity, so a changed contact geometry is a risk the SPR number cannot rule out. Flagging rather than deciding: this is a judgment call for the pitch, and both variants are cheap to submit.
 
 ### IDEA-009 — Redesign H2 or L3 with `antibody-2026-10-30` instead of chasing CDRH3
 
@@ -116,3 +119,36 @@ suggested it) | `team`.
 - **evidence:** EXP-002
 - **query_terms:** computational alanine scanning antibody antigen interface energy decomposition; MM-GBSA per residue binding free energy antibody
 - **notes:** TH-009's weak point, stated in its own `evidence_against`: contact frequency across crystal structures is geometry, not energy. Y109 contacts in only 1 of 8 structures, but a rare contact can still be energetically load-bearing, and Y109 is the one position the IDEA-008 recipe sacrifices. If an energetic estimate says Y109 is a hot spot, IDEA-008 needs a different fourth substitution — and there is no safe alternative, which would make the tension in TH-009 sharper rather than looser.
+
+### IDEA-011 — Adopt the sequence pre-filter as the primary ranker for optimisation-track designs
+
+- **status:** open
+- **priority:** high
+- **tests:** TH-014; TH-013
+- **cost:** none on the GPU. The code is `NICCOLO/eda/prefilter.py` on branch `origin/nick`; it needs its inputs pulled (SPR-768, FACS 524k, clonotype splits) and runs on a laptop at ~1.29M sequences/s
+- **source:** experiment
+- **evidence:** EXP-003
+- **query_terms:** sequence based antibody affinity ranker deployment validation
+- **notes:** The highest-value change available and it costs no GPU time. We currently rank on min_ipae, which EXP-003 shows separates real HER2 pairs from shuffled ones at AUROC 0.645 while a one-hot sequence model reaches Spearman +0.622 against measured log10 KD in the >=3-mutation band. Use the two stages as intended: classifier for "will this bind at all", ranker for "how tightly", and keep a structure score only as a coarse filter that discards the clearly bad. Coordination note: this is a teammate's code in `NICCOLO/`, which we must not write into — use it, cite it, and ask before changing it. Scope limit from TH-014: optimisation track only, since no labels exist for de novo designs.
+
+### IDEA-012 — Run a decoy control before trusting any score we rank on
+
+- **status:** open
+- **priority:** high
+- **tests:** TH-013
+- **cost:** near zero: shuffle design-target pairings, refold a sample, compare score distributions
+- **source:** experiment
+- **evidence:** EXP-003
+- **query_terms:** decoy control scoring function validation protein design benchmark
+- **notes:** The transferable lesson from EXP-003, worth making a standing rule rather than a one-off. EXP-001 reported a ranking from a 0.021 min_ipae gap without anyone having established that min_ipae discriminates binders on this target; it does not. The control is to shuffle which design is paired with which target, score both sets, and check the distributions actually separate. It costs almost nothing and it is the difference between a number and a measurement. Applies to any new metric we adopt, including the thermostability predictor once chosen (IDEA-003) and the sequence ranker itself on de novo designs, where TH-014 says it has no support.
+
+### IDEA-013 — Check ESM-IF1 against ProteinMPNN for the inverse-folding step
+
+- **status:** open
+- **priority:** medium
+- **tests:**
+- **cost:** low: both are sequence-design tools run on an existing backbone, no new design run needed
+- **source:** literature
+- **evidence:** PMID:37880344
+- **query_terms:** ESM-IF1 inverse folding binder design success rate; inverse folding model comparison protein binder design benchmark
+- **notes:** `AGENTS.md` names ProteinMPNN with soluble weights as a developability filter, which is a different job from designing a binder. PMID:37880344 reports ESM-IF1 producing successful binder designs toward 185 heteromeric interfaces (6.5%) against ProteinMPNN's 18 (1.5%) from 100 samples each — a ~4x difference at exactly the step where we would pick sequences for a designed backbone. **Caveat that keeps this at medium:** "successful" there means *predicted* interface RMSD <= 2 A, not measured binding, so it is one predicted metric preferring another. Per IDEA-012 this is precisely the kind of number that needs a control before it drives a decision. Worth a cheap comparison, not worth reorganising the pipeline around.

@@ -8,11 +8,11 @@
 
 | | |
 |---|---|
-| Experiments | 2 (`worked` 1, `inconclusive` 1) |
-| Theories | 11 active + 1 retired — `low` 0, `medium` 7, `high` 4 |
-| Ideas | 9 open/lit-checked, 1 done |
-| Research passes | 4 |
-| AMASS spend | 8 searches, $0.40 of the ~2,000-search team budget (hard stop at 400) |
+| Experiments | 3 (`worked` 2, `inconclusive` 1) |
+| Theories | 14 active + 1 retired — `low` 0, `medium` 8, `high` 6 |
+| Ideas | 12 open/lit-checked, 1 done |
+| Research passes | 5 |
+| AMASS spend | 11 searches, $0.55 of the ~2,000-search team budget (hard stop at 400) |
 | Published | PR #2 **merged** into `main` at `27b6982`; later work goes out as a new PR |
 
 ## What this task is
@@ -53,11 +53,12 @@ not on the designs alone. See [`PROMPT.md`](PROMPT.md) for the full cycle.
 
 ## Next, in order
 
-1. **Hand IDEA-008 to whoever has the GPU.** Substitute A106/M107/D108/Y109 and nothing else: 63.6% CDRH3 identity, track-eligible by arithmetic before any model runs, and the lowest constructible epitope risk. Rank it first unless a model objects.
-2. Each pass: scan the repo for new committed results, `--scope` the weakest theory, apply, commit.
-3. **IDEA-006 — measure the min_ipae seed spread** on one design (5+ Boltz-2 seeds, more if cheap). TH-011 is now `high` and AlphaFold3 needed 20 seeds for its median, so a metric with no error bar is the largest hole in the pipeline. Do this before ranking anything.
-4. **IDEA-005 — add a VHH** alongside the scFv designs. Promoted by TH-012: a VHH is the only format where both no-proxy properties (Tm, structure accuracy) are covered.
-5. IDEA-010 — energetics for Y109. The single assumption IDEA-008 rests on, and pass-003 proved the literature will not answer it.
+1. **IDEA-011 — switch the ranker.** Adopt the sequence pre-filter (`NICCOLO/eda/prefilter.py`, branch `origin/nick`) as the primary ranking for optimisation-track designs. Costs no GPU, runs on a laptop, and replaces a metric EXP-003 shows is near-useless (Boltz-2 ipTM AUROC 0.645) with one at Spearman +0.622 against measured KD. Highest-value action available.
+2. **IDEA-008 — hand the design to whoever has the GPU**, now with measured substitutions: A106→L, D108→V, plus a deliberate choice between M107→H (safe, costs affinity) and D102→Q/E (largest measured gain, but contacts in 6 of 8 structures). 63.6% identity either way.
+3. **IDEA-005 — add a VHH** alongside the scFv designs. TH-012: the only format where both no-proxy properties (Tm, structure accuracy) are covered.
+4. Each pass: scan the repo for new committed results, `--scope` the weakest theory, apply, commit.
+5. IDEA-010 — energetics for Y109, the one assumption IDEA-008 rests on and the one position SPR-768 cannot speak to. pass-003 proved the literature will not answer it.
+6. IDEA-012 — make the decoy control a standing rule before any new metric is trusted.
 4. IDEA-001 (CDRH3 for binding + framework for Tm) — still the only idea attacking two scored properties at once, and TH-005 is unaffected by EXP-002.
 5. Resolve IDEA-003 (thermostability predictor); answer now depends on whether we submit a VHH.
 
@@ -77,3 +78,5 @@ not on the designs alone. See [`PROMPT.md`](PROMPT.md) for the full cycle.
 | 2026-11-14 | **PR #2 merged** into `main` at `27b6982` (46 files). Branch rebased onto the merge; subsequent passes go out as a new PR |
 | 2026-11-14 | pass-003 ($0.15, 3 searches, scoped TH-009): found **nothing** on Y109 energetics — a negative result that escalates IDEA-010 to high. Side effects: TH-001 `medium` → `high` (PMID:29702641, 10-50 fold measured), and new **TH-011** on whether refold scores can separate close designs at all |
 | 2026-11-14 | pass-004 ($0.15, 3 searches, scoped TH-011): repo scan found nothing new. TH-011 `medium` → **`high`** — AlphaFold3 needs **20 seeds** for a 2.9 Å median CDR-H3 (PMID:40814020), and four methods 2009-2025 converge on 2.4-2.9 Å. IDEA-006 rescoped from "second seed" to "measure the spread". New **TH-012**: a VHH is better supported by our tooling on two legs, so IDEA-005 → high |
+| 2026-11-14 | **Repo scan found `origin/nick` `aec87f4`** (NICCOLO HER2 CDRH3 pre-filter). Recorded as **EXP-003**, the most consequential result so far: Boltz-2 ipTM separates real from shuffled HER2 pairs at AUROC 0.645 with 94.3% of decoys scoring ≥0.7, while a one-hot sequence model reaches Spearman +0.622 against measured log10 KD. New **TH-013/014/015**; TH-011's last caveat closed by direct measurement; EXP-001's scores shown to sit inside the decoy distribution. IDEA-011/012 opened, IDEA-006 downgraded to medium, IDEA-008 given measured substitutions |
+| 2026-11-14 | pass-005 ($0.15, 3 searches, scoped TH-013): **no published validation of ipTM/ipAE as a binder screen exists** in what the searches returned, so our own decoy control is the best evidence on it. New IDEA-013 (ESM-IF1 vs ProteinMPNN, 6.5% vs 1.5% predicted binder success). Recorded the de novo ranking gap as open |

@@ -237,3 +237,49 @@ therefore better covered for a VHH than for an scFv — hence TH-012 and the
 promotion of IDEA-005. Honest counterweight, also recorded: ImmuneBuilder finds
 *no* nanobody advantage (2.89 vs 2.81 Å), and a single domain gives up the
 light-chain CDRs that carry 45% of trastuzumab's interface contacts.
+
+## 9. How to rank: measured, and it changes the pipeline (EXP-003, pass-005)
+
+**Structure scores do not rank binders on this target.** Real-vs-shuffled
+discrimination, measured on HER2 systems over thousands of decoy pairs
+(EXP-003, measured):
+
+| Model | ipTM AUROC | topmodel AUROC |
+|---|---|---|
+| AF3 | 0.754 | 0.397 |
+| **Boltz-2** | **0.645** | 0.443 |
+| Chai-1 | 0.568 | 0.492 |
+
+The topmodel score is below random **and inverted** — shuffled medians exceed
+real ones. Boltz-2 ipTM has a real median of 0.911 against a shuffled median of
+0.884, and **94.3% of 8,190 shuffled pairs score ≥0.7**. EXP-001's ipTM values
+of 0.946 and 0.965 therefore sit inside the decoy distribution; they were never
+evidence of binding (TH-013).
+
+**A sequence model does rank them.** With Hamming ≤2 clusters held out together
+and everything re-reported on the ≥3-mutation band `abguard` forces us into
+(EXP-003, measured): binder classifier AUROC **0.915**, log10 KD ranker Spearman
+**+0.622**, and a top-20 median true KD of **1.42 nM** against 86 nM across the
+set — about 60×, recovering the 0.023 nM best binder (TH-014). Quote those
+figures, not the ungrouped 0.99s.
+
+**Per-position measured preferences** cover 10 of our 11 CDRH3 positions
+(TH-015, measured): F at 99, **Q or E at 102** (log10 KD 0.15/0.18, the largest
+gain in the loop), L at 106, V at 108, with wild-type already best at 104, 105
+and 107. Caveat that keeps TH-015 at `medium`: the standout residues rest on
+n=4–5 against n=104–128 for the wild-type residues they beat. And the dataset
+is a 10-mer, so it says nothing about **Y109** — the one position TH-009's
+recipe sacrifices.
+
+**Two open gaps, stated rather than papered over:**
+
+1. **De novo has no ranker at all.** TH-014 is label-dependent and labels exist
+   only for CDRH3 variants on the trastuzumab framework. pass-005 searched for a
+   validated interface-score screen and found none — no published work measuring
+   whether ipTM or ipAE separates binders from non-binders. For de novo designs
+   we currently have no defensible ranking method, only a filter.
+2. **Nobody has validated the score we were using.** That the literature offers
+   no decoy-control benchmark for ipTM screening is why IDEA-012 makes the
+   control a standing rule: shuffle the pairings, score both sets, check they
+   separate. It costs almost nothing and it is the difference between a number
+   and a measurement.

@@ -1,0 +1,136 @@
+{
+  "pass": 5,
+  "date": "2026-11-14",
+  "scope": "TH-013",
+  "rationale": "explicit scope TH-013",
+  "targets": [
+    "TH-013"
+  ],
+  "queries": {
+    "cached": 0,
+    "fetched": 3,
+    "failed": [],
+    "deferred": []
+  },
+  "spend_this_pass_usd": 0.15,
+  "spend_total": {
+    "searches": 11,
+    "usd": 0.55,
+    "passes": 6
+  },
+  "findings": {
+    "TH-013": [
+      {
+        "id": "37880344",
+        "core": "biomedcore",
+        "year": "2023",
+        "title": "Peptide binder design with inverse folding and protein structure prediction",
+        "hits": 6,
+        "quotes": [
+          "Successful binders (predicted interface RMSD \u2264 2 A\u030a) are designed towards 185 (6.5%) heteromeric and 42 (3.6%) homomeric protein interfaces with ESM-IF1 compared with 18 (1.5%) using ProteinMPNN from 100 samples."
+        ],
+        "matched": [
+          "alphafold",
+          "binder",
+          "complex",
+          "interface",
+          "rate",
+          "score"
+        ],
+        "cites": 34
+      },
+      {
+        "id": "42906387",
+        "core": "biomedcore",
+        "year": "2026",
+        "title": "AlphaFold-driven structure-based drug discovery: Capabilities, benchmarks and limitations for medicinal chemistry",
+        "hits": 6,
+        "quotes": [
+          "Even though AlphaFold has substantially advanced the field for example, in a prospective screen against the G protein-coupled receptor (GPCR) TAAR1, docking to AlphaFold2 models gave a 60% hit rate versus 22% for a homology model and a workflow combining an AlphaFold model with generative chemistry against the kinase CDK20 yielded a compound with an IC50 of 33.4 nM and an approximately eightfold antiproliferative selectivity window between cell lines-problems related to protein flexibility, conformational changes of proteins due to ligands, binding affinity prediction and biological complexity cannot be neglected and predicted structures still require experimental validation before guiding synthesis."
+        ],
+        "matched": [
+          "alphafold",
+          "benchmark",
+          "complex",
+          "rate",
+          "screening",
+          "validation"
+        ],
+        "cites": 0
+      },
+      {
+        "id": "29702641",
+        "core": "biomedcore",
+        "year": "2018",
+        "title": "RosettaAntibodyDesign (RAbD): A general framework for computational antibody design",
+        "hits": 5,
+        "quotes": [
+          "We tested RAbD experimentally on both a lambda and kappa antibody-antigen complex, successfully improving their affinities 10 to 50 fold by replacing individual CDRs of the native antibody with new CDR lengths and clusters."
+        ],
+        "matched": [
+          "benchmark",
+          "complex",
+          "decoy",
+          "interface",
+          "rate"
+        ],
+        "cites": 230
+      },
+      {
+        "id": "37650367",
+        "core": "biomedcore",
+        "year": "2023",
+        "title": "Integrating deep learning, threading alignments, and a multi-MSA strategy for high-quality protein monomer and complex structure prediction in CASP15",
+        "hits": 5,
+        "quotes": [
+          "For 47 free modeling targets in CASP15, the final models predicted by D-I-TASSER showed average TM-score 19% higher than the standard AlphaFold2 program.",
+          "For the 38 complex targets, DMFold-Multimer generated models with an average TM-score of 0.83 and Interface Contact Score of 0.60, both significantly higher than those of competing complex prediction tools."
+        ],
+        "matched": [
+          "alphafold",
+          "complex",
+          "interface",
+          "rate",
+          "score"
+        ],
+        "cites": 66
+      },
+      {
+        "id": "40814020",
+        "core": "biomedcore",
+        "year": "2025",
+        "title": "What does AlphaFold3 learn about antibody and nanobody docking, and what remains unsolved?",
+        "hits": 5,
+        "quotes": [
+          "With twenty seeds, AF3 achieves a median unbound CDR H3 RMSD accuracy of 2.9 A\u030a ... and 2.2 A\u030a ... for antibodies and nanobodies, respectively."
+        ],
+        "matched": [
+          "alphafold",
+          "complex",
+          "iptm",
+          "rate",
+          "screening"
+        ],
+        "cites": 42
+      },
+      {
+        "id": "37248282",
+        "core": "biomedcore",
+        "year": "2023",
+        "title": "ImmuneBuilder: Deep-Learning models for predicting the structures of immune proteins",
+        "hits": 4,
+        "quotes": [
+          "For example, on a benchmark of 34 recently solved antibodies, ABodyBuilder2 predicts CDR-H3 loops with an RMSD of 2.81A\u030a, a 0.09A\u030a improvement over AlphaFold-Multimer, while being over a hundred times faster.",
+          "Similar results are also achieved for nanobodies, (NanoBodyBuilder2 predicts CDR-H3 loops with an average RMSD of 2.89A\u030a, a 0.55A\u030a improvement over AlphaFold2) and TCRs."
+        ],
+        "matched": [
+          "alphafold",
+          "benchmark",
+          "error",
+          "rate"
+        ],
+        "cites": 307
+      }
+    ]
+  }
+}
