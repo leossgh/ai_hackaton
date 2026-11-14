@@ -1,0 +1,148 @@
+{
+  "pass": 7,
+  "date": "2026-11-14",
+  "scope": "TH-003",
+  "rationale": "explicit scope TH-003",
+  "targets": [
+    "TH-003"
+  ],
+  "queries": {
+    "cached": 0,
+    "fetched": 0,
+    "failed": [],
+    "deferred": [
+      [
+        "TH-003",
+        "biomedcore",
+        "antibody net charge nonspecificity developability"
+      ],
+      [
+        "TH-003",
+        "biomedcore",
+        "arginine CDR mutation polyspecificity nonspecific binding antibody"
+      ],
+      [
+        "TH-003",
+        "biomedcore",
+        "charged residue CDR affinity specificity trade-off"
+      ]
+    ]
+  },
+  "spend_this_pass_usd": 0.0,
+  "spend_total": {
+    "searches": 14,
+    "usd": 0.7,
+    "passes": 8
+  },
+  "findings": {
+    "TH-003": [
+      {
+        "id": "35941164",
+        "core": "biomedcore",
+        "year": "2022",
+        "title": "A 33-residue peptide tag increases solubility and stability of Escherichia coli produced single-chain antibody fragments",
+        "hits": 5,
+        "quotes": [
+          "Here we report that a 33-residue peptide, termed P17 tag, increases the solubility of multiple scFvs produced in Escherichia coli SHuffle strain by up to 11.6 fold."
+        ],
+        "matched": [
+          "affinity",
+          "binding",
+          "charge",
+          "charged",
+          "residue"
+        ],
+        "cites": 27
+      },
+      {
+        "id": "40267400",
+        "core": "biomedcore",
+        "year": "2025",
+        "title": "Enhanced antibody-mediated cellular cytotoxicity of germline-like anti-HER2 antibodies through a point mutation in complementarity-determining regions",
+        "hits": 5,
+        "quotes": [
+          "Substitution of aspartic acid with glutamic acid decreased the interaction energies, resulting in a remarkable affinity enhancement of Ab5m-scFv (KD = 0.2 nM) compared with parental Ab5-scFv (KD = 1.5 nM)."
+        ],
+        "matched": [
+          "affinity",
+          "charge",
+          "charged",
+          "mutation",
+          "residue"
+        ],
+        "cites": 2
+      },
+      {
+        "id": "AMBC_JwGSFsFYuumYi1zgXk0571g2F5A",
+        "core": "biomedcore",
+        "year": "2026",
+        "title": "An innovative AI-based platform for antibody stability improvement and affinity optimization.",
+        "hits": 5,
+        "quotes": [
+          "This approach effectively find a new mutant reduced aggregation under one-week accelerated thermal stress from 100% to less than 5%, while increasing the melting temperature (Tm) by up to \u223c10 \u00b0C."
+        ],
+        "matched": [
+          "affinity",
+          "binding",
+          "mutation",
+          "residue",
+          "specificity"
+        ],
+        "cites": 0
+      },
+      {
+        "id": "31181988",
+        "core": "biomedcore",
+        "year": "2019",
+        "title": "Development of tibulizumab, a tetravalent bispecific antibody targeting BAFF and IL-17A for the treatment of autoimmune disease",
+        "hits": 4,
+        "quotes": [
+          "The anti-IL-17 scFv showed a high melting temperature (Tm) by differential scanning calorimetry (73.1\u00b0C), but also concentration-dependent, initially reversible, protein self-association."
+        ],
+        "matched": [
+          "affinity",
+          "binding",
+          "charge",
+          "residue"
+        ],
+        "cites": 54
+      },
+      {
+        "id": "36683173",
+        "core": "biomedcore",
+        "year": "2023",
+        "title": "Toward generalizable prediction of antibody thermostability using machine learning on sequence and structure features",
+        "hits": 4,
+        "quotes": [
+          "Both of these models are trained over temperature-specific data (TS50 measurements) derived from multiple libraries of scFv sequences.",
+          "Further, we demonstrate that for an independent mAb with available thermal melting temperatures for 20 experimentally characterized thermostable mutations, these models trained on TS50 data could identify 18 residue positions and 5 identical amino-acid mutations showing remarkable generalizability."
+        ],
+        "matched": [
+          "affinity",
+          "mutation",
+          "residue",
+          "specificity"
+        ],
+        "cites": 46
+      },
+      {
+        "id": "23255066",
+        "core": "biomedcore",
+        "year": "2013",
+        "title": "Ab initio structure prediction of the antibody hypervariable H3 loop",
+        "hits": 4,
+        "quotes": [
+          "When the prediction is performed in the crystal environment and including symmetry mates, the median backbone root mean square deviation (RMSD) is 0.5 A\u030a to the crystal structure, with 91% of cases having an RMSD of less than 2.0 A\u030a.",
+          "When the prediction is performed in a noncrystallographic environment, where the scaffold is constructed by swapping the H3 loops between homologous antibodies, 70% of cases have an RMSD below 2.0 A\u030a."
+        ],
+        "matched": [
+          "affinity",
+          "binding",
+          "residue",
+          "specificity"
+        ],
+        "cites": 34
+      }
+    ]
+  }
+}

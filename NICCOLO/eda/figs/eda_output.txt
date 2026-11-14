@@ -1,0 +1,85 @@
+Matplotlib is building the font cache; this may take a moment.
+
+=== A. ipTM matrices: real (diagonal) vs shuffled (off-diagonal) ===
+af3 shape (91, 91) rows==cols: True NaN: 53
+boltz2 shape (91, 91) rows==cols: True NaN: 0
+chai1 shape (91, 91) rows==cols: True NaN: 240
+ model  n_real  n_shuffled  real_med  shuf_med  real_ge07  shuf_ge07  shuf_ge07_n  auroc
+   af3      91        8137     0.500     0.180      0.473      0.030          246  0.754
+boltz2      91        8190     0.911     0.884      0.989      0.943         7723  0.645
+ chai1      89        7952     0.208     0.191      0.079      0.002           17  0.568
+pairs scored by all 3 models: 7991
+Spearman between models:
+           af3  boltz2  chai1
+af3     1.000   0.185  0.210
+boltz2  0.185   1.000  0.203
+chai1   0.210   0.203  1.000
+AF3 nanobodies with >=1 shuffled partner at ipTM>=0.7: 71 of 91
+
+=== B. topmodel structure accuracy per model ===
+af3 723527 rows; {'count': 723527.0, 'mean': 26.6, 'std': 9.7, 'min': 1.0, '25%': 20.0, '50%': 26.0, '75%': 32.0, 'max': 141.0} unparsed IDs: 0
+boltz2 756292 rows; {'count': 756292.0, 'mean': 32.6, 'std': 11.2, 'min': 1.0, '25%': 25.0, '50%': 31.0, '75%': 39.0, 'max': 385.0} unparsed IDs: 0
+chai1 715173 rows; {'count': 715173.0, 'mean': 86.6, 'std': 927.8, 'min': 1.0, '25%': 34.0, '50%': 48.0, '75%': 108.0, 'max': 95587.0} unparsed IDs: 0
+
+=== C. Trastuzumab HER2 SPR, 768 rows ===
+binding_result
+no_reportable_kd      460
+quantified_binding    190
+inconclusive          104
+not_reported           14
+trastuzumab reference rows: 8 KD range 0.02851802 0.178 | other antibody rows: 8
+variants: 752 | unique CDRH3: 752 | duplicates: 0
+CDRH3 length: {10: 732, 9: 20}
+Hamming to trastuzumab (10-mers only): {'count': 732.0, 'mean': 6.58, 'std': 2.27, 'min': 1.0, '25%': 5.0, '50%': 7.0, '75%': 8.0, 'max': 10.0}
+quantified: 182 KD nM quantiles: {0.0: 0.023, 0.1: 1.241, 0.25: 11.698, 0.5: 79.5, 0.75: 202.675, 0.9: 370.715, 1.0: 13863.16}
+better than trastuzumab median (0.135 nM): 6 | better than its best (min): 1 | KD<1 nM: 17
+KD vs Hamming distance, Spearman: SignificanceResult(statistic=np.float64(0.4118579297284252), pvalue=np.float64(1.0165049354604437e-08))
+hit rate by edit distance:
+ binding_result  inconclusive  no_reportable_kd  not_reported  quantified_binding
+edit                                                                            
+1.0                        0                 0             0                  15
+2.0                        1                 1             0                  14
+3.0                        9                15             0                  19
+4.0                       14                24             1                  34
+5.0                       11                40             2                  32
+6.0                       16                64             1                  29
+7.0                       14                74             2                  18
+8.0                       12                84             0                  10
+9.0                       11                84             5                   4
+10.0                      11                55             2                   4
+per-position fraction identical to trastuzumab (position: binders vs no-KD):
+  1 W  0.58  0.15
+  2 G  0.68  0.35
+  3 G  0.60  0.55
+  4 D  0.30  0.20
+  5 G  0.72  0.37
+  6 F  0.42  0.09
+  7 Y  0.65  0.15
+  8 A  0.46  0.25
+  9 M  0.17  0.04
+  10 D  0.67  0.54
+distinct VH frameworks (CDRH3 masked): 1 | distinct VL: 1
+
+=== D. Champloo SPR table S1 ===
+outcome_class  KD reported  antigen not produced  no reportable fit  not expressed  response without fitted KD
+pair_type                                                                                                     
+cognate                  4                     1                  0              0                           1
+non-cognate              0                     4                 12              7                           0
+antigen_name         vhh_design pair_type   kd_nM    kd_method  af3_iptm
+        CD8a Anti-human CD8 VHH   cognate   0.401      kinetic       NaN
+         CD4             8w90_a   cognate   7.410      kinetic      0.12
+      CNPase             9etj_h   cognate   4.030      kinetic      0.46
+         C3b    hC3Nb1 Nanobody   cognate 767.000 steady state       NaN
+             vhh_design vhh_pdb          target   pair_type response_RU  surface_load_RU                          call                                                                                                               notes
+                 8k4q_d    8K4Q          IL-4Ra     cognate         113            697.0              confirmed binder                                                          only surface in the panel that confirmed a binder outright
+                 8k4q_d    8K4Q       Properdin non-cognate         248              NaN             off-target binder                                                         responded more strongly on properdin than on its own target
+                 8c5h_n    8C5H       Properdin non-cognate         199              NaN             off-target binder                                   bound 11 of 14 targets; best-expressing design; polyreactive rather than specific
+                 8c5h_n    8C5H Synaptotagmin-1     cognate         NaN              NaN        not quantified in text                                                                                            cognate target of 8c5h_n
+     Anti-human CD8 VHH    8EW6            CD8a     cognate          53              NaN           weak (under-loaded)                                                                                   promising but low surface loading
+                    S43    8J5J  SARS-CoV-2 RBD     cognate          68              NaN           weak (under-loaded) binds only RBD within the panel; kinetic 88-104 nM vs equilibrium 3.7-4.7 uM (~40-fold disagreement), no firm value
+                    DL4     NaN  SARS-CoV-2 RBD     cognate         <20              NaN                        silent                                                                               the one genuinely silent cognate pair
+unspecified cognate VHH     NaN            EGFR     cognate         NaN              NaN weak (low loading background)                                                                                           weak rather than negative
+unspecified cognate VHH     NaN            CD1d     cognate         NaN              NaN weak (low loading background)                                                                                           weak rather than negative
+unspecified cognate VHH     NaN            CD38     cognate         NaN              NaN weak (low loading background)                                                                                           weak rather than negative
+unspecified cognate VHH     NaN             CD4     cognate         NaN              NaN weak (low loading background)                                                                                           weak rather than negative
+unspecified cognate VHH     NaN          hMPV F     cognate         NaN              NaN weak (low loading background)                                                                                           weak rather than negative

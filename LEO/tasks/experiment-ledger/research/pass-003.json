@@ -1,0 +1,129 @@
+{
+  "pass": 3,
+  "date": "2026-11-14",
+  "scope": "TH-009",
+  "rationale": "explicit scope TH-009",
+  "targets": [
+    "TH-009"
+  ],
+  "queries": {
+    "cached": 0,
+    "fetched": 3,
+    "failed": [],
+    "deferred": []
+  },
+  "spend_this_pass_usd": 0.15,
+  "spend_total": {
+    "searches": 5,
+    "usd": 0.25,
+    "passes": 4
+  },
+  "findings": {
+    "TH-009": [
+      {
+        "id": "42968171",
+        "core": "biomedcore",
+        "year": "2026",
+        "title": "Affinity-tuned anti-idiotypic masking enables protease-activatable HER2-targeting antibodies with an optimized masked-unmasked dynamic range",
+        "hits": 6,
+        "quotes": [
+          "BLI analysis further showed detectable HER2 binding of MMP-9-treated dAb(W104F)-MMP-9-4D5scFv, with an apparent KD of 10.0 nM, whereas dAb(WT)-MMP-9-4D5scFv and uncleaved dAb(W104F)-MMP-9-4D5scFv showed no detectable binding under the same assay conditions."
+        ],
+        "matched": [
+          "alanine",
+          "antigen",
+          "crystal",
+          "paratope",
+          "position",
+          "scan"
+        ],
+        "cites": 0
+      },
+      {
+        "id": "20403153",
+        "core": "biomedcore",
+        "year": "2010",
+        "title": "The kinetics of antibody binding to Plasmodium falciparum VAR2CSA PfEMP1 antigen and modelling of PfEMP1 antigen packing on the membrane knobs",
+        "hits": 5,
+        "quotes": [
+          "CONCLUSIONS: High avidity is required to achieve the strongest binding to VAR2CSA PfEMP1, but the structures that display PfEMP1 also tend to inhibit cross-linking between PfEMP1 antigens, by holding many binding epitopes at distances beyond the 15-18 nm sweep radius of an antibody."
+        ],
+        "matched": [
+          "antigen",
+          "crystal",
+          "packing",
+          "position",
+          "structures"
+        ],
+        "cites": 23
+      },
+      {
+        "id": "19324053",
+        "core": "biomedcore",
+        "year": "2009",
+        "title": "Energy-based analysis and prediction of the orientation between light- and heavy-chain antibody variable domains",
+        "hits": 4,
+        "quotes": [
+          "When applied to antibody homology models generated from templates with 55-75% sequence identity, we predict the V(L):V(H) orientation of 20 antibodies with an average/median RMSD of 2.1/1.6 A to the crystal structures."
+        ],
+        "matched": [
+          "antigen",
+          "crystal",
+          "packing",
+          "structures"
+        ],
+        "cites": 43
+      },
+      {
+        "id": "29702641",
+        "core": "biomedcore",
+        "year": "2018",
+        "title": "RosettaAntibodyDesign (RAbD): A general framework for computational antibody design",
+        "hits": 3,
+        "quotes": [
+          "We tested RAbD experimentally on both a lambda and kappa antibody-antigen complex, successfully improving their affinities 10 to 50 fold by replacing individual CDRs of the native antibody with new CDR lengths and clusters."
+        ],
+        "matched": [
+          "antigen",
+          "contact",
+          "structures"
+        ],
+        "cites": 230
+      },
+      {
+        "id": "19062174",
+        "core": "biomedcore",
+        "year": "2009",
+        "title": "Toward high-resolution homology modeling of antibody Fv regions and application to antibody-antigen docking",
+        "hits": 3,
+        "quotes": [
+          "The median root mean square deviation (rmsd) of the antigen binding pocket comprised of all the CDR residues was 1.5 A with 80% of the targets having an rmsd lower than 2.0 A.",
+          "The median backbone heavy atom global rmsd of the CDR H3 loop prediction was 1.6, 1.9, 2.4, 3.1, and 6.0 A for very short (4-6 residues), short (7-9), medium (10-11), long (12-14) and very long (17-22) loops, respectively."
+        ],
+        "matched": [
+          "antigen",
+          "crystal",
+          "structures"
+        ],
+        "cites": 188
+      },
+      {
+        "id": "23255066",
+        "core": "biomedcore",
+        "year": "2013",
+        "title": "Ab initio structure prediction of the antibody hypervariable H3 loop",
+        "hits": 3,
+        "quotes": [
+          "When the prediction is performed in the crystal environment and including symmetry mates, the median backbone root mean square deviation (RMSD) is 0.5 A\u030a to the crystal structure, with 91% of cases having an RMSD of less than 2.0 A\u030a.",
+          "When the prediction is performed in a noncrystallographic environment, where the scaffold is constructed by swapping the H3 loops between homologous antibodies, 70% of cases have an RMSD below 2.0 A\u030a."
+        ],
+        "matched": [
+          "antigen",
+          "crystal",
+          "structures"
+        ],
+        "cites": 34
+      }
+    ]
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "pass": 2,
+  "date": "2026-11-14",
+  "scope": "TH-007",
+  "rationale": "explicit scope TH-007",
+  "targets": [
+    "TH-007"
+  ],
+  "queries": {
+    "cached": 2,
+    "fetched": 0,
+    "failed": [],
+    "deferred": [
+      [
+        "TH-007",
+        "biomedcore",
+        "TEMPRO nanobody Tm protein embedding prediction"
+      ]
+    ]
+  },
+  "spend_this_pass_usd": 0.0,
+  "spend_total": {
+    "searches": 2,
+    "usd": 0.1,
+    "passes": 3
+  },
+  "findings": {
+    "TH-007": [
+      {
+        "id": "41564239",
+        "core": "biomedcore",
+        "year": "2026",
+        "title": "Thermostability Prediction Powered by Synergistic Deep Learning at Experimental and Theoretical Levels for Nanobodies",
+        "hits": 8,
+        "quotes": [
+          "Benefiting from the two synergistic models, a more reliable screening criterion (Tm > 65 \u00b0C and Qclass IV) is proposed for determining highly thermostable nanobodies."
+        ],
+        "matched": [
+          "accuracy",
+          "embedding",
+          "learning",
+          "machine",
+          "melting",
+          "nanobody",
+          "temperature",
+          "thermostability"
+        ],
+        "cites": 0
+      },
+      {
+        "id": "36683173",
+        "core": "biomedcore",
+        "year": "2023",
+        "title": "Toward generalizable prediction of antibody thermostability using machine learning on sequence and structure features",
+        "hits": 6,
+        "quotes": [
+          "Both of these models are trained over temperature-specific data (TS50 measurements) derived from multiple libraries of scFv sequences.",
+          "Further, we demonstrate that for an independent mAb with available thermal melting temperatures for 20 experimentally characterized thermostable mutations, these models trained on TS50 data could identify 18 residue positions and 5 identical amino-acid mutations showing remarkable generalizability."
+        ],
+        "matched": [
+          "learning",
+          "machine",
+          "melting",
+          "scfv",
+          "temperature",
+          "thermostability"
+        ],
+        "cites": 46
+      },
+      {
+        "id": "39154093",
+        "core": "biomedcore",
+        "year": "2024",
+        "title": "TEMPRO: nanobody melting temperature estimation model using protein embeddings",
+        "hits": 6,
+        "quotes": [
+          "Our results indicate the efficacy of protein embeddings in reliably predicting the Tm of sdAbs with mean absolute error (MAE) of 4.03 \u00b0C and root mean squared error (RMSE) of 5.66 \u00b0C, thus offering a valuable tool for the optimization of nanobodies for various biomedical and therapeutic applications."
+        ],
+        "matched": [
+          "embedding",
+          "melting",
+          "nanobody",
+          "temperature",
+          "tempro",
+          "thermostability"
+        ],
+        "cites": 15
+      },
+      {
+        "id": "40079266",
+        "core": "biomedcore",
+        "year": "2025",
+        "title": "Seq2Topt: a sequence-based deep learning predictor of enzyme optimal temperature",
+        "hits": 5,
+        "quotes": [
+          "In comparison with existing models, a new model developed in this study, Seq2Topt, reached a superior accuracy on ${T}_{opt}$ prediction just using protein sequences (RMSE = 12.26\u00b0C and R2 = 0.57), and could capture key protein regions for enzyme ${T}_{opt}$ with multi-head attention on residues.",
+          "Additionally, accurate deep learning predictors of enzyme optimal pH (Seq2pHopt, RMSE = 0.88 and R2 = 0.42) and melting temperature (Seq2Tm, RMSE = 7.57 \u00b0C and R2 = 0.64) were developed based on the model architecture of Seq2Topt, suggesting that the development of Seq2Topt could potentially give rise to a useful prediction platform of enzymes."
+        ],
+        "matched": [
+          "accuracy",
+          "learning",
+          "melting",
+          "predictor",
+          "temperature"
+        ],
+        "cites": 19
+      },
+      {
+        "id": "35361835",
+        "core": "biomedcore",
+        "year": "2022",
+        "title": "Machine learning modeling for solubility prediction of recombinant antibody fragment in four different E. coli strains",
+        "hits": 5,
+        "quotes": [
+          "The concentration of soluble scFv reached 112.4 mg/L at the optimum condition and strain (induction at cell density 0.6 with 0.4 mM IPTG for 24 h at 23 \u00b0C in Origami)."
+        ],
+        "matched": [
+          "accuracy",
+          "learning",
+          "machine",
+          "scfv",
+          "temperature"
+        ],
+        "cites": 14
+      },
+      {
+        "id": "35509940",
+        "core": "biomedcore",
+        "year": "2022",
+        "title": "A low-cost 3D-printable differential scanning fluorometer for protein and RNA melting experiments",
+        "hits": 5,
+        "quotes": [
+          "Airflow heating and inline temperature control by thermistors enabled high-accuracy temperature management in PCR tubes (\u00b10.1 \u00b0C) allowing us to perform high-resolution thermal shift assays (TSA) from exemplary biological applications."
+        ],
+        "matched": [
+          "accuracy",
+          "machine",
+          "melting",
+          "temperature",
+          "validation"
+        ],
+        "cites": 4
+      }
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+# Baseline: mutate trastuzumab's CDRH3 window -> cheap filters first, expensive last -> rank.
+# Swapping a module = editing a `name:` line below. `abpipe list` shows every module and its parameters.
+run:
+  name: baseline
+  out_dir: runs
+  seed: 1
+data_dir: ${HOME}/hackathon-team-3/apheris/hackathon-data     # git-ignored organiser data
+parent:                                                       # wild type found in the SPR table by its CDRH3
+  table: her2-trastuzumab/trastuzumab_her2_spr_all_768.csv
+  window_column: cdrh3
+  id: trastuzumab
+
+generators:
+  - name: cdrh3_mutagenesis
+    n: 2000
+    params: {min_subs: 4, max_subs: 8, prior: uniform}
+
+filters:                                                      # run in this order, each on the previous survivors
+  - {name: framework_integrity}
+  - {name: abguard_hard}
+  - {name: dedupe}
+  - {name: new_liabilities, params: {severities: [high], max_new: 0}}
+  - {name: track_check}                                       # BASE VALIDATION: abguard track + each track's rules
+
+scorers:
+  - {name: parent_distance}
+  - {name: nearest_known_binder, params: {binder_classes: [high], k: 25}}
+
+aggregator: {name: borda}

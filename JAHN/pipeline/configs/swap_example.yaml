@@ -1,0 +1,29 @@
+# Same pipeline, three modules swapped by editing lines only: Pareto ranking, liabilities only
+# flagged (not dropped), and a different generator prior.
+run:
+  name: swap_example
+  out_dir: runs
+  seed: 2
+data_dir: ${HOME}/hackathon-team-3/apheris/hackathon-data
+parent:
+  table: her2-trastuzumab/trastuzumab_her2_spr_all_768.csv
+  window_column: cdrh3
+  id: trastuzumab
+
+generators:
+  - name: cdrh3_mutagenesis
+    n: 2000
+    params: {min_subs: 4, max_subs: 6, prior: facs, prior_classes: [high]}
+
+filters:
+  - {name: framework_integrity}
+  - {name: abguard_hard}
+  - {name: dedupe}
+  - {name: new_liabilities, on_fail: flag}
+  - {name: track_check}
+
+scorers:
+  - {name: parent_distance}
+  - {name: nearest_known_binder}
+
+aggregator: {name: pareto}
